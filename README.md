@@ -17,7 +17,7 @@ def deps do
 end
 ```
 
-Then open up your `app.js` and import/setup the hook:
+Next open up your `app.js` and import/setup the hook:
 
 ```javascript
 import { createLiveToastHook } from 'live_toast'
@@ -28,6 +28,27 @@ let liveSocket = new LiveSocket('/live', Socket, {
   }
 })
 ```
+
+Then, add `'../deps/live_toast/lib/**/*.*ex'` to your list of paths Tailwind will look for class names, in your
+`tailwind.config.js`:
+
+```javascript
+// assets/tailwind.config.js
+
+module.exports = {
+  content: [
+    './js/**/*.js',
+    '../lib/elixir_courses_web.ex',
+    '../lib/elixir_courses_web/**/*.*ex',
+    '../deps/live_toast/lib/**/*.*ex',
+  ]
+}
+```
+
+Your particular file will look different but all you need to do is make sure the last line is there.
+
+Note that the classes are currently hardcoded. Configuration of the toast components, and therefore there styling, are
+on the roadmap. But the default styles should look pretty good in the mean time.
 
 Finally, replace your `<.flash_group />` component with the new `<LiveToast.toast_group />`. It's most likely in your
 `app.html.heex`:
