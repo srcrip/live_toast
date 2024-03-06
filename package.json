@@ -1,0 +1,25 @@
+{
+  "name": "live_toast",
+  "version": "0.1.0",
+  "description": "Phoenix Hook for LiveToast",
+  "license": "MIT",
+  "private": true,
+  "module": "./priv/static/live_toast.esm.js",
+  "main": "./priv/static/live_toast.cjs.js",
+  "exports": {
+    "import": "./priv/static/live_toast.esm.js",
+    "require": "./priv/static/live_toast.cjs.js"
+  },
+  "author": "Andrew Stewart",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/srcrip/live_toast.git"
+  },
+  "files": [
+    "README.md",
+    "LICENSE.md",
+    "package.json",
+    "priv/static/*",
+    "assets/js/live_toast/*"
+  ]
+}

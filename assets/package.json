@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "phoenix_live_view": "file:../deps/phoenix_live_view",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@types/phoenix_live_view": "^0.18.4"
+  }
+}

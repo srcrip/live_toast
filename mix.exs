@@ -7,22 +7,50 @@ defmodule LiveToast.MixProject do
       version: "0.1.0",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      aliases: aliases(),
+      package: package(),
+      deps: deps(),
+      name: "LiveToast",
+      homepage_url: "https://github.com/srcrip/live_toast",
+      description: """
+      Drop-in replacement for the Phoenix flash system, supporting flashes and toasts.
+      """
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:phoenix, ">= 1.6.0 and < 1.8.0"},
+      {:phoenix_live_view, "~> 0.18"},
+      {:esbuild, "~> 0.2", only: :dev}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Andrew Stewart"],
+      licenses: ["MIT"],
+      links: %{
+        Changelog: "https://hexdocs.pm/live_toast/changelog.html",
+        GitHub: "https://github.com/srcrip/live_toast"
+      },
+      files:
+        ~w(assets/js lib priv) ++
+          ~w(CHANGELOG.md LICENSE.md mix.exs package.json README.md)
+    ]
+  end
+
+  defp aliases do
+    [
+      setup: ["deps.get", "cmd --cd assets npm install"],
+      "assets.build": ["esbuild module", "esbuild cdn", "esbuild cdn_min", "esbuild main"],
+      "assets.watch": ["esbuild module --watch"]
     ]
   end
 end
