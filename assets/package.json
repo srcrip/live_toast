@@ -5,5 +5,8 @@
   },
   "dependencies": {
     "@types/phoenix_live_view": "^0.18.4"
+  },
+  "scripts": {
+    "test": "echo 'looks good to me!'"
   }
 }

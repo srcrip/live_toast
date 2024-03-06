@@ -63,9 +63,21 @@ defmodule LiveToast do
     {:noreply, socket}
   end
 
+  @doc "Merges a new toast message into the current toast list."
+  def send_toast(kind, msg, id \\ "toast-group") do
+    Phoenix.LiveView.send_update(__MODULE__,
+      id: id,
+      toasts: [{kind, msg}]
+    )
+  end
+
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
 
+  @doc """
+  toast_group/1 is just a small Phoenix.Component wrapper around the LiveComponent for toasts.
+  You can use the LiveComponent directly if you prefer, this is just a convenience.
+  """
   def toast_group(assigns) do
     ~H"""
     <.live_component id={@id} module={__MODULE__} f={@flash} />
@@ -81,7 +93,7 @@ defmodule LiveToast do
 
   slot(:inner_block, doc: "the optional inner block that renders the flash message")
 
-  def toast(assigns) do
+  defp toast(assigns) do
     assigns =
       assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
 

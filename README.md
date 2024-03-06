@@ -1,21 +1,77 @@
-# LiveToast
+# Live Toast
 
-**TODO: Add description**
+![CI](https://github.com/srcrip/live_toast/workflows/CI/badge.svg) [![Hex](https://img.shields.io/hexpm/v/live_toast)](https://hex.pm/packages/live_toast)
+
+Live Toast is a drop-in replacement for the flash system in Phoenix/LiveView.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `live_toast` to your list of dependencies in `mix.exs`:
+Add `live_toast` to your list of dependencies in the `mix.exs` of your Phoenix
+application:
 
 ```elixir
 def deps do
   [
-    {:live_toast, "~> 0.1.0"}
+    {:live_toast, "~> 0.22.7"}
   ]
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/live_toast>.
+Then open up your `app.js` and import/setup the hook:
 
+```javascript
+import { createLiveToastHook } from 'live_toast'
+
+let liveSocket = new LiveSocket('/live', Socket, {
+  hooks: {
+    LiveToast: createLiveToastHook()
+  }
+})
+```
+
+Finally, replace your `<.flash_group />` component with the new `<LiveToast.toast_group />`. It's most likely in your
+`app.html.heex`:
+
+```eex
+<!-- Remove this! -->
+<.flash_group flash={@flash} />
+
+<!-- And replace it with this: -->
+<LiveToast.toast_group flash={@flash} />
+
+<%= @inner_content %>
+```
+
+And you're done!
+
+## Usage
+
+`LiveToast` will hijack the usual display of your flash messages, so they will continue to work as normal. You can
+continue to use flashes as normal, if you want to.
+
+However, one of the reasons to *not* use flash messages, is the Phoenix flash system only allows one message for each
+kind of flash. The toast pattern, alternatively, generally allows for multiple messages displayed to the user at at time.
+
+From a LiveView, you can now use `put_toast` similar to how you may use `put_flash`:
+
+```elixir
+defmodule YourApp.SomeLiveView do
+  def handle_event("submit", _payload, socket) do
+    # you do some thing with the payload, then you want to show a toast, so:
+    LiveToast.send_toast(:info, "Upload successful.")
+
+    {:noreply, socket}
+  end
+end
+```
+
+And that's pretty much it.
+
+## Roadmap
+
+Some of the stuff still to work on:
+
+- [ ] Improved docs
+- [ ] Configuration for the classes on toasts
+- [ ] Tests
+- [ ] More configuration for the animations
