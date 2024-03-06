@@ -87,32 +87,32 @@ defmodule LiveToast do
 
     ~H"""
     <div
-    :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
-    id={@id}
-    role="alert"
-    phx-hook="LiveToast"
-    class={[
-    "mt-2 mr-2 w-80 sm:w-96 z-50 p-2 rounded-md shadow origin-center overflow-hidden",
-    assigns.rest[:hidden] != true && "flex",
-    @kind == :info && "text-gray-800 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
-    @kind == :success && "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400",
-    @kind == :error && "text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400"
-    ]}
-    {@rest}
+      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+      id={@id}
+      role="alert"
+      phx-hook="LiveToast"
+      class={[
+        "mt-2 mr-2 w-80 sm:w-96 z-50 p-2 rounded-md shadow origin-center overflow-hidden",
+        assigns.rest[:hidden] != true && "flex",
+        @kind == :info && "text-gray-800 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+        @kind == :success && "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400",
+        @kind == :error && "text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400"
+      ]}
+      {@rest}
     >
-    <div class="pl-2 grow flex flex-col gap-1 items-start justify-center">
-    <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-    <%= @title %>
-    </p>
-    <p class="text-sm leading-5">
-    <%= msg %>
-    </p>
-    </div>
-    <button
-    type="button"
-    class="flex place-self-start group p-1"
-    aria-label="close"
-    {
+      <div class="pl-2 grow flex flex-col gap-1 items-start justify-center">
+        <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
+          <%= @title %>
+        </p>
+        <p class="text-sm leading-5">
+          <%= msg %>
+        </p>
+      </div>
+      <button
+        type="button"
+        class="flex place-self-start group p-1"
+        aria-label="close"
+        {
     if Phoenix.Flash.get(@flash, @kind),
     do: ["phx-click": JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")],
     else: [
@@ -121,9 +121,9 @@ defmodule LiveToast do
     "phx-value-id": @id
     ]
     }
-    >
-    <.svg name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
-    </button>
+      >
+        <.svg name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+      </button>
     </div>
     """
   end
@@ -131,46 +131,46 @@ defmodule LiveToast do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-          <div id={assigns[:id] || "toast-group"} class="z-50 fixed right-2 top-2 ">
-            <.toast kind={:info} title="Success!" flash={@f} />
-            <.toast kind={:error} title="Error!" flash={@f} />
+    <div id={assigns[:id] || "toast-group"} class="z-50 fixed right-2 top-2 ">
+      <.toast kind={:info} title="Success!" flash={@f} />
+      <.toast kind={:error} title="Error!" flash={@f} />
 
-            <.toast
-              id="client-error"
-              kind={:error}
-              title="We can't find the internet"
-              phx-disconnected={show(".phx-client-error #client-error")}
-              phx-connected={hide("#client-error")}
-              hidden
-            >
-              Attempting to reconnect
-      <.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
-    </.toast>
+      <.toast
+        id="client-error"
+        kind={:error}
+        title="We can't find the internet"
+        phx-disconnected={show(".phx-client-error #client-error")}
+        phx-connected={hide("#client-error")}
+        hidden
+      >
+        Attempting to reconnect
+        <.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+      </.toast>
 
-              <.toast
-              id="server-error"
-              kind={:error}
-              title="Something went wrong!"
-              phx-disconnected={show(".phx-server-error #server-error")}
-              phx-connected={hide("#server-error")}
-              hidden
-            >
-              Hang in there while we get back on track
-      <.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
-    </.toast>
+      <.toast
+        id="server-error"
+        kind={:error}
+        title="Something went wrong!"
+        phx-disconnected={show(".phx-server-error #server-error")}
+        phx-connected={hide("#server-error")}
+        hidden
+      >
+        Hang in there while we get back on track
+        <.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+      </.toast>
 
-              <.toast
-              :for={{{k, t}, index} <- Enum.with_index(@toasts)}
-              kind={k}
-              title={
-              case k do
-              :info -> "Info"
-              :success -> "Success"
-          :error -> "Error"
-        end
-                  }
-      target={@myself}
-      id={"toast-#{index}"}
+      <.toast
+        :for={{{k, t}, index} <- Enum.with_index(@toasts)}
+        kind={k}
+        title={
+          case k do
+            :info -> "Info"
+            :success -> "Success"
+            :error -> "Error"
+          end
+        }
+        target={@myself}
+        id={"toast-#{index}"}
       >
         <%= t %>
       </.toast>
