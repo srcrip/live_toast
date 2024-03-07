@@ -12,7 +12,7 @@ application:
 ```elixir
 def deps do
   [
-    {:live_toast, "~> 0.22.7"}
+    {:live_toast, "~> 0.1.0"}
   ]
 end
 ```
@@ -38,8 +38,8 @@ Then, add `'../deps/live_toast/lib/**/*.*ex'` to your list of paths Tailwind wil
 module.exports = {
   content: [
     './js/**/*.js',
-    '../lib/elixir_courses_web.ex',
-    '../lib/elixir_courses_web/**/*.*ex',
+    '../lib/your_app_web.ex',
+    '../lib/your_app_web/**/*.*ex',
     '../deps/live_toast/lib/**/*.*ex',
   ]
 }

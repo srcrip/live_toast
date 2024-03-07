@@ -52,17 +52,6 @@ defmodule LiveToast do
     {:noreply, socket}
   end
 
-  def handle_event("add_toast", _params, socket) do
-    socket =
-      socket
-      |> assign(
-        :toasts,
-        socket.assigns.toasts ++ [{:info, "Welcome to Elixir Courses"}]
-      )
-
-    {:noreply, socket}
-  end
-
   @doc "Merges a new toast message into the current toast list."
   def send_toast(kind, msg, id \\ "toast-group") do
     Phoenix.LiveView.send_update(__MODULE__,
