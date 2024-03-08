@@ -223,6 +223,7 @@ defmodule LiveToast do
   defp show(js \\ %JS{}, selector) do
     JS.show(js,
       to: selector,
+      display: "flex",
       transition:
         {"transition-all transform ease-out duration-300",
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
