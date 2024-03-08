@@ -62,6 +62,7 @@ defmodule LiveToast do
 
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
+  attr(:connected, :boolean, default: false, doc: "whether we're in a liveview or not")
 
   @doc """
   toast_group/1 is just a small Phoenix.Component wrapper around the LiveComponent for toasts.
@@ -69,7 +70,51 @@ defmodule LiveToast do
   """
   def toast_group(assigns) do
     ~H"""
-    <.live_component id={@id} module={__MODULE__} f={@flash} />
+    <.live_component :if={@connected} id={@id} module={__MODULE__} f={@flash} />
+    <.flash_group :if={!@connected} id={@id} flash={@flash} />
+    """
+  end
+
+  attr(:flash, :map, required: true, doc: "the map of flash messages")
+  attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
+
+  # Used to render flashes-only on regular non-LV pages.
+  defp flash_group(assigns) do
+    ~H"""
+    <div id={assigns[:id] || "flash-group"} class="z-50 fixed right-2 top-2 ">
+      <.flashes f={@flash} />
+    </div>
+    """
+  end
+
+  defp flashes(assigns) do
+    ~H"""
+    <.toast dismiss={0} kind={:info} title="Success!" flash={@f} />
+    <.toast dismiss={0} kind={:error} title="Error!" flash={@f} />
+
+    <.toast
+      id="client-error"
+      kind={:error}
+      title="We can't find the internet"
+      phx-disconnected={show(".phx-client-error #client-error")}
+      phx-connected={hide("#client-error")}
+      hidden
+    >
+      Attempting to reconnect
+      <.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+    </.toast>
+
+    <.toast
+      id="server-error"
+      kind={:error}
+      title="Something went wrong!"
+      phx-disconnected={show(".phx-server-error #server-error")}
+      phx-connected={hide("#server-error")}
+      hidden
+    >
+      Hang in there while we get back on track
+      <.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+    </.toast>
     """
   end
 
@@ -79,6 +124,11 @@ defmodule LiveToast do
   attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
   attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
   attr(:target, :any, required: false, doc: "the target for the phx-click event")
+
+  attr(:dismiss, :integer,
+    default: 6000,
+    doc: "the time in milliseconds before the message is automatically dismissed"
+  )
 
   slot(:inner_block, doc: "the optional inner block that renders the flash message")
 
@@ -92,6 +142,7 @@ defmodule LiveToast do
       id={@id}
       role="alert"
       phx-hook="LiveToast"
+      data-dismiss={assigns[:dismiss]}
       class={[
         "mt-2 mr-2 w-80 sm:w-96 z-50 p-2 rounded-md shadow origin-center overflow-hidden",
         assigns.rest[:hidden] != true && "flex",
@@ -115,10 +166,10 @@ defmodule LiveToast do
         aria-label="close"
         {
     if Phoenix.Flash.get(@flash, @kind),
-    do: ["phx-click": JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")],
-    else: [
-    "phx-target": assigns[:target],
-    "phx-click": "clear",
+      do: ["phx-click": JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")],
+      else: [
+        "phx-target": assigns[:target],
+        "phx-click": "clear",
     "phx-value-id": @id
     ]
     }
@@ -133,32 +184,7 @@ defmodule LiveToast do
   def render(assigns) do
     ~H"""
     <div id={assigns[:id] || "toast-group"} class="z-50 fixed right-2 top-2 ">
-      <.toast kind={:info} title="Success!" flash={@f} />
-      <.toast kind={:error} title="Error!" flash={@f} />
-
-      <.toast
-        id="client-error"
-        kind={:error}
-        title="We can't find the internet"
-        phx-disconnected={show(".phx-client-error #client-error")}
-        phx-connected={hide("#client-error")}
-        hidden
-      >
-        Attempting to reconnect
-        <.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
-      </.toast>
-
-      <.toast
-        id="server-error"
-        kind={:error}
-        title="Something went wrong!"
-        phx-disconnected={show(".phx-server-error #server-error")}
-        phx-connected={hide("#server-error")}
-        hidden
-      >
-        Hang in there while we get back on track
-        <.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
-      </.toast>
+      <.flashes f={@f} />
 
       <.toast
         :for={{{k, t}, index} <- Enum.with_index(@toasts)}

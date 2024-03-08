@@ -15,6 +15,10 @@ __export(exports, {
 function createLiveToastHook(duration = 6e3, enterAnimationTime = 400, leaveAnimationTime = 600) {
   return {
     mounted() {
+      let dismissTime = this.el.dataset.dismiss;
+      if (dismissTime !== void 0) {
+        duration = parseInt(dismissTime);
+      }
       this.el.animate([
         { opacity: 0, transform: "translateY(-100px) rotateY(30deg)" },
         { opacity: 1, transform: "translateY(0px) rotateY(0deg)" }
@@ -24,7 +28,7 @@ function createLiveToastHook(duration = 6e3, enterAnimationTime = 400, leaveAnim
         fill: "forwards"
       });
       const specialToasts = ["server-error", "client-error"];
-      if (specialToasts.includes(this.el.id)) {
+      if (specialToasts.includes(this.el.id) || duration === 0) {
         return;
       }
       const keyframes = [

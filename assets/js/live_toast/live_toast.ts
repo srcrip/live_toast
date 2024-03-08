@@ -9,6 +9,11 @@ export function createLiveToastHook(
 ) {
   return {
     mounted(this: ViewHook) {
+      let dismissTime = this.el.dataset.dismiss
+      if (dismissTime !== undefined) {
+        duration = parseInt(dismissTime)
+      }
+
       this.el.animate(
         [
           { opacity: 0, transform: 'translateY(-100px) rotateY(30deg)' },
@@ -22,8 +27,9 @@ export function createLiveToastHook(
       )
 
       // don't remove the special error flashes automatically
+      // or toasts with dismissTime set to 0
       const specialToasts = ['server-error', 'client-error']
-      if (specialToasts.includes(this.el.id)) {
+      if (specialToasts.includes(this.el.id) || duration === 0) {
         return
       }
 

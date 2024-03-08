@@ -58,12 +58,12 @@ Finally, replace your `<.flash_group />` component with the new `<LiveToast.toas
 <.flash_group flash={@flash} />
 
 <!-- And replace it with this: -->
-<LiveToast.toast_group flash={@flash} />
+<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} />
 
 <%= @inner_content %>
 ```
 
-And you're done!
+And you're done! Note that it's very important to set `connected` based on whether we're in a LiveView or not.
 
 ## Usage
 
