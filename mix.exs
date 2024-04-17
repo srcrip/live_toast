@@ -1,7 +1,7 @@
 defmodule LiveToast.MixProject do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.3.0"
 
   def project do
     [
@@ -31,6 +31,7 @@ defmodule LiveToast.MixProject do
     [
       {:phoenix, ">= 1.6.0 and < 1.8.0"},
       {:phoenix_live_view, "~> 0.18"},
+      {:ecto, ">= 0.0.0"},
       {:esbuild, "~> 0.2", only: :dev},
       {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},
       {:credo, ">= 0.0.0", only: [:dev], runtime: false},

@@ -15,12 +15,18 @@ __export(exports, {
 function createLiveToastHook(duration = 6e3, enterAnimationTime = 400, leaveAnimationTime = 600) {
   return {
     mounted() {
-      let dismissTime = this.el.dataset.dismiss;
-      if (dismissTime !== void 0) {
-        duration = parseInt(dismissTime);
+      let dataDuration = this.el.dataset.duration;
+      if (dataDuration !== void 0) {
+        duration = parseInt(dataDuration);
+      }
+      let ty;
+      if (this.el.dataset.corner === "bottom-left" || this.el.dataset.corner === "bottom-right") {
+        ty = "-100px";
+      } else {
+        ty = "100px";
       }
       this.el.animate([
-        { opacity: 0, transform: "translateY(-100px) rotateY(30deg)" },
+        { opacity: 0, transform: `translateY(${ty}) rotateY(30deg)` },
         { opacity: 1, transform: "translateY(0px) rotateY(0deg)" }
       ], {
         duration: enterAnimationTime,
@@ -38,12 +44,11 @@ function createLiveToastHook(duration = 6e3, enterAnimationTime = 400, leaveAnim
         },
         {
           opacity: 0,
-          transform: "scale(.95) rotateY(30deg)",
+          transform: "scale(0) rotateY(30deg)",
           height: 0,
           color: "transparent",
           background: "transparent",
-          padding: "0 .6em",
-          margin: "0 .3em"
+          padding: 0
         }
       ];
       this.el.animate(keyframes, {
@@ -54,7 +59,7 @@ function createLiveToastHook(duration = 6e3, enterAnimationTime = 400, leaveAnim
       });
       window.setTimeout(() => {
         this.pushEventTo("#toast-group", "clear", { id: this.el.id });
-      }, duration + 50);
+      }, duration + 5);
     }
   };
 }

@@ -12,7 +12,7 @@ application:
 ```elixir
 def deps do
   [
-    {:live_toast, "~> 0.1.0"}
+    {:live_toast, "~> 0.3.0"}
   ]
 end
 ```
@@ -84,6 +84,31 @@ defmodule YourApp.SomeLiveView do
     {:noreply, socket}
   end
 end
+```
+
+## Configuration
+
+You can define a custom toast class function, like so:
+
+```elixir
+defmodule MyModule do
+  def toast_class_fn(assigns) do
+    [
+      "w-80 sm:w-96 z-50 p-2 rounded-md shadow origin-center overflow-hidden",
+      assigns[:rest][:hidden] != true && "flex",
+      assigns[:kind] == :info && "text-gray-800 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      assigns[:kind] == :success && "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400",
+      assigns[:kind] == :error && "text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400"
+    ]
+  end
+end
+
+```
+
+And then use it to override the default styles:
+
+```heex
+<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={MyModule.toast_class_fn/1} />
 ```
 
 And that's pretty much it.
