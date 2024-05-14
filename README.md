@@ -12,7 +12,7 @@ application:
 ```elixir
 def deps do
   [
-    {:live_toast, "~> 0.3.0"}
+    {:live_toast, "~> 0.4.1"}
   ]
 end
 ```
@@ -63,7 +63,8 @@ Finally, replace your `<.flash_group />` component with the new `<LiveToast.toas
 <%= @inner_content %>
 ```
 
-And you're done! Note that it's very important to set `connected` based on whether we're in a LiveView or not.
+And you're done! Note that it's very important to set `connected` based on whether we're in a LiveView or not. This
+controls toast/flash display on non-LiveView pages.
 
 ## Usage
 
@@ -73,20 +74,63 @@ continue to use flashes as normal, if you want to.
 However, one of the reasons to *not* use flash messages, is the Phoenix flash system only allows one message for each
 kind of flash. The toast pattern, alternatively, generally allows for multiple messages displayed to the user at at time.
 
-From a LiveView, you can now use `put_toast` similar to how you may use `put_flash`:
+From a LiveView, you can now use `send_toast`:
 
 ```elixir
 defmodule YourApp.SomeLiveView do
   def handle_event("submit", _payload, socket) do
-    # you do some thing with the payload, then you want to show a toast, so:
-    LiveToast.send_toast(:info, "Upload successful.")
+  # you do some thing with the payload, then you want to show a toast, so:
+  LiveToast.send_toast(:info, "Upload successful.")
+
+  {:noreply, socket}
+  end
+end
+```
+
+Or you can use the helper function, `put_toast`, similar to how you may use `put_flash`:
+
+```elixir
+defmodule YourApp.SomeLiveView do
+  def handle_event("submit", _payload, socket) do
+    socket = socket
+    |> put_toast(:info, "Upload successful.")
 
     {:noreply, socket}
   end
 end
 ```
 
+`put_toast` can take a `Phoenix.LiveView.Socket` or a `Plug.Conn`, so you can use the same thing in your live and
+non-live pages.
+
+```elixir
+defmodule YourApp.SomeController do
+  def create(conn, _params) do
+    conn
+    |> put_toast(:info, "Upload successful.")
+    |> render(:whatever)
+  end
+end
+```
+
 ## Configuration
+
+### Function Options
+
+`send_toast` takes a number of arguments to control it's behavior. They are currently:
+
+- `kind`: The 'level' of this toast. The default setup supports `:info`, and `:error`.
+- `body`: The primary text of the message. 
+- `title`: The optional title of the toast displayed at the top.
+- `icon`: An optional function component that renders next to the title. You can use this with the default toast to display an icon.
+- `action`: An optional function component that renders to the side. You can use this with the default toast to display an action, like a button.
+- `component`: Use this to totally override rendering of the toast. This is expected to be a function component that
+    will receive all of the above options. See [this part of the demo]() as an example.
+
+Note that if you use more than just `:info` and `:error` in your codebase for flashes, you can augment Livetoast using
+some of the methods below to support that.
+
+### Custom Classes
 
 You can define a custom toast class function, like so:
 
@@ -94,11 +138,10 @@ You can define a custom toast class function, like so:
 defmodule MyModule do
   def toast_class_fn(assigns) do
     [
-      "w-80 sm:w-96 z-50 p-2 rounded-md shadow origin-center overflow-hidden",
-      assigns[:rest][:hidden] != true && "flex",
-      assigns[:kind] == :info && "text-gray-800 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
-      assigns[:kind] == :success && "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400",
-      assigns[:kind] == :error && "text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400"
+      "group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
+      if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
+      assigns[:kind] == :info && " bg-white text-black",
+      assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"
     ]
   end
 end
@@ -111,7 +154,22 @@ And then use it to override the default styles:
 <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={MyModule.toast_class_fn/1} />
 ```
 
-And that's pretty much it.
+### JavaScript Options
+
+You can also change some options about the LiveView hook when it is initalized. Such as:
+
+```javascript
+import { createLiveToastHook } from 'live_toast'
+
+// the duration for each toast to stay on screen in ms
+const duration = 4000
+
+const liveToastHook = createLiveToastHook(duration)
+
+let liveSocket = new LiveSocket('/live', Socket, {
+  hooks: { LiveToast: liveToastHook },
+})
+```
 
 ## Roadmap
 
@@ -119,5 +177,7 @@ Some of the stuff still to work on:
 
 - [ ] Improved docs
 - [ ] Configuration for the classes on toasts
-- [ ] Tests
+- [ ] more tests
 - [ ] More configuration for the animations
+- [ ] Ability to have more flashes than the default :error and :info (like a :warn)
+- [ ] Update a toast live (showing progress for example), and a recipe entry on this

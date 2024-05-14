@@ -1,7 +1,9 @@
 defmodule LiveToast.MixProject do
+  @moduledoc false
+
   use Mix.Project
 
-  @version "0.3.0"
+  @version "0.4.1"
 
   def project do
     [
@@ -29,15 +31,16 @@ defmodule LiveToast.MixProject do
 
   defp deps do
     [
-      {:phoenix, ">= 1.6.0 and < 1.8.0"},
-      {:phoenix_live_view, "~> 0.18"},
-      {:ecto, ">= 0.0.0"},
+      {:phoenix, ">= 1.7.0"},
+      {:phoenix_live_view, ">= 0.18.0"},
+      {:ecto, ">= 3.11.0"},
       {:esbuild, "~> 0.2", only: :dev},
+      {:bandit, "~> 1.1", only: :dev},
       {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},
       {:credo, ">= 0.0.0", only: [:dev], runtime: false},
       {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false},
       {:doctor, ">= 0.0.0", only: [:dev], runtime: false},
-      {:ex_doc, ">= 0.0.0", only: [:dev], runtime: false},
+      {:ex_doc, "~> 0.32.2", only: [:dev], runtime: false},
       {:mix_audit, ">= 0.0.0", only: [:dev], runtime: false}
     ]
   end
@@ -51,7 +54,7 @@ defmodule LiveToast.MixProject do
         GitHub: "https://github.com/srcrip/live_toast"
       },
       files:
-        ~w(assets/js lib priv) ++
+        ~w(assets/js lib/live_toast.ex priv) ++
           ~w(CHANGELOG.md LICENSE.md mix.exs package.json README.md)
     ]
   end

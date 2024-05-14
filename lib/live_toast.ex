@@ -1,7 +1,34 @@
 defmodule LiveToast do
   use Phoenix.LiveComponent
 
+  @enforce_keys [:kind, :msg]
+  defstruct [
+    :kind,
+    :msg,
+    :title,
+    :icon,
+    :action,
+    :component,
+    :duration,
+    :container_id,
+    :uuid
+  ]
+
+  @typedoc "Instance of a toast message."
+  @type t() :: %__MODULE__{
+          kind: atom(),
+          msg: binary(),
+          title: binary() | nil,
+          icon: (map() -> binary()) | nil,
+          action: (map() -> binary()) | nil,
+          component: (map() -> binary()) | nil,
+          duration: non_neg_integer() | nil,
+          container_id: binary() | nil,
+          uuid: Ecto.UUID.t() | nil
+        }
+
   alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Socket
 
   @moduledoc """
   LiveComponent for displaying toast messages.
@@ -11,7 +38,13 @@ defmodule LiveToast do
   def mount(socket) do
     socket =
       socket
-      |> assign(:toasts, [])
+      |> stream_configure(:toasts,
+        dom_id: fn %LiveToast{uuid: id} ->
+          "toast-#{id}"
+        end
+      )
+      |> stream(:toasts, [])
+      |> assign(:toast_count, 0)
 
     {:ok, socket}
   end
@@ -24,20 +57,18 @@ defmodule LiveToast do
     socket =
       socket
       |> assign(assigns)
-      |> update(:toasts, fn ts -> ts ++ toasts end)
+      |> stream(:toasts, toasts)
+      |> assign(:toast_count, socket.assigns.toast_count + length(toasts))
 
     {:ok, socket}
   end
 
   @impl Phoenix.LiveComponent
   def handle_event("clear", %{"id" => "toast-" <> uuid}, socket) do
-    toasts =
-      socket.assigns.toasts
-      |> Enum.reject(fn {_kind, _msg, id} -> id == uuid end)
-
     socket =
       socket
-      |> assign(:toasts, toasts)
+      |> stream_delete_by_dom_id(:toasts, "toast-#{uuid}")
+      |> assign(:toast_count, socket.assigns.toast_count - 1)
 
     {:noreply, socket}
   end
@@ -49,11 +80,28 @@ defmodule LiveToast do
   end
 
   @doc "Merges a new toast message into the current toast list."
-  def send_toast(kind, msg, id \\ "toast-group") do
-    Phoenix.LiveView.send_update(__MODULE__,
-      id: id,
-      toasts: [{kind, msg, Ecto.UUID.generate()}]
-    )
+  @spec send_toast(LiveToast.t()) :: Ecto.UUID.t()
+  def send_toast(%LiveToast{} = toast) do
+    container_id = toast.container_id || "toast-group"
+    uuid = toast.uuid || Ecto.UUID.generate()
+
+    toast =
+      toast
+      |> struct!(container_id: container_id, uuid: uuid)
+
+    Phoenix.LiveView.send_update(__MODULE__, id: container_id, toasts: [toast])
+
+    uuid
+  end
+
+  def put_toast(%Plug.Conn{} = conn, %LiveToast{kind: kind, msg: msg}) do
+    Phoenix.Controller.put_flash(conn, kind, msg)
+  end
+
+  def put_toast(%Socket{} = socket, %LiveToast{} = toast) do
+    send_toast(toast)
+
+    socket
   end
 
   @doc """
@@ -63,15 +111,13 @@ defmodule LiveToast do
   ```elixir
   defmodule MyModule do
     def toast_class_fn(assigns) do
-    [
-        "w-80 sm:w-96 z-50 p-2 rounded-md shadow origin-center overflow-hidden",
-        assigns[:rest][:hidden] != true && "flex",
-        assigns[:kind] == :info && "text-gray-800 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
-        assigns[:kind] == :success &&
-          "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400",
-        assigns[:kind] == :error && "text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400"
-        ]
-  end
+      [
+        "group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
+        if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
+        assigns[:kind] == :info && " bg-white text-black",
+        assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"
+      ]
+    end
   end
 
   # use it in your layout:
@@ -80,12 +126,10 @@ defmodule LiveToast do
   """
   def toast_class_fn(assigns) do
     [
-      "w-80 sm:w-96 z-50 p-2 rounded-md shadow origin-center overflow-hidden",
-      assigns[:rest][:hidden] != true && "flex",
-      assigns[:kind] == :info && "text-gray-800 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
-      assigns[:kind] == :success &&
-        "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400",
-      assigns[:kind] == :error && "text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400"
+      "group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
+      if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
+      assigns[:kind] == :info && " bg-white text-black",
+      assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"
     ]
   end
 
@@ -144,8 +188,29 @@ defmodule LiveToast do
 
   # Used to render flashes-only on regular non-LV pages.
   defp flash_group(assigns) do
+    # todo: move this to a common implementation
+    default_classes =
+      "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center"
+
+    class =
+      case assigns[:corner] do
+        :bottom_left ->
+          "#{default_classes} items-end bottom-0 left-0 flex-col-reverse sm:top-auto"
+
+        :bottom_right ->
+          "#{default_classes} items-end bottom-0 right-0 flex-col-reverse sm:top-auto"
+
+        :top_left ->
+          "#{default_classes} items-start top-0 left-0 flex-col sm:bottom-auto"
+
+        :top_right ->
+          "#{default_classes} items-start top-0 right-0 flex-col sm:bottom-auto"
+      end
+
+    assigns = assign(assigns, :class, class)
+
     ~H"""
-    <div id={assigns[:id] || "flash-group"} class="z-50 pointer-events-none fixed right-2 top-2 ">
+    <div id={assigns[:id] || "flash-group"} class={@class}>
       <.flashes f={@flash} corner={@corner} toast_class_fn={@toast_class_fn} />
     </div>
     """
@@ -171,7 +236,8 @@ defmodule LiveToast do
       class_fn={@toast_class_fn}
       duration={0}
       kind={:info}
-      title="Success!"
+      title="Info"
+      phx-update="ignore"
       flash={@f}
     />
     <.toast
@@ -179,7 +245,8 @@ defmodule LiveToast do
       class_fn={@toast_class_fn}
       duration={0}
       kind={:error}
-      title="Error!"
+      title="Error"
+      phx-update="ignore"
       flash={@f}
     />
 
@@ -189,6 +256,7 @@ defmodule LiveToast do
       id="client-error"
       kind={:error}
       title="We can't find the internet"
+      phx-update="ignore"
       phx-disconnected={show(".phx-client-error #client-error")}
       phx-connected={hide("#client-error")}
       hidden
@@ -203,6 +271,7 @@ defmodule LiveToast do
       id="server-error"
       kind={:error}
       title="Something went wrong!"
+      phx-update="ignore"
       phx-disconnected={show(".phx-server-error #server-error")}
       phx-connected={hide("#server-error")}
       hidden
@@ -218,7 +287,7 @@ defmodule LiveToast do
   attr(:title, :string, default: nil)
   attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
   attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
-  attr(:target, :any, required: false, doc: "the target for the phx-click event")
+  attr(:target, :any, default: nil, doc: "the target for the phx-click event")
 
   attr(:duration, :integer,
     default: 6000,
@@ -232,11 +301,16 @@ defmodule LiveToast do
 
   attr(:corner, :atom, required: true, doc: "the corner to display the toasts")
 
+  attr(:icon, :any, default: nil, doc: "the optional icon to render in the flash message")
+  attr(:action, :any, default: nil, doc: "the optional action to render in the flash message")
+  attr(:component, :any, default: nil, doc: "the optional component to render the flash message")
+
   slot(:inner_block, doc: "the optional inner block that renders the flash message")
 
   defp toast(assigns) do
     assigns =
-      assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
+      assigns
+      |> assign_new(:id, fn -> "flash-#{assigns.kind}" end)
 
     ~H"""
     <div
@@ -244,48 +318,87 @@ defmodule LiveToast do
       id={@id}
       role="alert"
       phx-hook="LiveToast"
-      data-duration={assigns[:duration]}
-      data-corner={assigns[:corner]}
+      data-duration={@duration}
+      data-corner={@corner}
       class={@class_fn.(assigns)}
       {@rest}
-      phx-update="ignore"
     >
-      <div class="pl-2 grow flex flex-col gap-1 items-start justify-center">
-        <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-          <%= @title %>
-        </p>
-        <p class="text-sm leading-5">
-          <%= msg %>
-        </p>
-      </div>
+      <%= if @component do %>
+        <%= @component.(Map.merge(assigns, %{body: msg})) %>
+      <% else %>
+        <div class="grow flex flex-col items-start justify-center">
+          <p
+            :if={@title}
+            data-part="title"
+            class={[
+              if(@icon, do: "mb-2", else: ""),
+              "flex items-center text-sm font-semibold leading-6"
+            ]}
+          >
+            <%= if @icon do %>
+              <%= @icon.(assigns) %>
+            <% end %>
+            <%= @title %>
+          </p>
+          <p class="text-sm leading-5">
+            <%= msg %>
+          </p>
+        </div>
+
+        <%= if @action do %>
+          <%= @action.(assigns) %>
+        <% end %>
+      <% end %>
+      <!--
+        todo
+        just get rid of close button?
+      -->
       <button
         type="button"
-        class="flex place-self-start group p-1"
+        class="
+        group-has-[[data-part='title']]/toast:absolute
+        right-[5px] top-[5px] rounded-md p-[5px] text-black/50 transition-opacity  hover:text-black focus:opacity-100 focus:outline-none focus:ring-1 group group-hover:opacity-100"
         aria-label="close"
         {
-      if Phoenix.Flash.get(@flash, @kind),
-        do: ["phx-click": JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")],
+        if Phoenix.Flash.get(@flash, @kind),
+        do: ["phx-click": 
+          JS.dispatch("flash-leave", to: "##{@id}")
+          |> JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")],
         else: [
-          "phx-target": assigns[:target],
+          "phx-target": @target,
           "phx-click": "clear",
-      "phx-value-id": @id
-      ]
-      }
+          "phx-value-id": @id
+        ]
+          }
       >
-        <.svg name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+        <.svg name="hero-x-mark-solid" class="h-[14px] w-[14px] opacity-40 group-hover:opacity-70" />
       </button>
     </div>
     """
   end
 
+  # todo: fix bug where refreshing causes the disconnected toast to show
+
   @impl Phoenix.LiveComponent
   def render(assigns) do
+    # flex
+    # "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-auto z-50 pointer-events-none fixed gap-2"
+    default_classes =
+      "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center"
+
     class =
       case assigns[:corner] do
-        :bottom_left -> "z-50 fixed bottom-3 left-3 flex-col-reverse"
-        :bottom_right -> "z-50 fixed bottom-3 right-3 flex-col-reverse"
-        :top_left -> "z-50 fixed top-3 left-3 flex-col"
-        _ -> "z-50 fixed top-3 right-3 flex-col"
+        :bottom_left ->
+          "#{default_classes} items-end bottom-0 left-0 flex-col-reverse sm:top-auto"
+
+        :bottom_right ->
+          "#{default_classes} items-end bottom-0 right-0 flex-col-reverse sm:top-auto"
+
+        :top_left ->
+          "#{default_classes} items-start top-0 left-0 flex-col sm:bottom-auto"
+
+        :top_right ->
+          "#{default_classes} items-start top-0 right-0 flex-col sm:bottom-auto"
       end
 
     assigns = assign(assigns, :class, class)
@@ -294,29 +407,45 @@ defmodule LiveToast do
     <div
       id={assigns[:id] || "toast-group"}
       class={[
-        "pointer-events-auto z-50 pointer-events-none fixed flex gap-2",
         @class
       ]}
+      phx-update="stream"
     >
-      <.flashes f={@f} corner={@corner} toast_class_fn={@toast_class_fn} />
-
       <.toast
-        :for={{{k, t, uuid}, _index} <- Enum.with_index(@toasts)}
+        :for={
+          {dom_id,
+           %LiveToast{
+             kind: k,
+             msg: body,
+             title: title,
+             icon: icon,
+             action: action,
+             duration: duration,
+             component: component
+           }} <- @streams.toasts
+        }
+        id={dom_id}
+        data-count={@toast_count}
+        duration={duration}
         kind={k}
         class_fn={@toast_class_fn}
+        component={component}
+        icon={icon}
+        action={action}
         corner={@corner}
         title={
-          case k do
-            :info -> "Info"
-            :success -> "Success"
-            :error -> "Error"
+          if title do
+            title
+          else
+            nil
           end
         }
         target={@myself}
-        id={"toast-#{uuid}"}
       >
-        <%= t %>
+        <%= body %>
       </.toast>
+
+      <.flashes f={@f} corner={@corner} toast_class_fn={@toast_class_fn} />
     </div>
     """
   end

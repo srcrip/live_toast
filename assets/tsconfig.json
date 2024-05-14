@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "es6",
+    "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
@@ -21,36 +21,3 @@
     "**/*.ts",
   ]
 }
-
-// {
-//   "compilerOptions": {
-//     "esModuleInterop": true,
-//     "skipLibCheck": true,
-//     "target": "esnext",
-//     "allowJs": true,
-//     "resolveJsonModule": true,
-//     "moduleDetection": "force",
-//     "isolatedModules": true,
-//     "strict": true,
-//     /* If transpiling with TypeScript: */
-//     "moduleResolution": "NodeNext",
-//     "module": "NodeNext",
-//     "outDir": "dist",
-//     "sourceMap": true,
-//
-//     /* AND if you're building for a library: */
-//     "declaration": true,
-//
-//     //
-//     // /* If NOT transpiling with TypeScript: */
-//     // "moduleResolution": "Bundler",
-//     // "module": "ESNext",
-//     // "noEmit": true,
-//
-//     /* If your code runs in the DOM: */
-//     "lib": ["esnext", "dom", "dom.iterable"],
-//
-//     // /* If your code doesn't run in the DOM: */
-//     // "lib": ["es2022"]
-//   }
-// }

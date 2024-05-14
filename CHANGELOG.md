@@ -17,3 +17,11 @@ Bug fixes:
 Bug fixes:
 - Fixing quite a few little problems here and there
 - Adding more configuration
+
+## [v0.4.0] (2024-05-11)
+
+Massive overhaul of look and feel.
+
+## [v0.4.1] (2024-05-11)
+
+Demo repo bug fixing.
