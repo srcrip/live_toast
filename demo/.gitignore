@@ -26,3 +26,5 @@ live_toast-*.tar
 /tmp/
 
 node_modules
+
+priv/static/**/*
