@@ -1,0 +1,159 @@
+<h2 class="mb-6 text-2xl font-bold">Demo</h2>
+
+<div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Toasts</h2>
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click="toast" phx-value-kind="info" phx-throttle="100">
+    Info Toast
+    </.button>
+
+    <.button phx-click="toast" phx-value-kind="error" class="bg-red-100 border border-red-200/80">
+    Error Toast
+    </.button>
+  </div>
+</div>
+
+<div class="mb-12">
+   <h2 class="text-lg font-semibold mb-3">Update</h2>
+   <div class="flex flex-wrap gap-3">
+      <.button phx-click="update_toast" phx-value-kind="info">
+         Update an Existing Toast
+      </.button>
+   </div>
+</div>
+
+
+<div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Flashes</h2>
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click="flash" phx-value-kind="info">
+    Info Flash
+    </.button>
+
+    <.button phx-click="flash" phx-value-kind="error">
+    Error Flash
+    </.button>
+  </div>
+</div>
+
+<div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Position</h2>
+  <div class="flex flex-wrap gap-3">
+    <.button
+       class={if @settings["corner"] == "top_right", do: "!border-2 !border-indigo-400/80", else: ""}
+       phx-click={JS.push("toast", value: %{"kind" => "info", "title" => "Position changed", "body" => "Position set to top right."}) |> JS.push("change_settings", value: %{"corner" => "top_right"})}>
+       Top Right
+       </.button>
+
+       <.button
+       class={if @settings["corner"] == "top_left", do: "!border-2 !border-indigo-400/80", else: ""}
+       phx-click={JS.push("toast", value: %{"kind" => "info", "title" => "Position changed", "body" => "Position set to top left."}) |> JS.push("change_settings", value: %{"corner" => "top_left"})}>
+       Top Left
+       </.button>
+
+       <.button
+       class={if @settings["corner"] == "bottom_right", do: "!border-2 !border-indigo-400/80", else: ""}
+       phx-click={JS.push("toast", value: %{"kind" => "info", "title" => "Position changed", "body" => "Position set to bottom right."}) |> JS.push("change_settings", value: %{"corner" => "bottom_right"})}>
+       Bottom Right
+       </.button>
+
+       <.button
+       class={if @settings["corner"] == "bottom_left", do: "!border-2 !border-indigo-400/80", else: ""}
+       phx-click={JS.push("toast", value: %{"kind" => "info", "title" => "Position changed", "body" => "Position set to bottom left."}) |> JS.push("change_settings", value: %{"corner" => "bottom_left"})}>
+       Bottom Left
+       </.button>
+  </div>
+</div>
+
+<div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Titles</h2>
+  <div class="flex flex-wrap gap-3">
+    <.button
+       phx-click={
+       JS.push("toast", value: %{"kind" => "info", "title" => "Toast with title", "body" => "This is a toast with a title."})
+       }
+       >
+       With Title
+       </.button>
+
+       <.button
+       phx-click={
+       JS.push("toast", value: %{"kind" => "info", "body" => "No title on this one."})
+       }
+       >
+       Without Title
+       </.button>
+  </div>
+</div>
+
+<div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Icons</h2>
+  <div class="flex flex-wrap gap-3">
+    <.button
+       class={if @settings["icon"] == "example", do: "!border-2 !border-indigo-400/80", else: ""}
+       phx-click={
+       JS.push("change_settings", value: %{"icon" => "example"})
+       |> JS.push("toast", value: %{"title" => "With Icon", "body" => "This is a toast with an icon."})
+       }
+       >
+       With Icons
+       </.button>
+
+       <.button
+       class={if @settings["icon"] == nil, do: "!border-2 !border-indigo-400/80", else: ""}
+       phx-click={
+       JS.push("change_settings", value: %{"icon" => nil})
+       |> JS.push("toast", value: %{"title" => "No Icon", "body" => "This is a toast without an icon."})
+       }
+       >
+       Without Icons
+       </.button>
+  </div>
+</div>
+
+<div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Actions</h2>
+  <div class="flex flex-wrap gap-3">
+    <.button
+       class={if @settings["action"] == "example", do: "!border-2 !border-indigo-400/80", else: ""}
+       phx-click={
+       JS.push("change_settings", value: %{"action" => "example"})
+       |> JS.push("toast", value: %{"title" => "Actions", "body" => "This is a toast with an action."})
+       }
+       >
+       With Action
+       </.button>
+
+       <.button
+       class={if @settings["action"] == nil, do: "!border-2 !border-indigo-400/80", else: ""}
+       phx-click={
+       JS.push("change_settings", value: %{"action" => nil})
+       |> JS.push("toast", value: %{"title" => "Actions", "body" => "This is a toast without an action."})
+       }
+       >
+       Without Action
+       </.button>
+  </div>
+</div>
+
+<div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Kitchen Sink</h2>
+
+  <div class="flex flex-wrap gap-3">
+    <.button
+       phx-click={
+       JS.push("toast", value: %{"title" => "Custom component", "body" => "This is rendered using a custom toast.", "component" => "custom"})
+       }
+       >
+       Custom Component
+       </.button>
+
+       <.button
+       phx-click={
+       JS.push("toast", value: %{"title" => "Event Created", "body" => "Please contact your administrator for more details.", "component" => "everything"})
+       }
+       >
+       All The Things
+       </.button>
+  </div>
+</div>

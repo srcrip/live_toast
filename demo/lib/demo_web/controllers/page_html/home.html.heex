@@ -1,0 +1,31 @@
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  />
+
+<h2 class="mb-6 text-2xl font-bold">Dead View Demo</h2>
+
+<.link class="mb-4 text-sm text-indigo-500 inline-flex gap-2 place-items-center" href={~p"/"}>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+    <path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" />
+  </svg>
+  Back to LiveView Demo
+</.link>
+
+<div class="mb-12 space-y-4">
+  This page is loaded by a regular controller (you can call it a Dead View if you want). The links below trigger actions that will push flashes onto the assigns, so you can see how everything works on a non-LiveView page.
+</div>
+
+<div class="mb-12 space-y-4">
+  <.link href={~p"/demo?flash[]=info"} class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium border border-zinc-200/50 transition-colors bg-zinc-100 text-zinc-900 shadow-sm hover:bg-zinc-200 phx-submit-loading:opacity-75 active:text-zinc-800 h-9 px-4 py-2">
+    Info Flash
+  </.link>
+
+  <.link href={~p"/demo?flash[]=info&flash[]=error"} class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium border border-zinc-200/50 transition-colors bg-zinc-100 text-zinc-900 shadow-sm hover:bg-zinc-200 phx-submit-loading:opacity-75 active:text-zinc-800 h-9 px-4 py-2">
+  Info and Error Flash
+  </.link>
+
+  <.link href={~p"/demo"} class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium border border-zinc-200/50 transition-colors bg-zinc-100 text-zinc-900 shadow-sm hover:bg-zinc-200 phx-submit-loading:opacity-75 active:text-zinc-800 h-9 px-4 py-2">
+  Reset
+  </.link>
+</div>

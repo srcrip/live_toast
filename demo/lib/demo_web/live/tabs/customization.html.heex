@@ -1,0 +1,23 @@
+<h2 class="mb-6 text-2xl font-bold">Customization</h2>
+
+<div class="mb-12 space-y-4">
+  <h2 class="text-lg font-semibold mb-3">Elixir Function Settings</h2>
+  <p>
+    Many of the functions in LiveToast take settings to change the look and feel of the toasts, for minor customizations.
+  </p>
+
+  <h2 class="text-lg font-semibold mb-3">Custom Class Function</h2>
+  <p>
+    If you need more control over the styles, you can also pass a custom class function (that generates the class string for the main element). Note that there are a lot of required things in the default implementation of this class. It is best to take the example from the docs and extend it rather than start from zero.
+  </p>
+
+  <h2 class="text-lg font-semibold mb-3">Custom JavaScript</h2>
+  <p>
+    The JavaScript is also very customizable. When calling the function to create the hook, you can pass some settings to change how it behaves. I plan to extend this more in the future. If you need even more control in this area, you can also copy the TypeScript file that contains this function into your project and edit it completely.
+  </p>
+
+  <h2 class="text-lg font-semibold mb-3">Custom Components</h2>
+  <p>
+    If you need total control, you can pass a custom component to the toast functions. This hijacks the normal rendering and then you can pretty much do whatever you want in terms of generating the DOM elements.
+  </p>
+</div>
