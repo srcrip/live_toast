@@ -1,24 +1,24 @@
 import Config
 
 config :esbuild,
-version: "0.17.11",
-demo: [
-  args:
-  ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
-  cd: Path.expand("../assets", __DIR__),
-  env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
-]
+  version: "0.17.11",
+  demo: [
+    args:
+      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
 
 config :tailwind,
-version: "3.4.0",
-demo: [
-  args: ~w(
+  version: "3.4.0",
+  demo: [
+    args: ~w(
   --config=tailwind.config.cjs
            --input=css/app.css
                    --output=../priv/static/assets/app.css
   ),
-  cd: Path.expand("../assets", __DIR__)
-]
+    cd: Path.expand("../assets", __DIR__)
+  ]
 
 config :demo, DemoWeb.Endpoint,
   url: [host: "localhost"],

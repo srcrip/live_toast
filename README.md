@@ -1,6 +1,6 @@
 # Live Toast
 
-![CI](https://github.com/srcrip/live_toast/workflows/CI/badge.svg) [![Hex](https://img.shields.io/hexpm/v/live_toast)](https://hex.pm/packages/live_toast)
+![CI](https://github.com/srcrip/live_toast/actions/workflows/tests.yml/badge.svg) [![Hex](https://img.shields.io/hexpm/v/live_toast)](https://hex.pm/packages/live_toast)
 
 Live Toast is a drop-in replacement for the flash system in Phoenix/LiveView.
 

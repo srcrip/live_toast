@@ -33,13 +33,14 @@ defmodule DemoWeb.HomeLive do
   end
 
   def handle_event("update_toast", _payload, socket) do
-    body = [
-      "This is a toast event.",
-      "Different toast event.",
-      "This is another toast event.",
-      "Hello, world!"
-    ]
-    |> Enum.random()
+    body =
+      [
+        "This is a toast event.",
+        "Different toast event.",
+        "This is another toast event.",
+        "Hello, world!"
+      ]
+      |> Enum.random()
 
     uuid = "this-is-a-uuid"
 
@@ -113,10 +114,11 @@ defmodule DemoWeb.HomeLive do
       end
 
     %LiveToast{
-      kind: case kind do
-        "info" -> :info
-        "error" -> :error
-      end,
+      kind:
+        case kind do
+          "info" -> :info
+          "error" -> :error
+        end,
       msg: body,
       title: title,
       icon: icon,
@@ -193,10 +195,10 @@ defmodule DemoWeb.HomeLive do
     ~H"""
     <span class="mr-1.5 inline-grid">
       <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
         data-slot="icon"
         class="inline-block h-3 w-3 animate-spin"
       >
@@ -257,7 +259,7 @@ defmodule DemoWeb.HomeLive do
 
       <p class="w-full mt-2 text-xs font-medium text-gray-500 flex">
         <span class="grow text-indigo-600">
-          <.link href={"https://github.com/srcrip/live_toast"}>
+          <.link href="https://github.com/srcrip/live_toast">
             Star it on GitHub
           </.link>
         </span>

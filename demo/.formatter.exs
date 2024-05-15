@@ -1,7 +1,6 @@
 [
   plugins: [Phoenix.LiveView.HTMLFormatter],
   inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"],
-  subdirectories: ["demo"],
   import_deps: [:phoenix_live_view],
   locals_without_parens: [
     attr: 2,
