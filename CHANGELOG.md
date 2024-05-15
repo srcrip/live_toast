@@ -29,3 +29,7 @@ Demo repo bug fixing.
 ## [v0.4.2] (2024-05-15)
 
 Tightening up a few bugs found during the creation of the demo.
+
+## [v0.4.3] (2024-05-15)
+
+Fix implementation of `send_toast`.

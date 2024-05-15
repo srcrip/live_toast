@@ -81,6 +81,10 @@ defmodule LiveToast do
 
   @doc "Merges a new toast message into the current toast list."
   @spec send_toast(LiveToast.t()) :: Ecto.UUID.t()
+  def send_toast(kind, msg) do
+    send_toast(%LiveToast{kind: kind, msg: msg})
+  end
+
   def send_toast(%LiveToast{} = toast) do
     container_id = toast.container_id || "toast-group"
     uuid = toast.uuid || Ecto.UUID.generate()
@@ -94,12 +98,22 @@ defmodule LiveToast do
     uuid
   end
 
+  def put_toast(%Plug.Conn{} = conn, kind, msg) do
+    Phoenix.Controller.put_flash(conn, kind, msg)
+  end
+
   def put_toast(%Plug.Conn{} = conn, %LiveToast{kind: kind, msg: msg}) do
     Phoenix.Controller.put_flash(conn, kind, msg)
   end
 
   def put_toast(%Socket{} = socket, %LiveToast{} = toast) do
     send_toast(toast)
+
+    socket
+  end
+
+  def put_toast(%Socket{} = socket, kind, msg) do
+    send_toast(%LiveToast{kind: kind, msg: msg})
 
     socket
   end
