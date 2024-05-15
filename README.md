@@ -53,7 +53,7 @@ on the roadmap. But the default styles should look pretty good in the mean time.
 Finally, replace your `<.flash_group />` component with the new `<LiveToast.toast_group />`. It's most likely in your
 `app.html.heex`:
 
-```eex
+```heex
 <!-- Remove this! -->
 <.flash_group flash={@flash} />
 
@@ -79,10 +79,10 @@ From a LiveView, you can now use `send_toast`:
 ```elixir
 defmodule YourApp.SomeLiveView do
   def handle_event("submit", _payload, socket) do
-  # you do some thing with the payload, then you want to show a toast, so:
-  LiveToast.send_toast(:info, "Upload successful.")
+    # you do some thing with the payload, then you want to show a toast, so:
+    LiveToast.send_toast(:info, "Upload successful.")
 
-  {:noreply, socket}
+    {:noreply, socket}
   end
 end
 ```

@@ -44,7 +44,8 @@ defmodule LiveToast.MixProject do
       {:mix_audit, ">= 0.0.0", only: [:dev], runtime: false},
       {:makeup, "1.1.2", only: [:dev], runtime: false},
       {:makeup_elixir, "0.16.2", only: [:dev], runtime: false},
-      {:makeup_js, "~> 0.1.0", only: [:dev], runtime: false}
+      {:makeup_js, "~> 0.1.0", only: [:dev], runtime: false},
+      {:makeup_eex, "~> 0.1.2", only: [:dev], runtime: false}
     ]
   end
 
