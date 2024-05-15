@@ -25,3 +25,7 @@ Massive overhaul of look and feel.
 ## [v0.4.1] (2024-05-11)
 
 Demo repo bug fixing.
+
+## [v0.4.2] (2024-05-15)
+
+Tightening up a few bugs found during the creation of the demo.
