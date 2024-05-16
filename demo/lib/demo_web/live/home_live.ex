@@ -34,13 +34,18 @@ defmodule DemoWeb.HomeLive do
 
   def handle_event("update_toast", _payload, socket) do
     body =
-      Enum.random(["This is a toast event.", "Different toast event.", "This is another toast event.", "Hello, world!"])
+      Enum.random([
+        "This is a toast event.",
+        "Different toast event.",
+        "This is another toast event.",
+        "Hello, world!"
+      ])
 
     uuid = "this-is-a-uuid"
 
-    LiveToast.send_toast(%LiveToast{
-      kind: :info,
-      msg: body,
+    LiveToast.send_toast(
+      :info,
+      body,
       title: nil,
       icon: nil,
       action: nil,
@@ -48,7 +53,7 @@ defmodule DemoWeb.HomeLive do
       component: nil,
       container_id: "toast-group",
       uuid: uuid
-    })
+    )
 
     {:noreply, socket}
   end
@@ -56,9 +61,9 @@ defmodule DemoWeb.HomeLive do
   def handle_event("show_progress", _payload, socket) do
     uuid = "show-progress"
 
-    LiveToast.send_toast(%LiveToast{
-      kind: :info,
-      msg: "Uploading...",
+    LiveToast.send_toast(
+      :info,
+      "Uploading...",
       title: "Show Progress",
       icon: &loading_icon/1,
       action: nil,
@@ -66,7 +71,7 @@ defmodule DemoWeb.HomeLive do
       component: nil,
       container_id: "toast-group",
       uuid: uuid
-    })
+    )
 
     Process.send_after(self(), :progress, 3000)
 
@@ -105,20 +110,19 @@ defmodule DemoWeb.HomeLive do
         _ -> nil
       end
 
-    LiveToast.send_toast(%LiveToast{
-      kind:
-        case kind do
-          "info" -> :info
-          "error" -> :error
-        end,
-      msg: body,
+    LiveToast.send_toast(
+      case kind do
+        "info" -> :info
+        "error" -> :error
+      end,
+      body,
       title: title,
       icon: icon,
       action: action,
       duration: duration,
       component: component,
       container_id: "toast-group"
-    })
+    )
 
     {:noreply, socket}
   end
@@ -138,16 +142,16 @@ defmodule DemoWeb.HomeLive do
   end
 
   def handle_event(event, _payload, socket) do
-    IO.puts("Unhandled event: #{event}")
+    Logger.error("Unhandled event: #{event}")
     {:noreply, socket}
   end
 
   def handle_info(:progress, socket) do
     uuid = "show-progress"
 
-    LiveToast.send_toast(%LiveToast{
-      kind: :info,
-      msg: "Still going, please wait a little longer...",
+    LiveToast.send_toast(
+      :info,
+      "Still going, please wait a little longer...",
       title: "Show Progress",
       icon: &loading_icon/1,
       action: nil,
@@ -155,7 +159,7 @@ defmodule DemoWeb.HomeLive do
       component: nil,
       container_id: "toast-group",
       uuid: uuid
-    })
+    )
 
     Process.send_after(self(), :done, 2000)
 
@@ -165,9 +169,9 @@ defmodule DemoWeb.HomeLive do
   def handle_info(:done, socket) do
     uuid = "show-progress"
 
-    LiveToast.send_toast(%LiveToast{
-      kind: :info,
-      msg: "Upload complete!",
+    LiveToast.send_toast(
+      :info,
+      "Upload complete!",
       title: "Show Progress",
       icon: nil,
       action: nil,
@@ -175,7 +179,7 @@ defmodule DemoWeb.HomeLive do
       component: nil,
       container_id: "toast-group",
       uuid: uuid
-    })
+    )
 
     {:noreply, socket}
   end
@@ -390,6 +394,6 @@ defmodule DemoWeb.HomeLive do
   end
 
   def apply_action(socket, _) do
-    assign(socket, :page_title, "Live Toast — Demo")
+    assign(socket, :page_title, "Live Toast — Getting Started")
   end
 end

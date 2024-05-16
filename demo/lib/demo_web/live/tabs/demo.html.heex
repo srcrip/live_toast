@@ -1,7 +1,31 @@
+<h2 class="mb-6 text-2xl font-bold">Getting Started</h2>
+
+<h2 class="text-lg font-semibold mb-3">What is LiveToast?</h2>
+
+<p class="mt-4">
+   LiveToast is a drop-in replacement for your `flash-group` component. It has two main components/features:
+</p>
+
+<ol class="mb-8 list-disc list-inside ml-4">
+   <li class="mt-3">
+      It provides a toast message system, that you can call <.link class="text-blue-700 hover:text-blue-500 underline" href={"https://hexdocs.pm/live_toast/readme.html#usage"}>from a function</.link> in your LiveView components.
+   </li>
+   <li class="mt-3">
+      It also continues to render your app's flash messages, in the same style, so your users can't tell the difference (you should migrate them to the toast system, though!)
+   </li>
+</ol>
+
 <h2 class="mb-6 text-2xl font-bold">Demo</h2>
 
-<div class="mb-12">
+<p class="mt-4">
+   Here's a sneak peak of some of the customization options LiveToast provides:
+</p>
+
+<div class="mt-6 mb-12">
   <h2 class="text-lg font-semibold mb-3">Toasts</h2>
+  <p class="mt-2 mb-4">
+     Regular calls to <code class="text-rose-600 bg-zinc-50 rounded px-1">send_toast</code> will render a toast message with the default styles.
+  </p>
   <div class="flex flex-wrap gap-3">
     <.button phx-click="toast" phx-value-kind="info" phx-throttle="100">
     Info Toast
@@ -15,6 +39,9 @@
 
 <div class="mb-12">
    <h2 class="text-lg font-semibold mb-3">Update</h2>
+   <p class="mt-2 mb-4">
+      If you want to update an existing toast, you can call <code class="text-rose-600 bg-zinc-50 rounded px-1">send_toast</code> with the same UUID multiple times.
+   </p>
    <div class="flex flex-wrap gap-3">
       <.button phx-click="update_toast" phx-value-kind="info">
          Update an Existing Toast
@@ -25,6 +52,9 @@
 
 <div class="mb-12">
   <h2 class="text-lg font-semibold mb-3">Flashes</h2>
+  <p class="mt-2 mb-4">
+     LiveToast also continues to render your app's flash messages, in the same style as the new toasts.
+  </p>
   <div class="flex flex-wrap gap-3">
     <.button phx-click="flash" phx-value-kind="info">
     Info Flash
@@ -38,6 +68,9 @@
 
 <div class="mb-12">
   <h2 class="text-lg font-semibold mb-3">Position</h2>
+  <p class="mt-2 mb-4">
+     The default component <.link class="text-blue-700 hover:text-blue-500 underline" href={"https://hexdocs.pm/live_toast/readme.html#setting-the-corner"}>can be anchored</.link> to the top right, top left, bottom right, or bottom left of the screen.
+  </p>
   <div class="flex flex-wrap gap-3">
     <.button
        class={if @settings["corner"] == "top_right", do: "!border-2 !border-indigo-400/80", else: ""}
@@ -67,6 +100,9 @@
 
 <div class="mb-12">
   <h2 class="text-lg font-semibold mb-3">Titles</h2>
+  <p class="mt-2 mb-4">
+     You may pass an optional <code class="text-rose-600 bg-zinc-50 rounded px-1">:title</code> string to <code class="text-rose-600 bg-zinc-50 rounded px-1">send_toast</code>.
+  </p>
   <div class="flex flex-wrap gap-3">
     <.button
        phx-click={
@@ -88,6 +124,9 @@
 
 <div class="mb-12">
   <h2 class="text-lg font-semibold mb-3">Icons</h2>
+  <p class="mt-2 mb-4">
+     You may pass an optional <code class="text-rose-600 bg-zinc-50 rounded px-1">:icon</code> function to <code class="text-rose-600 bg-zinc-50 rounded px-1">send_toast</code>. It is expected to be a function component, which takes assigns and returns heex.
+  </p>
   <div class="flex flex-wrap gap-3">
     <.button
        class={if @settings["icon"] == "example", do: "!border-2 !border-indigo-400/80", else: ""}
@@ -113,6 +152,9 @@
 
 <div class="mb-12">
   <h2 class="text-lg font-semibold mb-3">Actions</h2>
+  <p class="mt-2 mb-4">
+     You may pass an optional <code class="text-rose-600 bg-zinc-50 rounded px-1">:action</code> function to <code class="text-rose-600 bg-zinc-50 rounded px-1">send_toast</code>. It is expected to be a function component, which takes assigns and returns heex.
+  </p>
   <div class="flex flex-wrap gap-3">
     <.button
        class={if @settings["action"] == "example", do: "!border-2 !border-indigo-400/80", else: ""}
@@ -138,22 +180,26 @@
 
 <div class="mb-12">
   <h2 class="text-lg font-semibold mb-3">Kitchen Sink</h2>
+  <p class="mt-2 mb-4">
+     If you need total customization, you may pass a <code class="text-rose-600 bg-zinc-50 rounded px-1">:component</code> function to <code class="text-rose-600 bg-zinc-50 rounded px-1">send_toast</code>. It is expected to be a function component, which takes assigns and returns heex.
+  </p>
 
+  <p class="mt-2 mb-4">
+     It will totally take over rendering for that call, so that you can render totally custom toasts. It receives all the assigns of the built in toast function. See the default implementation in GitHub for an example.
+  </p>
   <div class="flex flex-wrap gap-3">
     <.button
-       phx-click={
-       JS.push("toast", value: %{"title" => "Custom component", "body" => "This is rendered using a custom toast.", "component" => "custom"})
-       }
-       >
-       Custom Component
-       </.button>
+      phx-click={
+        JS.push("toast", value: %{"title" => "Custom component", "body" => "This is rendered using a custom toast.", "component" => "custom"})
+      }>
+      Custom Component
+    </.button>
 
-       <.button
-       phx-click={
-       JS.push("toast", value: %{"title" => "Event Created", "body" => "Please contact your administrator for more details.", "component" => "everything"})
-       }
-       >
-       All The Things
-       </.button>
+    <.button
+      phx-click={
+        JS.push("toast", value: %{"title" => "Event Created", "body" => "Please contact your administrator for more details.", "component" => "everything"})
+      }>
+      All The Things
+    </.button>
   </div>
 </div>
