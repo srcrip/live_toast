@@ -7,9 +7,9 @@ defmodule DemoWeb do
     quote do
       use Phoenix.Router, helpers: false
 
-      import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+      import Plug.Conn
     end
   end
 
@@ -49,8 +49,8 @@ defmodule DemoWeb do
 
   defp html_helpers do
     quote do
-      import Phoenix.HTML
       import DemoWeb.CoreComponents
+      import Phoenix.HTML
 
       alias Phoenix.LiveView.JS
 

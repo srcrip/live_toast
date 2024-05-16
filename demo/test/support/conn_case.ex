@@ -5,13 +5,13 @@ defmodule DemoWeb.ConnCase do
 
   using do
     quote do
-      @endpoint DemoWeb.Endpoint
-
       use DemoWeb, :verified_routes
 
-      import Plug.Conn
-      import Phoenix.ConnTest
       import DemoWeb.ConnCase
+      import Phoenix.ConnTest
+      import Plug.Conn
+
+      @endpoint DemoWeb.Endpoint
     end
   end
 

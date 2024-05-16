@@ -1,5 +1,12 @@
 defmodule LiveToast do
+  @moduledoc """
+  LiveComponent for displaying toast messages.
+  """
+
   use Phoenix.LiveComponent
+
+  alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Socket
 
   @enforce_keys [:kind, :msg]
   defstruct [
@@ -26,13 +33,6 @@ defmodule LiveToast do
           container_id: binary() | nil,
           uuid: Ecto.UUID.t() | nil
         }
-
-  alias Phoenix.LiveView.JS
-  alias Phoenix.LiveView.Socket
-
-  @moduledoc """
-  LiveComponent for displaying toast messages.
-  """
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -90,8 +90,7 @@ defmodule LiveToast do
     uuid = toast.uuid || Ecto.UUID.generate()
 
     toast =
-      toast
-      |> struct!(container_id: container_id, uuid: uuid)
+      struct!(toast, container_id: container_id, uuid: uuid)
 
     Phoenix.LiveView.send_update(__MODULE__, id: container_id, toasts: [toast])
 
@@ -323,8 +322,7 @@ defmodule LiveToast do
 
   defp toast(assigns) do
     assigns =
-      assigns
-      |> assign_new(:id, fn -> "flash-#{assigns.kind}" end)
+      assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
 
     ~H"""
     <div
@@ -510,8 +508,7 @@ defmodule LiveToast do
       to: selector,
       display: "flex",
       transition:
-        {"transition-all transform ease-out duration-300",
-         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+        {"transition-all transform ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
          "opacity-100 translate-y-0 sm:scale-100"}
     )
   end
@@ -521,8 +518,7 @@ defmodule LiveToast do
       to: selector,
       time: 200,
       transition:
-        {"transition-all transform ease-in duration-200",
-         "opacity-100 translate-y-0 sm:scale-100",
+        {"transition-all transform ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
   end

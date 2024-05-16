@@ -1,7 +1,7 @@
 defmodule DemoWeb.HomeLiveTest do
-  use DemoWeb.ConnCase
-
   @moduledoc false
+
+  use DemoWeb.ConnCase
 
   import Phoenix.LiveViewTest
 

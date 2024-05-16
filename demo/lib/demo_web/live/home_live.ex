@@ -1,4 +1,5 @@
 defmodule DemoWeb.HomeLive do
+  @moduledoc false
   use DemoWeb, :live_view
 
   alias Phoenix.LiveView.JS
@@ -26,25 +27,18 @@ defmodule DemoWeb.HomeLive do
 
   def handle_event("change_settings", payload, socket) do
     socket =
-      socket
-      |> assign(:settings, Map.merge(socket.assigns.settings, payload))
+      assign(socket, :settings, Map.merge(socket.assigns.settings, payload))
 
     {:noreply, socket}
   end
 
   def handle_event("update_toast", _payload, socket) do
     body =
-      [
-        "This is a toast event.",
-        "Different toast event.",
-        "This is another toast event.",
-        "Hello, world!"
-      ]
-      |> Enum.random()
+      Enum.random(["This is a toast event.", "Different toast event.", "This is another toast event.", "Hello, world!"])
 
     uuid = "this-is-a-uuid"
 
-    %LiveToast{
+    LiveToast.send_toast(%LiveToast{
       kind: :info,
       msg: body,
       title: nil,
@@ -54,8 +48,7 @@ defmodule DemoWeb.HomeLive do
       component: nil,
       container_id: "toast-group",
       uuid: uuid
-    }
-    |> LiveToast.send_toast()
+    })
 
     {:noreply, socket}
   end
@@ -63,7 +56,7 @@ defmodule DemoWeb.HomeLive do
   def handle_event("show_progress", _payload, socket) do
     uuid = "show-progress"
 
-    %LiveToast{
+    LiveToast.send_toast(%LiveToast{
       kind: :info,
       msg: "Uploading...",
       title: "Show Progress",
@@ -73,8 +66,7 @@ defmodule DemoWeb.HomeLive do
       component: nil,
       container_id: "toast-group",
       uuid: uuid
-    }
-    |> LiveToast.send_toast()
+    })
 
     Process.send_after(self(), :progress, 3000)
 
@@ -113,7 +105,7 @@ defmodule DemoWeb.HomeLive do
         _ -> nil
       end
 
-    %LiveToast{
+    LiveToast.send_toast(%LiveToast{
       kind:
         case kind do
           "info" -> :info
@@ -126,16 +118,15 @@ defmodule DemoWeb.HomeLive do
       duration: duration,
       component: component,
       container_id: "toast-group"
-    }
-    |> LiveToast.send_toast()
+    })
 
     {:noreply, socket}
   end
 
   def handle_event("flash", %{"kind" => kind}, socket) do
     socket =
-      socket
-      |> put_flash(
+      put_flash(
+        socket,
         case kind do
           "info" -> :info
           "error" -> :error
@@ -154,7 +145,7 @@ defmodule DemoWeb.HomeLive do
   def handle_info(:progress, socket) do
     uuid = "show-progress"
 
-    %LiveToast{
+    LiveToast.send_toast(%LiveToast{
       kind: :info,
       msg: "Still going, please wait a little longer...",
       title: "Show Progress",
@@ -164,8 +155,7 @@ defmodule DemoWeb.HomeLive do
       component: nil,
       container_id: "toast-group",
       uuid: uuid
-    }
-    |> LiveToast.send_toast()
+    })
 
     Process.send_after(self(), :done, 2000)
 
@@ -175,7 +165,7 @@ defmodule DemoWeb.HomeLive do
   def handle_info(:done, socket) do
     uuid = "show-progress"
 
-    %LiveToast{
+    LiveToast.send_toast(%LiveToast{
       kind: :info,
       msg: "Upload complete!",
       title: "Show Progress",
@@ -185,8 +175,7 @@ defmodule DemoWeb.HomeLive do
       component: nil,
       container_id: "toast-group",
       uuid: uuid
-    }
-    |> LiveToast.send_toast()
+    })
 
     {:noreply, socket}
   end
@@ -389,22 +378,18 @@ defmodule DemoWeb.HomeLive do
   def tab(assigns), do: demo(assigns)
 
   def apply_action(socket, :why) do
-    socket
-    |> assign(:page_title, "Live Toast — Why Live Toast?")
+    assign(socket, :page_title, "Live Toast — Why Live Toast?")
   end
 
   def apply_action(socket, :recipes) do
-    socket
-    |> assign(:page_title, "Live Toast — Recipes")
+    assign(socket, :page_title, "Live Toast — Recipes")
   end
 
   def apply_action(socket, :customization) do
-    socket
-    |> assign(:page_title, "Live Toast — Customization")
+    assign(socket, :page_title, "Live Toast — Customization")
   end
 
   def apply_action(socket, _) do
-    socket
-    |> assign(:page_title, "Live Toast — Demo")
+    assign(socket, :page_title, "Live Toast — Demo")
   end
 end

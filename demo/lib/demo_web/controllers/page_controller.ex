@@ -8,8 +8,7 @@ defmodule DemoWeb.PageController do
           conn
 
         ["info"] ->
-          conn
-          |> put_flash(:info, "This is an info flash.")
+          put_flash(conn, :info, "This is an info flash.")
 
         ["info", "error"] ->
           conn
