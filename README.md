@@ -119,7 +119,9 @@ end
 
 `send_toast` takes a number of arguments to control it's behavior. They are currently:
 
-- `kind`: The 'level' of this toast. The default setup supports `:info`, and `:error`.
+- `kind`: The 'level' of this toast. The `component` function can receive this and modify behavior based on severity.
+    the `toast_class_fn` also receives it, and it can be used there to modify styles, for example, making `:info` toasts
+    green and `:error` toasts red.
 - `body`: The primary text of the message. 
 - `title`: The optional title of the toast displayed at the top.
 - `icon`: An optional function component that renders next to the title. You can use this with the default toast to display an icon.
