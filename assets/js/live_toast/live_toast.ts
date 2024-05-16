@@ -48,8 +48,6 @@ function flashCount() {
 const removalTime = 5
 // animation time in ms
 const animationTime = 550
-// max toasts of one kind (flashes don't count)
-const maxItems = 3
 // whether flashes should be counted in maxItems
 const maxItemsIgnoresFlashes = true
 // gap in px between toasts
@@ -67,6 +65,7 @@ declare global {
 function doAnimations(
   this: ViewHook,
   delayTime: number,
+  maxItems: number,
   elToRemove?: HTMLElement,
 ) {
   const ts = []
@@ -200,10 +199,10 @@ async function animateOut(this: ViewHook) {
 
 // Create the Phoenix Hoook for live_toast.
 // You can set custom animation durations.
-export function createLiveToastHook(duration = 6000) {
+export function createLiveToastHook(duration = 6000, maxItems = 3) {
   return {
     destroyed(this: ViewHook) {
-      doAnimations.bind(this)(duration)
+      doAnimations.bind(this)(duration, maxItems)
     },
     updated(this: ViewHook) {
       console.log(`updated ${this.el.id}`)
@@ -224,12 +223,12 @@ export function createLiveToastHook(duration = 6000) {
       window.addEventListener('flash-leave', async (event) => {
         if (event.target === this.el) {
           // animate this flash sliding out
-          doAnimations.bind(this, duration, this.el)()
+          doAnimations.bind(this, duration, maxItems, this.el)()
           await animateOut.bind(this)()
         }
       })
 
-      doAnimations.bind(this)(duration)
+      doAnimations.bind(this)(duration, maxItems)
 
       // skip the removal code if this is a flash
       if (isFlash(this.el)) {

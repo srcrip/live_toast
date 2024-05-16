@@ -115,6 +115,14 @@ end
 
 ## Configuration
 
+### Setting the corner
+
+You can change which corner the toasts are anchored to by passing the `corner` setting to `toast_group`, one of either `:top_left`, `:top_right`, `:bottom_left`, `:bottom_right`. The default is `:bottom_right`.
+
+```heex
+<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} corner={:top_right} />
+```
+
 ### Function Options
 
 `send_toast` takes a number of arguments to control it's behavior. They are currently:
@@ -166,10 +174,13 @@ import { createLiveToastHook } from 'live_toast'
 // the duration for each toast to stay on screen in ms
 const duration = 4000
 
-const liveToastHook = createLiveToastHook(duration)
+// how many toasts to show on screen at once
+const maxItems = 3
+
+const liveToastHook = createLiveToastHook(duration, maxItems)
 
 let liveSocket = new LiveSocket('/live', Socket, {
-  hooks: { LiveToast: liveToastHook },
+  hooks: { LiveToast: liveToastHook }
 })
 ```
 
