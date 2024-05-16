@@ -805,11 +805,10 @@ var LiveMotion = (() => {
   }
   var removalTime = 5;
   var animationTime = 550;
-  var maxItems = 3;
   var maxItemsIgnoresFlashes = true;
   var gap = 15;
   var lastTS = [];
-  function doAnimations(delayTime, elToRemove) {
+  function doAnimations(delayTime, maxItems, elToRemove) {
     const ts = [];
     let toasts = Array.from(document.querySelectorAll("#toast-group > div")).map((t) => {
       if (isHidden(t)) {
@@ -887,10 +886,10 @@ var LiveMotion = (() => {
       yield animation.finished;
     });
   }
-  function createLiveToastHook(duration = 6e3) {
+  function createLiveToastHook(duration = 6e3, maxItems = 3) {
     return {
       destroyed() {
-        doAnimations.bind(this)(duration);
+        doAnimations.bind(this)(duration, maxItems);
       },
       updated() {
         console.log(`updated ${this.el.id}`);
@@ -906,11 +905,11 @@ var LiveMotion = (() => {
         }
         window.addEventListener("flash-leave", (event) => __async(this, null, function* () {
           if (event.target === this.el) {
-            doAnimations.bind(this, duration, this.el)();
+            doAnimations.bind(this, duration, maxItems, this.el)();
             yield animateOut.bind(this)();
           }
         }));
-        doAnimations.bind(this)(duration);
+        doAnimations.bind(this)(duration, maxItems);
         if (isFlash(this.el)) {
           return;
         }
