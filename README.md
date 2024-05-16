@@ -17,7 +17,7 @@ def deps do
 end
 ```
 
-Next open up your `app.js` and import/setup the hook:
+Next open up your `app.js` and import/setup the hook (Note that if you bundle through some external bundler, you may need to import from `../deps/live_toast`):
 
 ```javascript
 import { createLiveToastHook } from 'live_toast'
