@@ -16,6 +16,7 @@ defmodule LiveToast.MixProject do
       deps: deps(),
       docs: docs(),
       name: "Live Toast",
+      source_url: "https://github.com/srcrip/live_toast",
       homepage_url: "https://github.com/srcrip/live_toast",
       description: """
       Drop-in replacement for the Phoenix flash system, supporting flashes and toasts.
@@ -56,7 +57,8 @@ defmodule LiveToast.MixProject do
       licenses: ["MIT"],
       links: %{
         Changelog: "https://hexdocs.pm/live_toast/changelog.html",
-        GitHub: "https://github.com/srcrip/live_toast"
+        GitHub: "https://github.com/srcrip/live_toast",
+        Sponsor: "https://github.com/sponsors/srcrip"
       },
       files: files()
     ]
