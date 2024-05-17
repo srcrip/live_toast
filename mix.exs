@@ -3,7 +3,7 @@ defmodule LiveToast.MixProject do
 
   use Mix.Project
 
-  @version "0.5.0"
+  @version "0.6.0"
 
   def project do
     [
@@ -58,10 +58,24 @@ defmodule LiveToast.MixProject do
         Changelog: "https://hexdocs.pm/live_toast/changelog.html",
         GitHub: "https://github.com/srcrip/live_toast"
       },
-      files:
-        ~w(assets/js lib/live_toast.ex priv) ++
-          ~w(CHANGELOG.md LICENSE.md mix.exs package.json README.md)
+      files: files()
     ]
+  end
+
+  defp files do
+    ~w"""
+    assets/js
+    priv
+    lib/live_toast.ex
+    lib/live_toast/components.ex
+    lib/live_toast/live_component.ex
+    lib/live_toast/utility.ex
+    CHANGELOG.md
+    LICENSE.md
+    mix.exs
+    package.json
+    README.md
+    """
   end
 
   defp docs do

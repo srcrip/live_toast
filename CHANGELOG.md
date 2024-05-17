@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+Note that the versions prior to `0.6.0` are very unstable.
+
 ## [v0.1.0] (2024-03-06)
 
 🚀 Initial release.
@@ -33,3 +35,11 @@ Tightening up a few bugs found during the creation of the demo.
 ## [v0.4.3] (2024-05-15)
 
 Fix implementation of `send_toast`.
+
+## [v0.5.0] (2024-05-16)
+
+New Public API.
+
+## [v0.6.0] (2024-05-17)
+
+Fixed Hex release. Some files were missing from the build.
