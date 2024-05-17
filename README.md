@@ -1,8 +1,23 @@
 # Live Toast
 
-![CI](https://github.com/srcrip/live_toast/actions/workflows/tests.yml/badge.svg) [![Hex](https://img.shields.io/hexpm/v/live_toast)](https://hex.pm/packages/live_toast)
+<div>
+  <a href="https://github.com/srcrip/live_toast/actions"><img src="https://github.com/srcrip/live_toast/actions/workflows/tests.yml/badge.svg" alt="tests badge"/></a>
+  <a href="https://hex.pm/packages/live_toast"><img src="https://img.shields.io/hexpm/v/live_toast" alt="tests badge"/></a>
+</div>
+
+<br />
 
 Live Toast is a drop-in replacement for the flash system in Phoenix/LiveView.
+
+## Features
+
+- **📄 Stackable toast messages:** The flash system limits you to one flash per type. No longer!
+- **📸 Replaces your flash messages:** One drop in component to continue to render your flash messages in the same style as
+    the newer toast system.
+- **💅 Beautiful by design:** Based on the look of the wonderful [Sonner](https://sonner.emilkowal.ski/) library from React.
+- **⚙️ Highly configurable:** Looks good out of the box, but can be changed in pretty much any way you want.
+- **🌍 Simple asset delivery:** `LiveToast` simply ships Tailwind classes and lets your project bundle them up. No CSS
+    drop-in required.
 
 ## Installation
 
@@ -76,11 +91,18 @@ kind of flash. The toast pattern, alternatively, generally allows for multiple m
 
 From a LiveView, you can now use `send_toast`:
 
+> **Note:**
+> Please reference the `Configuration` section below for the available `options`.
+
 ```elixir
 defmodule YourApp.SomeLiveView do
   def handle_event("submit", _payload, socket) do
+    options = [
+      title: "Status"
+    ]
+
     # you do some thing with the payload, then you want to show a toast, so:
-    LiveToast.send_toast(:info, "Upload successful.")
+    LiveToast.send_toast(:info, "Upload successful.", options)
 
     {:noreply, socket}
   end
