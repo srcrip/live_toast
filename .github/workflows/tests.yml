@@ -89,6 +89,10 @@ jobs:
     - name: Install dependencies
       run: mix deps.get
 
+    - name: Install demo dependencies
+      working-directory: ./demo
+      run: mix deps.get
+
     # Step: Compile the project treating any warnings as errors.
     # Customize this step if a different behavior is desired.
     - name: Compiles without warnings
@@ -102,4 +106,6 @@ jobs:
 
     # Step: Execute the tests.
     - name: Run tests
+      # env:
+      #   MIX_ENV: test
       run: mix test

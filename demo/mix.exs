@@ -39,7 +39,7 @@ defmodule Demo.MixProject do
       {:doctor, ">= 0.0.0", only: [:dev], runtime: false},
       {:ex_doc, ">= 0.0.0", only: [:dev], runtime: false},
       {:mix_audit, ">= 0.0.0", only: [:dev], runtime: false},
-      {:styler, "~> 0.11.9", only: [:dev], runtime: false},
+      {:styler, "~> 0.11.9", only: [:dev, :test], runtime: false},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:floki, ">= 0.30.0", only: :test},

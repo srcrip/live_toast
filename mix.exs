@@ -43,7 +43,7 @@ defmodule LiveToast.MixProject do
       {:doctor, ">= 0.0.0", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.32.2", only: [:dev], runtime: false},
       {:mix_audit, ">= 0.0.0", only: [:dev], runtime: false},
-      {:styler, "~> 0.11.9", only: [:dev], runtime: false},
+      {:styler, "~> 0.11.9", only: [:dev, :test], runtime: false},
       {:makeup, "1.1.2", only: [:dev], runtime: false},
       {:makeup_elixir, "0.16.2", only: [:dev], runtime: false},
       {:makeup_js, "~> 0.1.0", only: [:dev], runtime: false},

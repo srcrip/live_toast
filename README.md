@@ -157,7 +157,7 @@ You can change which corner the toasts are anchored to by passing the `corner` s
 - `icon`: An optional function component that renders next to the title. You can use this with the default toast to display an icon.
 - `action`: An optional function component that renders to the side. You can use this with the default toast to display an action, like a button.
 - `component`: Use this to totally override rendering of the toast. This is expected to be a function component that
-    will receive all of the above options. See [this part of the demo]() as an example.
+    will receive all of the above options. See [this part of the demo](https://github.com/srcrip/live_toast/blob/fddcd7c51be05ba9997eb300ca920985e98ab583/demo/lib/demo_web/live/home_live.ex#L61) as an example.
 
 Note that if you use more than just `:info` and `:error` in your codebase for flashes, you can augment Livetoast using
 some of the methods below to support that.
