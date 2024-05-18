@@ -205,9 +205,6 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
       doAnimations.bind(this)(duration, maxItems)
     },
     updated(this: ViewHook) {
-      console.log(`updated ${this.el.id}`)
-      console.log(this.el.targetDestination)
-
       // animate to targetDestination in 0ms
       let keyframes = { y: [this.el.targetDestination] }
       animate(this.el, keyframes, { duration: 0 })
