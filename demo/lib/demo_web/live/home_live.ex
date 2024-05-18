@@ -19,6 +19,7 @@ defmodule DemoWeb.HomeLive do
       socket
       |> assign(:settings, @default_settings)
       |> apply_action(socket.assigns.live_action)
+      |> push_event("close-menu", %{})
 
     Logger.info("Mounted")
 
@@ -324,7 +325,7 @@ defmodule DemoWeb.HomeLive do
   defp navbar(assigns) do
     ~H"""
     <div class="container fixed top-0 z-20 w-dvw max-w-full -ml-3 md:-ml-6 bg-transparent">
-      <div class="nextra-nav-container-blur pointer-events-none absolute z-[-1] h-full w-full bg-white shadow-[0_2px_4px_rgba(0,0,0,.02),0_1px_0_rgba(0,0,0,.06)]">
+      <div class="pointer-events-none absolute z-[-1] h-full w-full bg-white shadow-[0_2px_4px_rgba(0,0,0,.02),0_1px_0_rgba(0,0,0,.06)]">
       </div>
       <nav class="mx-auto flex h-[50px] max-w-[90rem] items-center justify-end gap-2 pl-[max(env(safe-area-inset-left),1.5rem)] pr-[max(env(safe-area-inset-right),1.5rem)]">
         <a class="flex items-center hover:opacity-75 font-semibold" href="/">

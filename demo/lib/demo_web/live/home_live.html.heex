@@ -9,13 +9,7 @@
   end}
 />
 
-<!--
-<main class="px-4 py-20 sm:px-6 lg:px-8">
-  </div>
-</main>
--->
-
-<div class="text-center py-4 md:mb-20 mt-[calc(50px-.75em)]">
+<div class="text-center py-6 max-md:py-16 md:mb-20 mt-[calc(50px-.75em)]">
   <h1 class="text-4xl font-extrabold mb-2">Live Toast</h1>
   <p class="text-lg text-gray-600">A beautiful drop-in replacement for the Phoenix Flash system.</p>
   <div class="mt-12 flex place-content-center gap-4">
@@ -39,15 +33,29 @@
 
 <div class="px-2 max-w-screen-lg mx-auto grid grid-cols-1 md:grid-cols-[12rem_auto] gap-8">
   <aside class="
-    transition-all
     hidden md:block max-md:z-[19]
     max-md:fixed max-md:top-0 max-md:left-0 max-md:mt-[50px] max-md:px-6 max-md:bg-white max-md:shadow-lg max-md:w-full max-md:py-8
     "
    id="main-navigation"
+   data-close={
+   JS.remove_class(
+   "max-md:block",
+   to: "aside#main-navigation"
+   )
+   |> JS.remove_class(
+   "max-md:block",
+   to: "#backdrop"
+   )
+   }
+   phx-window-keydown={JS.exec("data-close")}
+   phx-key="escape"
+   phx-click-away={JS.exec("data-close")}
+   }
    >
     <nav class="isolate">
       <h3 class="px-2 mb-3 font-bold">Information</h3>
       <.link patch={~p"/"} class="block mb-1 font-medium text-zinc-800 px-2 py-0.5 hover:bg-zinc-100 rounded-md transition-colors">Getting Started</.link>
+      <!-- phx-click={} -->
       <.link patch={~p"/why"} class="block mb-1 font-medium text-zinc-800 px-2 py-0.5 hover:bg-zinc-100 rounded-md transition-colors">Why Live Toast</.link>
       <.link href={"https://hexdocs.pm/live_toast/readme.html#installation"} class="block mb-1 font-medium text-zinc-800 px-2 py-0.5 hover:bg-zinc-100 rounded-md transition-colors">Installation</.link>
       <.link patch={~p"/demo"} class="block mb-1 font-medium text-zinc-800 px-2 py-0.5 hover:bg-zinc-100 rounded-md transition-colors">Dead View</.link>

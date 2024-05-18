@@ -15,6 +15,14 @@ let liveSocket = new LiveSocket('/live', Socket, {
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 
+window.addEventListener('phx:close-menu', (e) => {
+  const menu = document.querySelector('aside#main-navigation')
+  menu.classList.remove('max-md:block')
+
+  const backdrop = document.querySelector('#backdrop')
+  backdrop.classList.remove('max-md:block')
+})
+
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session

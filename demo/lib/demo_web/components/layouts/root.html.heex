@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix=" · Phoenix Framework">
-      <%= assigns[:page_title] || "LiveToast" %>
+      <%= assigns[:page_title] || "Live Toast" %>
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
     <script defer src="https://analytics.src.rip/pa.js" id="pianjs" data-code="20cTBsepkWfQaH2PXXRBWgAshpOwTKhG" data-hit-endpoint="https://analytics.src.rip/hit" data-event-endpoint="https://analytics.src.rip/event" data-session-endpoint="https://analytics.src.rip/session"></script>
+    <!-- meta description -->
+    <meta name="description" content="LiveToast is a simple and easy to use toast notification library for Phoenix LiveView." />
+    <!-- og image -->
+    <meta property="og:image" content="https://ik.imagekit.io/srcrip/CleanShot%202024-05-18%20at%2007.29.33@2x.png?updatedAt=1716032066270" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Live Toast" />
+    <meta property="og:url" content="https://toast.src.rip" />
+    <meta property="og:description" content="LiveToast is a simple and easy to use toast notification library for Phoenix LiveView." />
   </head>
   <body class="bg-white antialiased">
     <%= @inner_content %>
