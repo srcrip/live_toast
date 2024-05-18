@@ -868,8 +868,6 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
       doAnimations.bind(this)(duration, maxItems);
     },
     updated() {
-      console.log(`updated ${this.el.id}`);
-      console.log(this.el.targetDestination);
       let keyframes = { y: [this.el.targetDestination] };
       animate2(this.el, keyframes, { duration: 0 });
     },

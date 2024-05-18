@@ -47,3 +47,7 @@ Fixed Hex release. Some files were missing from the build.
 ## [v0.6.1] (2024-05-18)
 
 Remove a `console.log` from the JS bundle.
+
+## [v0.6.2] (2024-05-19)
+
+Releasing new bundle (meant to compile it in `v0.6.1`).
