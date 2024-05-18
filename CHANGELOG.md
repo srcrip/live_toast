@@ -43,3 +43,7 @@ New Public API.
 ## [v0.6.0] (2024-05-17)
 
 Fixed Hex release. Some files were missing from the build.
+
+## [v0.6.1] (2024-05-18)
+
+Remove a `console.log` from the JS bundle.
