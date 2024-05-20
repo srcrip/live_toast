@@ -62,8 +62,9 @@ module.exports = {
 
 Your particular file will look different but all you need to do is make sure the last line is there.
 
-Note that the classes are currently hardcoded. Configuration of the toast components, and therefore there styling, are
-on the roadmap. But the default styles should look pretty good in the mean time.
+> **Note for Umbrella Apps:**
+> If you're using an umbrella application, your paths above may look different. You'll probably have an extra folder in
+> there, so the line you need to add would be more like `"../../../deps/live_toast/lib/**/*.*ex"`
 
 Finally, replace your `<.flash_group />` component with the new `<LiveToast.toast_group />`. It's most likely in your
 `app.html.heex`:
