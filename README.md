@@ -90,7 +90,7 @@ continue to use flashes as normal, if you want to.
 However, one of the reasons to *not* use flash messages, is the Phoenix flash system only allows one message for each
 kind of flash. The toast pattern, alternatively, generally allows for multiple messages displayed to the user at at time.
 
-From a LiveView, you can now use `send_toast`:
+From a LiveView, you can now use [`send_toast`](https://hexdocs.pm/live_toast/LiveToast.html#send_toast/3):
 
 > **Note:**
 > Please reference the `Configuration` section below for the available `options`.
@@ -110,7 +110,10 @@ defmodule YourApp.SomeLiveView do
 end
 ```
 
-Or you can use the helper function, `put_toast`, similar to how you may use `put_flash`:
+> **Note:**
+> `LiveToast` is the top-level module, so there's no need to `alias` or `import` anything.
+
+Or you can use the helper function, [`put_toast`](https://hexdocs.pm/live_toast/LiveToast.html#put_toast/4), similar to how you may use [`put_flash`](https://hexdocs.pm/phoenix/Phoenix.Controller.html#put_flash/3):
 
 ```elixir
 defmodule YourApp.SomeLiveView do
@@ -123,7 +126,7 @@ defmodule YourApp.SomeLiveView do
 end
 ```
 
-`put_toast` can take a `Phoenix.LiveView.Socket` or a `Plug.Conn`, so you can use the same thing in your live and
+[`put_toast`](https://hexdocs.pm/live_toast/LiveToast.html#put_toast/4) can take a `Phoenix.LiveView.Socket` or a `Plug.Conn`, so you can use the same thing in your live and
 non-live pages.
 
 ```elixir
@@ -148,7 +151,7 @@ You can change which corner the toasts are anchored to by passing the `corner` s
 
 ### Function Options
 
-`send_toast` takes a number of arguments to control it's behavior. They are currently:
+[`send_toast`](https://hexdocs.pm/live_toast/LiveToast.html#send_toast/3) takes a number of arguments to control it's behavior. They are currently:
 
 - `kind`: The 'level' of this toast. The `component` function can receive this and modify behavior based on severity.
     the `toast_class_fn` also receives it, and it can be used there to modify styles, for example, making `:info` toasts
