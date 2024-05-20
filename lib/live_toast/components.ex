@@ -34,6 +34,11 @@ defmodule LiveToast.Components do
 
   slot(:inner_block, doc: "the optional inner block that renders the flash message")
 
+  @doc """
+  Default toast function. Based on the look and feel of [Sonner](https://sonner.emilkowal.ski/).
+
+  You can use this as a reference to create your own toast component, that can be passed to the `component` option of `LiveToast.send_toast/3`.
+  """
   def toast(assigns) do
     assigns =
       assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
@@ -114,6 +119,7 @@ defmodule LiveToast.Components do
     doc: "function to override the look of the toasts"
   )
 
+  @doc false
   def flashes(assigns) do
     ~H"""
     <.toast
@@ -182,6 +188,7 @@ defmodule LiveToast.Components do
   )
 
   # Used to render flashes-only on regular non-LV pages.
+  @doc false
   def flash_group(assigns) do
     # todo: move this to a common implementation
     default_classes =

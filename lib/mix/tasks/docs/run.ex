@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Docs.Run do
-  @moduledoc "Run documentation server."
+  @moduledoc false
 
   use Mix.Task
 

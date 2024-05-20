@@ -55,8 +55,8 @@ defmodule LiveToast do
 
   ## Examples
 
-  iex> send_toast(:info, "Thank you for logging in!", title: "Welcome")
-  "00c90156-56d1-4bca-a9e2-6353d49c974a"
+      iex> send_toast(:info, "Thank you for logging in!", title: "Welcome")
+      "00c90156-56d1-4bca-a9e2-6353d49c974a"
 
   """
   @spec send_toast(atom(), binary(), [option()]) :: Ecto.UUID.t()
@@ -91,11 +91,11 @@ defmodule LiveToast do
 
   ## Examples
 
-  iex> put_toast(conn, :info, "Thank you for logging in!")
-  %Plug.Conn{...}
+      iex> put_toast(conn, :info, "Thank you for logging in!")
+      %Plug.Conn{...}
 
-  iex> put_toast(socket, :info, "Thank you for logging in!")
-  %LiveView.Socket{...}
+      iex> put_toast(socket, :info, "Thank you for logging in!")
+      %LiveView.Socket{...}
 
   """
   @spec put_toast(Plug.Conn.t() | LiveView.Socket.t(), binary(), [option()]) :: Ecto.UUID.t()
@@ -116,24 +116,20 @@ defmodule LiveToast do
 
   ## Examples:
 
-  ```elixir
-  defmodule MyModule do
-    def toast_class_fn(assigns) do
-      [
-        "group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
-        if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
-        assigns[:kind] == :info && " bg-white text-black",
-        assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"
-      ]
-    end
-  end
-  ```
+      defmodule MyModule do
+        def toast_class_fn(assigns) do
+          [
+            "group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
+            if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
+            assigns[:kind] == :info && " bg-white text-black",
+            assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"
+          ]
+        end
+      end
 
   Then use it in your layout:
 
-  ```heex
-  <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={MyModule.toast_class_fn/1} />
-  ```
+      <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={MyModule.toast_class_fn/1} />
   """
   def toast_class_fn(assigns) do
     [
@@ -161,6 +157,7 @@ defmodule LiveToast do
 
   @doc """
   Renders a group of toasts and flashes.
+
   Replace your `flash_group` with this component in your layout.
   """
   def toast_group(assigns) do
