@@ -183,7 +183,7 @@ end
 And then use it to override the default styles:
 
 ```heex
-<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={MyModule.toast_class_fn/1} />
+<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={&MyModule.toast_class_fn/1} />
 ```
 
 ### JavaScript Options
