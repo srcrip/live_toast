@@ -163,7 +163,7 @@ You can change which corner the toasts are anchored to by passing the `corner` s
 - `component`: Use this to totally override rendering of the toast. This is expected to be a function component that
     will receive all of the above options. See [this part of the demo](https://github.com/srcrip/live_toast/blob/fddcd7c51be05ba9997eb300ca920985e98ab583/demo/lib/demo_web/live/home_live.ex#L61) as an example.
 
-Note that if you use more than just `:info` and `:error` in your codebase for flashes, you can augment Livetoast using
+Note that if you use more than just `:info` and `:error` in your codebase for flashes, you can augment LiveToast using
 some of the methods below to support that.
 
 ### Custom Classes
@@ -192,7 +192,7 @@ And then use it to override the default styles:
 
 ### JavaScript Options
 
-You can also change some options about the LiveView hook when it is initalized. Such as:
+You can also change some options about the LiveView hook when it is initialized. Such as:
 
 ```javascript
 import { createLiveToastHook } from 'live_toast'
@@ -214,9 +214,8 @@ let liveSocket = new LiveSocket('/live', Socket, {
 
 Some of the stuff still to work on:
 
-- [ ] Improved docs
-- [ ] Configuration for the classes on toasts
-- [ ] more tests
-- [ ] More configuration for the animations
-- [ ] Ability to have more flashes than the default :error and :info (like a :warn)
-- [ ] Update a toast live (showing progress for example), and a recipe entry on this
+- [ ] Further documentation
+- [ ] Even more configuration
+- [ ] Lots of amazing tests
+- [ ] Spring animations
+- [ ] Possibly some way to configure additional severity levels
