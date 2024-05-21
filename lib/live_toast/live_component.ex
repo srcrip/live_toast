@@ -36,8 +36,6 @@ defmodule LiveToast.LiveComponent do
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
-    # flex
-    # "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-auto z-50 pointer-events-none fixed gap-2"
     default_classes =
       "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center"
 
