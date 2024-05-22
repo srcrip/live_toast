@@ -788,7 +788,7 @@ var gap = 15;
 var lastTS = [];
 function doAnimations(delayTime, maxItems, elToRemove) {
   const ts = [];
-  let toasts = Array.from(document.querySelectorAll("#toast-group > div")).map((t) => {
+  let toasts = Array.from(document.querySelectorAll('#toast-group [phx-hook="LiveToast"]')).map((t) => {
     if (isHidden(t)) {
       return null;
     } else {
