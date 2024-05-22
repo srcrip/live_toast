@@ -70,7 +70,9 @@ function doAnimations(
 ) {
   const ts = []
   let toasts = Array.from(
-    document.querySelectorAll<HTMLElement>('#toast-group > div'),
+    document.querySelectorAll<HTMLElement>(
+      '#toast-group [phx-hook="LiveToast"]',
+    ),
   )
     .map((t) => {
       if (isHidden(t)) {

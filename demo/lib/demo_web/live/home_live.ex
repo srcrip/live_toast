@@ -136,7 +136,7 @@ defmodule DemoWeb.HomeLive do
           "info" -> :info
           "error" -> :error
         end,
-        "this is  a flash"
+        "This is a flash message."
       )
 
     {:noreply, socket}

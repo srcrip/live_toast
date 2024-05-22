@@ -62,41 +62,42 @@ defmodule LiveToast.LiveComponent do
       class={[
         @class
       ]}
-      phx-update="stream"
     >
-      <Components.toast
-        :for={
-          {dom_id,
-           %LiveToast{
-             kind: k,
-             msg: body,
-             title: title,
-             icon: icon,
-             action: action,
-             duration: duration,
-             component: component
-           }} <- @streams.toasts
-        }
-        id={dom_id}
-        data-count={@toast_count}
-        duration={duration}
-        kind={k}
-        class_fn={@toast_class_fn}
-        component={component}
-        icon={icon}
-        action={action}
-        corner={@corner}
-        title={
-          if title do
-            title
-          else
-            nil
-          end
-        }
-        target={@myself}
-      >
-        <%= body %>
-      </Components.toast>
+      <div class="contents" id="toast-group-stream" phx-update="stream">
+        <Components.toast
+          :for={
+            {dom_id,
+             %LiveToast{
+               kind: k,
+               msg: body,
+               title: title,
+               icon: icon,
+               action: action,
+               duration: duration,
+               component: component
+             }} <- @streams.toasts
+          }
+          id={dom_id}
+          data-count={@toast_count}
+          duration={duration}
+          kind={k}
+          class_fn={@toast_class_fn}
+          component={component}
+          icon={icon}
+          action={action}
+          corner={@corner}
+          title={
+            if title do
+              title
+            else
+              nil
+            end
+          }
+          target={@myself}
+        >
+          <%= body %>
+        </Components.toast>
+      </div>
 
       <Components.flashes f={@f} corner={@corner} toast_class_fn={@toast_class_fn} />
     </div>

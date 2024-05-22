@@ -12,6 +12,21 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ "Live Toast"
       assert html =~ "A beautiful drop-in replacement for the Phoenix Flash system."
     end
+
+    # Note: This test tracks an issue I found after 0.6.2 with streams.
+    # On this and prior versions, the flashes lived next to the toasts in the stream container.
+    # This is invalid, and for some reason tests catch it but no runtime errors happen.
+    # After this version they've been moved into their own container with display contents.
+    test "clicking the flash button", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/")
+
+      refute html =~ "This is a flash message."
+
+      assert view
+             |> element("button", "Info Flash")
+             |> render_click() =~
+               "This is a flash message."
+    end
   end
 
   describe "LiveToast.send_toast/7" do
