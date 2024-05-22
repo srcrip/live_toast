@@ -51,3 +51,9 @@ Remove a `console.log` from the JS bundle.
 ## [v0.6.2] (2024-05-19)
 
 Releasing new bundle (meant to compile it in `v0.6.1`).
+
+## [v0.6.3] (2024-05-22)
+
+- Documentation updates.
+- Fixes invalid usage of Phoenix LiveView streams by moving the flashes outside the stream container.
+- Fixes a bit of a visual issue when loading on non LV pages by setting opacity to 0.
