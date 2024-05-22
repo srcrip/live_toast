@@ -217,6 +217,7 @@ let liveSocket = new LiveSocket('/live', Socket, {
 
 Some of the stuff still to work on:
 
+- [ ] A11y
 - [ ] Further documentation
 - [ ] Even more configuration
 - [ ] Lots of amazing tests
