@@ -79,6 +79,9 @@ Finally, replace your `<.flash_group />` component with the new `<LiveToast.toas
 <%= @inner_content %>
 ```
 
+> **Note:**
+> As far as I can tell in my testing, this usage of `assigns` in the layout has no negative impact on change tracking.
+
 And you're done! Note that it's very important to set `connected` based on whether we're in a LiveView or not. This
 controls toast/flash display on non-LiveView pages.
 
