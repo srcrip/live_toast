@@ -1,14 +1,3 @@
-<LiveToast.toast_group
-  flash={@flash}
-  connected={assigns[:socket] != nil}
-  corner={case @settings["corner"] do
-    "top_right" -> :top_right
-    "top_left" -> :top_left
-    "bottom_right" -> :bottom_right
-    "bottom_left" -> :bottom_left
-  end}
-/>
-
 <div class="text-center py-6 max-md:py-16 md:mb-20 mt-[calc(50px-.75em)]">
   <h1 class="text-4xl font-extrabold mb-2">Live Toast</h1>
   <p class="text-lg text-gray-600">A beautiful drop-in replacement for the Phoenix Flash system.</p>
