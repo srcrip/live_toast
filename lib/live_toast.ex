@@ -85,7 +85,7 @@ defmodule LiveToast do
   Helper function around `send_toast/3` that is useful in pipelines.
   Can be used in a pipeline with either Plug.Conn or LiveView.Socket.
 
-  Unlike `send_toast/3`, this function does expose the UUID of the
+  Unlike `send_toast/3`, this function does not expose the UUID of the
   new toast, so if you need to update the toast after popping it onto
   the list, you should use `send_toast/3` directly.
 
