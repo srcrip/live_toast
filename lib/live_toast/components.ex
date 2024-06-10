@@ -9,30 +9,28 @@ defmodule LiveToast.Components do
   alias LiveToast.Utility
   alias Phoenix.LiveView.JS
 
-  attr(:id, :string, doc: "the optional id of flash container")
-  attr(:flash, :map, default: %{}, doc: "the map of flash messages to display")
-  attr(:title, :string, default: nil)
-  attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
-  attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
-  attr(:target, :any, default: nil, doc: "the target for the phx-click event")
+  attr :id, :string, doc: "the optional id of flash container"
+  attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
+  attr :title, :string, default: nil
+  attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+  attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
+  attr :target, :any, default: nil, doc: "the target for the phx-click event"
 
-  attr(:duration, :integer,
+  attr :duration, :integer,
     default: 6000,
     doc: "the time in milliseconds before the message is automatically dismissed"
-  )
 
-  attr(:class_fn, :any,
+  attr :class_fn, :any,
     required: true,
     doc: "function to override the look of the toasts"
-  )
 
-  attr(:corner, :atom, required: true, doc: "the corner to display the toasts")
+  attr :corner, :atom, required: true, doc: "the corner to display the toasts"
 
-  attr(:icon, :any, default: nil, doc: "the optional icon to render in the flash message")
-  attr(:action, :any, default: nil, doc: "the optional action to render in the flash message")
-  attr(:component, :any, default: nil, doc: "the optional component to render the flash message")
+  attr :icon, :any, default: nil, doc: "the optional icon to render in the flash message"
+  attr :action, :any, default: nil, doc: "the optional action to render in the flash message"
+  attr :component, :any, default: nil, doc: "the optional component to render the flash message"
 
-  slot(:inner_block, doc: "the optional inner block that renders the flash message")
+  slot :inner_block, doc: "the optional inner block that renders the flash message"
 
   @doc """
   Default toast function. Based on the look and feel of [Sonner](https://sonner.emilkowal.ski/).
@@ -106,18 +104,16 @@ defmodule LiveToast.Components do
     """
   end
 
-  attr(:f, :map, required: true, doc: "the map of flash messages")
+  attr :f, :map, required: true, doc: "the map of flash messages"
 
-  attr(:corner, :atom,
+  attr :corner, :atom,
     values: [:top_left, :top_right, :bottom_left, :bottom_right],
     default: :bottom_right,
     doc: "the corner to display the toasts"
-  )
 
-  attr(:toast_class_fn, :any,
+  attr :toast_class_fn, :any,
     default: &LiveToast.toast_class_fn/1,
     doc: "function to override the look of the toasts"
-  )
 
   @doc false
   def flashes(assigns) do
@@ -173,46 +169,36 @@ defmodule LiveToast.Components do
     """
   end
 
-  attr(:flash, :map, required: true, doc: "the map of flash messages")
-  attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
+  attr :flash, :map, required: true, doc: "the map of flash messages"
+  attr :id, :string, default: "toast-group", doc: "the optional id of flash container"
 
-  attr(:corner, :atom,
+  attr :corner, :atom,
     values: [:top_left, :top_right, :bottom_left, :bottom_right],
     default: :bottom_right,
     doc: "the corner to display the toasts"
-  )
 
-  attr(:toast_class_fn, :any,
+  attr :toast_class_fn, :any,
     default: &LiveToast.toast_class_fn/1,
     doc: "function to override the look of the toasts"
-  )
+
+  attr :class, :any,
+    default: "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center",
+    doc: "classes for the toast group"
 
   # Used to render flashes-only on regular non-LV pages.
   @doc false
   def flash_group(assigns) do
-    # todo: move this to a common implementation
-    default_classes =
-      "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center"
-
-    class =
-      case assigns[:corner] do
-        :bottom_left ->
-          "#{default_classes} items-end bottom-0 left-0 flex-col-reverse sm:top-auto"
-
-        :bottom_right ->
-          "#{default_classes} items-end bottom-0 right-0 flex-col-reverse sm:top-auto"
-
-        :top_left ->
-          "#{default_classes} items-start top-0 left-0 flex-col sm:bottom-auto"
-
-        :top_right ->
-          "#{default_classes} items-start top-0 right-0 flex-col sm:bottom-auto"
-      end
-
-    assigns = assign(assigns, :class, class)
+    assigns =
+      assign(assigns, :position_class, Utility.group_toast_class(assigns[:corner]))
 
     ~H"""
-    <div id={assigns[:id] || "flash-group"} class={@class}>
+    <div
+      id={assigns[:id] || "flash-group"}
+      class={[
+        @position_class,
+        @class
+      ]}
+    >
       <.flashes f={@flash} corner={@corner} toast_class_fn={@toast_class_fn} />
     </div>
     """

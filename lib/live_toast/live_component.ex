@@ -4,6 +4,7 @@ defmodule LiveToast.LiveComponent do
   use Phoenix.LiveComponent
 
   alias LiveToast.Components
+  alias LiveToast.Utility
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -36,30 +37,14 @@ defmodule LiveToast.LiveComponent do
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
-    default_classes =
-      "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center"
-
-    class =
-      case assigns[:corner] do
-        :bottom_left ->
-          "#{default_classes} items-end bottom-0 left-0 flex-col-reverse sm:top-auto"
-
-        :bottom_right ->
-          "#{default_classes} items-end bottom-0 right-0 flex-col-reverse sm:top-auto"
-
-        :top_left ->
-          "#{default_classes} items-start top-0 left-0 flex-col sm:bottom-auto"
-
-        :top_right ->
-          "#{default_classes} items-start top-0 right-0 flex-col sm:bottom-auto"
-      end
-
-    assigns = assign(assigns, :class, class)
+    assigns =
+      assign(assigns, :position_class, Utility.group_toast_class(assigns[:corner]))
 
     ~H"""
     <div
       id={assigns[:id] || "toast-group"}
       class={[
+        @position_class,
         @class
       ]}
     >

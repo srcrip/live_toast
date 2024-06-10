@@ -5,8 +5,8 @@ defmodule LiveToast.Utility do
 
   alias Phoenix.LiveView.JS
 
-  attr(:name, :string, required: true, doc: "the name of the icon")
-  attr(:rest, :global, doc: "other html attributes")
+  attr :name, :string, required: true, doc: "the name of the icon"
+  attr :rest, :global, doc: "other html attributes"
 
   def svg(%{name: "hero-x-mark-solid"} = assigns) do
     ~H"""
@@ -64,5 +64,21 @@ defmodule LiveToast.Utility do
         {"transition-all transform ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
+  end
+
+  def group_toast_class(corner_position) do
+    case corner_position do
+      :bottom_left ->
+        "items-end bottom-0 left-0 flex-col-reverse sm:top-auto"
+
+      :bottom_right ->
+        "items-end bottom-0 right-0 flex-col-reverse sm:top-auto"
+
+      :top_left ->
+        "items-start top-0 left-0 flex-col sm:bottom-auto"
+
+      :top_right ->
+        "items-start top-0 right-0 flex-col sm:bottom-auto"
+    end
   end
 end
