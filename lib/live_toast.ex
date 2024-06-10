@@ -152,20 +152,22 @@ defmodule LiveToast do
     ]
   end
 
-  attr(:flash, :map, required: true, doc: "the map of flash messages")
-  attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
-  attr(:connected, :boolean, default: false, doc: "whether we're in a liveview or not")
+  attr :flash, :map, required: true, doc: "the map of flash messages"
+  attr :id, :string, default: "toast-group", doc: "the optional id of flash container"
+  attr :connected, :boolean, default: false, doc: "whether we're in a liveview or not"
 
-  attr(:corner, :atom,
+  attr :corner, :atom,
     values: [:top_left, :top_right, :bottom_left, :bottom_right],
     default: :bottom_right,
     doc: "the corner to display the toasts"
-  )
 
-  attr(:toast_class_fn, :any,
+  attr :toast_class_fn, :any,
     default: &__MODULE__.toast_class_fn/1,
     doc: "function to override the look of the toasts"
-  )
+
+  attr :class, :any,
+    default: "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center",
+    doc: "classes for the toast group"
 
   @doc """
   Renders a group of toasts and flashes.
@@ -179,6 +181,7 @@ defmodule LiveToast do
       id={@id}
       module={LiveToast.LiveComponent}
       corner={@corner}
+      class={@class}
       toast_class_fn={@toast_class_fn}
       f={@flash}
     />
@@ -186,6 +189,7 @@ defmodule LiveToast do
       :if={!@connected}
       id={@id}
       corner={@corner}
+      class={@class}
       toast_class_fn={@toast_class_fn}
       flash={@flash}
     />
