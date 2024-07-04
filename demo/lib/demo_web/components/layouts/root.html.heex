@@ -7,27 +7,57 @@
     <.live_title suffix=" · Phoenix Framework">
       <%= assigns[:page_title] || "Live Toast" %>
     </.live_title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍞</text></svg>">
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍞</text></svg>"
+    />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
-    <script defer src="https://analytics.src.rip/pa.js" id="pianjs" data-code="20cTBsepkWfQaH2PXXRBWgAshpOwTKhG" data-hit-endpoint="https://analytics.src.rip/hit" data-event-endpoint="https://analytics.src.rip/event" data-session-endpoint="https://analytics.src.rip/session"></script>
+    <script
+      defer
+      src="https://analytics.src.rip/pa.js"
+      id="pianjs"
+      data-code="20cTBsepkWfQaH2PXXRBWgAshpOwTKhG"
+      data-hit-endpoint="https://analytics.src.rip/hit"
+      data-event-endpoint="https://analytics.src.rip/event"
+      data-session-endpoint="https://analytics.src.rip/session"
+    >
+    </script>
     <!-- meta description -->
-    <meta name="description" content="LiveToast is a simple and easy to use toast notification library for Phoenix LiveView." />
+    <meta
+      name="description"
+      content="LiveToast is a simple and easy to use toast notification library for Phoenix LiveView."
+    />
     <!-- og image -->
-    <meta property="og:image" content="https://ik.imagekit.io/srcrip/CleanShot%202024-05-18%20at%2007.29.33@2x.png?updatedAt=1716032066270" />
+    <meta
+      property="og:image"
+      content="https://ik.imagekit.io/srcrip/CleanShot%202024-05-18%20at%2007.29.33@2x.png?updatedAt=1716032066270"
+    />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Live Toast" />
     <meta property="og:url" content="https://toast.src.rip" />
-    <meta property="og:description" content="LiveToast is a simple and easy to use toast notification library for Phoenix LiveView." />
+    <meta
+      property="og:description"
+      content="LiveToast is a simple and easy to use toast notification library for Phoenix LiveView."
+    />
   </head>
   <body class="h-full flex flex-col bg-white antialiased">
     <%= @inner_content %>
     <footer class="mt-10 px-10 py-6 flex gap-4">
-      <.link href={"https://github.com/srcrip/live_toast"} class="text-zinc-700 text-xs">github</.link>
-      <.link href={"https://hex.pm/packages/live_toast"} class="text-zinc-700 text-xs">hex</.link>
-      <.link href={"https://hexdocs.pm/live_toast/readme.html"} class="text-zinc-700 text-xs">docs</.link>
-      <span class="grow text-right text-zinc-700 text-xs">made by <.link href="https://src.rip" class="text-rose-500 hover:text-rose-400">andrew@src.rip</.link></span>
+      <.link href="https://github.com/srcrip/live_toast" class="text-zinc-700 text-xs">
+        github
+      </.link>
+      <.link href="https://hex.pm/packages/live_toast" class="text-zinc-700 text-xs">hex</.link>
+      <.link href="https://hexdocs.pm/live_toast/readme.html" class="text-zinc-700 text-xs">
+        docs
+      </.link>
+      <span class="grow text-right text-zinc-700 text-xs">
+        made by
+        <.link href="https://src.rip" class="text-rose-500 hover:text-rose-400">
+          andrew@src.rip
+        </.link>
+      </span>
     </footer>
   </body>
 </html>
