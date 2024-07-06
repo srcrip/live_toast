@@ -33,7 +33,7 @@ defmodule LiveToast.MixProject do
   defp deps do
     [
       {:phoenix, ">= 1.7.0"},
-      {:phoenix_live_view, ">= 0.18.0"},
+      {:phoenix_live_view, ">= 0.20.0"},
       {:ecto, ">= 3.11.0"},
       {:esbuild, "~> 0.2", only: :dev},
       {:bandit, "~> 1.1", only: :dev},
