@@ -57,3 +57,5 @@ Releasing new bundle (meant to compile it in `v0.6.1`).
 - Documentation updates.
 - Fixes invalid usage of Phoenix LiveView streams by moving the flashes outside the stream container.
 - Fixes a bit of a visual issue when loading on non LV pages by setting opacity to 0.
+- New feature: arbitrary severity levels other than `:info` and `:error`
+- Various refactorings and cleanups
