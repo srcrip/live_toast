@@ -171,7 +171,7 @@ some of the methods below to support that.
 
 ### Custom Classes
 
-You can define a custom toast class function, like so:
+You can define a [custom toast class function](https://hexdocs.pm/live_toast/LiveToast.html#toast_class_fn/1), like so:
 
 ```elixir
 defmodule MyModule do
@@ -197,6 +197,8 @@ And then use it to override the default styles:
 ```heex
 <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={&MyModule.toast_class_fn/1} />
 ```
+
+If you need to change the classes of the container, there is a similar function parameter called [`group_class_fn`](https://hexdocs.pm/live_toast/LiveToast.html#group_class_fn/1). Reference the documentation and apply the override just as you would `toast_class_fn/1` shown above.
 
 ### Custom Severity Levels
 

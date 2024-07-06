@@ -36,33 +36,8 @@ defmodule LiveToast.LiveComponent do
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
-    default_classes =
-      "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center"
-
-    class =
-      case assigns[:corner] do
-        :bottom_left ->
-          "#{default_classes} items-end bottom-0 left-0 flex-col-reverse sm:top-auto"
-
-        :bottom_right ->
-          "#{default_classes} items-end bottom-0 right-0 flex-col-reverse sm:top-auto"
-
-        :top_left ->
-          "#{default_classes} items-start top-0 left-0 flex-col sm:bottom-auto"
-
-        :top_right ->
-          "#{default_classes} items-start top-0 right-0 flex-col sm:bottom-auto"
-      end
-
-    assigns = assign(assigns, :class, class)
-
     ~H"""
-    <div
-      id={assigns[:id] || "toast-group"}
-      class={[
-        @class
-      ]}
-    >
+    <div id={assigns[:id] || "toast-group"} class={@group_class_fn.(assigns)}>
       <div class="contents" id="toast-group-stream" phx-update="stream">
         <Components.toast
           :for={
@@ -81,7 +56,7 @@ defmodule LiveToast.LiveComponent do
           data-count={@toast_count}
           duration={duration}
           kind={k}
-          class_fn={@toast_class_fn}
+          toast_class_fn={@toast_class_fn}
           component={component}
           icon={icon}
           action={action}

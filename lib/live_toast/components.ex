@@ -21,9 +21,9 @@ defmodule LiveToast.Components do
     doc: "the time in milliseconds before the message is automatically dismissed"
   )
 
-  attr(:class_fn, :any,
+  attr(:toast_class_fn, :any,
     required: true,
-    doc: "function to override the look of the toasts"
+    doc: "function to override the toast classes"
   )
 
   attr(:corner, :atom, required: true, doc: "the corner to display the toasts")
@@ -51,7 +51,7 @@ defmodule LiveToast.Components do
       phx-hook="LiveToast"
       data-duration={@duration}
       data-corner={@corner}
-      class={@class_fn.(assigns)}
+      class={@toast_class_fn.(assigns)}
       {@rest}
     >
       <%= if @component do %>
@@ -116,7 +116,7 @@ defmodule LiveToast.Components do
 
   attr(:toast_class_fn, :any,
     default: &LiveToast.toast_class_fn/1,
-    doc: "function to override the look of the toasts"
+    doc: "function to override the toast classes"
   )
 
   attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
@@ -128,7 +128,7 @@ defmodule LiveToast.Components do
       :for={level <- @kinds}
       data-component="flash"
       corner={@corner}
-      class_fn={@toast_class_fn}
+      toast_class_fn={@toast_class_fn}
       duration={0}
       kind={level}
       title={String.capitalize(to_string(level))}
@@ -139,7 +139,7 @@ defmodule LiveToast.Components do
     <.toast
       data-component="flash"
       corner={@corner}
-      class_fn={@toast_class_fn}
+      toast_class_fn={@toast_class_fn}
       id="client-error"
       kind={:error}
       title="We can't find the internet"
@@ -155,7 +155,7 @@ defmodule LiveToast.Components do
     <.toast
       data-component="flash"
       corner={@corner}
-      class_fn={@toast_class_fn}
+      toast_class_fn={@toast_class_fn}
       id="server-error"
       kind={:error}
       title="Something went wrong!"
@@ -172,6 +172,7 @@ defmodule LiveToast.Components do
 
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
+  attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
 
   attr(:corner, :atom,
     values: [:top_left, :top_right, :bottom_left, :bottom_right],
@@ -179,39 +180,21 @@ defmodule LiveToast.Components do
     doc: "the corner to display the toasts"
   )
 
-  attr(:toast_class_fn, :any,
-    default: &LiveToast.toast_class_fn/1,
-    doc: "function to override the look of the toasts"
+  attr(:group_class_fn, :any,
+    default: &LiveToast.group_class_fn/1,
+    doc: "function to override the container classes"
   )
 
-  attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
+  attr(:toast_class_fn, :any,
+    default: &LiveToast.toast_class_fn/1,
+    doc: "function to override the toast classes"
+  )
 
   # Used to render flashes-only on regular non-LV pages.
   @doc false
   def flash_group(assigns) do
-    # todo: move this to a common implementation
-    default_classes =
-      "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center"
-
-    class =
-      case assigns[:corner] do
-        :bottom_left ->
-          "#{default_classes} items-end bottom-0 left-0 flex-col-reverse sm:top-auto"
-
-        :bottom_right ->
-          "#{default_classes} items-end bottom-0 right-0 flex-col-reverse sm:top-auto"
-
-        :top_left ->
-          "#{default_classes} items-start top-0 left-0 flex-col sm:bottom-auto"
-
-        :top_right ->
-          "#{default_classes} items-start top-0 right-0 flex-col sm:bottom-auto"
-      end
-
-    assigns = assign(assigns, :class, class)
-
     ~H"""
-    <div id={assigns[:id] || "flash-group"} class={@class}>
+    <div id={assigns[:id] || "flash-group"} class={@group_class_fn.(assigns)}>
       <.flashes f={@flash} corner={@corner} toast_class_fn={@toast_class_fn} kinds={@kinds} />
     </div>
     """

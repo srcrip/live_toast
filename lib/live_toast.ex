@@ -137,6 +137,8 @@ defmodule LiveToast do
   Then use it in your layout:
 
       <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={MyModule.toast_class_fn/1} />
+
+  Since this is a public function, you can also write a new function that calls it and extends it's return values.
   """
   def toast_class_fn(assigns) do
     [
@@ -152,6 +154,44 @@ defmodule LiveToast do
     ]
   end
 
+  @doc """
+  Default class function for the container around the toasts. Override this to change the classes of the toast container element.
+
+  ## Examples:
+
+      defmodule MyModule do
+        def group_class_fn(assigns) do
+          [
+            # base classes
+            "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center",
+            # classes to set container positioning
+            assigns[:corner] == :bottom_left && "items-end bottom-0 left-0 flex-col-reverse sm:top-auto",
+            assigns[:corner] == :bottom_right && "items-end bottom-0 right-0 flex-col-reverse sm:top-auto",
+            assigns[:corner] == :top_left && "items-start top-0 left-0 flex-col sm:bottom-auto",
+            assigns[:corner] == :top_right && "items-start top-0 right-0 flex-col sm:bottom-auto"
+          ]
+
+        end
+      end
+
+  Then use it in your layout:
+
+      <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} group_class_fn={MyModule.group_class_fn/1} />
+
+  Since this is a public function, you can also write a new function that calls it and extends it's return values.
+  """
+  def group_class_fn(assigns) do
+    [
+      # base classes
+      "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center",
+      # classes to set container positioning
+      assigns[:corner] == :bottom_left && "items-end bottom-0 left-0 flex-col-reverse sm:top-auto",
+      assigns[:corner] == :bottom_right && "items-end bottom-0 right-0 flex-col-reverse sm:top-auto",
+      assigns[:corner] == :top_left && "items-start top-0 left-0 flex-col sm:bottom-auto",
+      assigns[:corner] == :top_right && "items-start top-0 right-0 flex-col sm:bottom-auto"
+    ]
+  end
+
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
   attr(:connected, :boolean, default: false, doc: "whether we're in a liveview or not")
@@ -163,9 +203,14 @@ defmodule LiveToast do
     doc: "the corner to display the toasts"
   )
 
+  attr(:group_class_fn, :any,
+    default: &__MODULE__.group_class_fn/1,
+    doc: "function to override the container classes"
+  )
+
   attr(:toast_class_fn, :any,
     default: &__MODULE__.toast_class_fn/1,
-    doc: "function to override the look of the toasts"
+    doc: "function to override the toast classes"
   )
 
   @doc """
@@ -181,6 +226,7 @@ defmodule LiveToast do
       module={LiveToast.LiveComponent}
       corner={@corner}
       toast_class_fn={@toast_class_fn}
+      group_class_fn={@group_class_fn}
       f={@flash}
       kinds={@kinds}
     />
@@ -189,6 +235,7 @@ defmodule LiveToast do
       id={@id}
       corner={@corner}
       toast_class_fn={@toast_class_fn}
+      group_class_fn={@group_class_fn}
       flash={@flash}
       kinds={@kinds}
     />
