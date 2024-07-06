@@ -10,15 +10,7 @@ function isHidden(el: HTMLElement | null) {
 }
 
 function isFlash(el: HTMLElement) {
-  if (
-    ['server-error', 'client-error', 'flash-info', 'flash-error'].includes(
-      el.id,
-    )
-  ) {
-    return true
-  } else {
-    return false
-  }
+  return el.dataset.component === 'flash'
 }
 
 // number of flashes that aren't hidden

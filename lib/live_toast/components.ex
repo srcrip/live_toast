@@ -119,29 +119,25 @@ defmodule LiveToast.Components do
     doc: "function to override the look of the toasts"
   )
 
+  attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
+
   @doc false
   def flashes(assigns) do
     ~H"""
     <.toast
+      :for={level <- @kinds}
+      data-component="flash"
       corner={@corner}
       class_fn={@toast_class_fn}
       duration={0}
-      kind={:info}
-      title="Info"
-      phx-update="ignore"
-      flash={@f}
-    />
-    <.toast
-      corner={@corner}
-      class_fn={@toast_class_fn}
-      duration={0}
-      kind={:error}
-      title="Error"
+      kind={level}
+      title={String.capitalize(to_string(level))}
       phx-update="ignore"
       flash={@f}
     />
 
     <.toast
+      data-component="flash"
       corner={@corner}
       class_fn={@toast_class_fn}
       id="client-error"
@@ -157,6 +153,7 @@ defmodule LiveToast.Components do
     </.toast>
 
     <.toast
+      data-component="flash"
       corner={@corner}
       class_fn={@toast_class_fn}
       id="server-error"
@@ -187,6 +184,8 @@ defmodule LiveToast.Components do
     doc: "function to override the look of the toasts"
   )
 
+  attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
+
   # Used to render flashes-only on regular non-LV pages.
   @doc false
   def flash_group(assigns) do
@@ -213,7 +212,7 @@ defmodule LiveToast.Components do
 
     ~H"""
     <div id={assigns[:id] || "flash-group"} class={@class}>
-      <.flashes f={@flash} corner={@corner} toast_class_fn={@toast_class_fn} />
+      <.flashes f={@flash} corner={@corner} toast_class_fn={@toast_class_fn} kinds={@kinds} />
     </div>
     """
   end

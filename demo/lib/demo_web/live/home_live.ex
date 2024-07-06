@@ -115,6 +115,7 @@ defmodule DemoWeb.HomeLive do
       case kind do
         "info" -> :info
         "error" -> :error
+        "warn" -> :warn
       end,
       body,
       title: title,
@@ -135,6 +136,7 @@ defmodule DemoWeb.HomeLive do
         case kind do
           "info" -> :info
           "error" -> :error
+          "warn" -> :warn
         end,
         "This is a flash message."
       )

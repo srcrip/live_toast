@@ -1,6 +1,8 @@
 <div class="grow p-3 md:p-6 mx-auto max-screen-4xl">
   <LiveToast.toast_group
+    toast_class_fn={&demo_toast_class_fn/1}
     flash={@flash}
+    kinds={[:info, :error, :warn]}
     connected={assigns[:socket] != nil}
     {
       if assigns[:settings] do

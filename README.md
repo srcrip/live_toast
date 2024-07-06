@@ -198,6 +198,47 @@ And then use it to override the default styles:
 <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={&MyModule.toast_class_fn/1} />
 ```
 
+### Custom Severity Levels
+
+New Phoenix projects [use `:info` and `:error`](https://hexdocs.pm/phoenix/controllers.html#flash-messages)
+as the default severity levels for flash messages, so this is likely what you're already using. If you need to add an
+additional severity level, like `:warning`, you can pass a list of these values to the `kind` attribute:
+
+```heex
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  kinds={[:info, :error, :warning]}
+  toast_class_fn={&custom_toast_class_fn/1}
+/>
+```
+
+If this value is not set, it defaults to `[:info, :error]`.
+
+Setting `kind` will allow these new severity levels to be displayed, but it won't change how they look. To do that, you
+need to override [`toast_class_fn/1`](https://hexdocs.pm/live_toast/LiveToast.html#toast_class_fn/1). For example:
+
+```elixir
+# Note that this is just the default with one line added to handle the new `:warning` level.
+def custom_toast_class_fn(assigns) do
+  [
+    # base classes
+    "bg-white group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
+    # start hidden if javascript is enabled
+    "[@media(scripting:enabled)]:opacity-0 [@media(scripting:enabled){[data-phx-main]_&}]:opacity-100",
+    # used to hide the disconnected flashes
+    if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
+    # override styles per severity
+    assigns[:kind] == :info && "text-black",
+    assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200",
+    assigns[:kind] == :warning && "!text-amber-700 !bg-amber-100 border-amber-200"
+  ]
+end
+```
+
+Then just make sure you've passed it to the `live_group` component as seen above.
+
+
 ### JavaScript Options
 
 You can also change some options about the LiveView hook when it is initialized. Such as:
