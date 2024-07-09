@@ -2,7 +2,9 @@
   "type": "module",
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
+    "@biomejs/biome": "1.8.3",
     "ava": "^5.0.0",
+    "jsdom": "^24.1.0",
     "phoenix_live_view": "file:../deps/phoenix_live_view",
     "typescript": "^5.3.3"
   },
