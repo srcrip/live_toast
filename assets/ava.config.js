@@ -1,7 +1,7 @@
 export default {
   extensions: {
     js: true,
-    ts: 'module',
+    ts: 'module'
   },
-  nodeArguments: ['--import=tsimp/import'],
+  nodeArguments: ['--import=tsimp/import']
 }

@@ -1,5 +1,5 @@
-import type { ViewHook } from 'phoenix_live_view'
 import { animate } from 'motion'
+import type { ViewHook } from 'phoenix_live_view'
 
 function isHidden(el: HTMLElement | null) {
   if (el === null) {
@@ -58,15 +58,15 @@ function doAnimations(
   this: ViewHook,
   delayTime: number,
   maxItems: number,
-  elToRemove?: HTMLElement,
+  elToRemove?: HTMLElement
 ) {
   const ts = []
   let toasts = Array.from(
     document.querySelectorAll<HTMLElement>(
-      '#toast-group [phx-hook="LiveToast"]',
-    ),
+      '#toast-group [phx-hook="LiveToast"]'
+    )
   )
-    .map((t) => {
+    .map(t => {
       if (isHidden(t)) {
         return null
       } else {
@@ -78,7 +78,7 @@ function doAnimations(
     .reverse()
 
   if (elToRemove) {
-    toasts = toasts.filter((t) => t !== elToRemove)
+    toasts = toasts.filter(t => t !== elToRemove)
   }
 
   // Traverse through all toasts, in order they appear in the dom, for which they are NOT hidden, and assign el.order to
@@ -126,7 +126,7 @@ function doAnimations(
       toast.classList.add('pointer-events-auto')
     }
 
-    let keyframes = { y: [`${direction}${val}px`], opacity: [opacity] }
+    const keyframes = { y: [`${direction}${val}px`], opacity: [opacity] }
 
     // if element is entering for the first time, start below the fold
     if (toast.order === 0 && lastTS.includes(toast) === false) {
@@ -143,7 +143,7 @@ function doAnimations(
 
     animate(toast, keyframes, {
       duration,
-      easing: [0.22, 1.0, 0.36, 1.0],
+      easing: [0.22, 1.0, 0.36, 1.0]
     })
     toast.order += 1
 
@@ -181,11 +181,11 @@ async function animateOut(this: ViewHook) {
     {
       opacity: {
         duration: 0.2,
-        easing: 'ease-out',
+        easing: 'ease-out'
       },
       duration: 0.3,
-      easing: 'ease-out',
-    },
+      easing: 'ease-out'
+    }
   )
 
   await animation.finished
@@ -200,7 +200,7 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
     },
     updated(this: ViewHook) {
       // animate to targetDestination in 0ms
-      let keyframes = { y: [this.el.targetDestination] }
+      const keyframes = { y: [this.el.targetDestination] }
       animate(this.el, keyframes, { duration: 0 })
     },
     mounted(this: ViewHook) {
@@ -211,7 +211,7 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         }
       }
 
-      window.addEventListener('flash-leave', async (event) => {
+      window.addEventListener('flash-leave', async event => {
         if (event.target === this.el) {
           // animate this flash sliding out
           doAnimations.bind(this, duration, maxItems, this.el)()
@@ -228,7 +228,7 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
 
       let durationOverride = duration
       if (this.el.dataset.duration !== undefined) {
-        durationOverride = parseInt(this.el.dataset.duration)
+        durationOverride = Number.parseInt(this.el.dataset.duration)
       }
 
       window.setTimeout(async () => {
@@ -237,6 +237,6 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
 
         this.pushEventTo('#toast-group', 'clear', { id: this.el.id })
       }, durationOverride + removalTime)
-    },
+    }
   }
 }

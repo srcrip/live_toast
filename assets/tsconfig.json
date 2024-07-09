@@ -14,10 +14,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noUnusedLocals": false,
-    "jsx": "preserve",
+    "jsx": "preserve"
   },
   "exclude": ["node_modules"],
-  "include": [
-    "**/*.ts",
-  ]
+  "include": ["**/*.ts"]
 }
