@@ -13,11 +13,11 @@ Live Toast is a drop-in replacement for the flash system in Phoenix/LiveView.
 
 - **📄 Stackable toast messages:** The flash system limits you to one flash per type. No longer!
 - **📸 Replaces your flash messages:** One drop in component to continue to render your flash messages in the same style as
-    the newer toast system.
+  the newer toast system.
 - **💅 Beautiful by design:** Based on the look of the wonderful [Sonner](https://sonner.emilkowal.ski/) library from React.
 - **⚙️ Highly configurable:** Looks good out of the box, but can be changed in pretty much any way you want.
 - **🌍 Simple asset delivery:** `LiveToast` simply ships Tailwind classes and lets your project bundle them up. No CSS
-    drop-in required.
+  drop-in required.
 
 ## Installation
 
@@ -35,13 +35,13 @@ end
 Next open up your `app.js` and import/setup the hook (Note that if you bundle through some external bundler, you may need to import from `../deps/live_toast`):
 
 ```javascript
-import { createLiveToastHook } from 'live_toast'
+import { createLiveToastHook } from "live_toast";
 
-let liveSocket = new LiveSocket('/live', Socket, {
+let liveSocket = new LiveSocket("/live", Socket, {
   hooks: {
-    LiveToast: createLiveToastHook()
-  }
-})
+    LiveToast: createLiveToastHook(),
+  },
+});
 ```
 
 Then, add `'../deps/live_toast/lib/**/*.*ex'` to your list of paths Tailwind will look for class names, in your
@@ -52,12 +52,12 @@ Then, add `'../deps/live_toast/lib/**/*.*ex'` to your list of paths Tailwind wil
 
 module.exports = {
   content: [
-    './js/**/*.js',
-    '../lib/your_app_web.ex',
-    '../lib/your_app_web/**/*.*ex',
-    '../deps/live_toast/lib/**/*.*ex',
-  ]
-}
+    "./js/**/*.js",
+    "../lib/your_app_web.ex",
+    "../lib/your_app_web/**/*.*ex",
+    "../deps/live_toast/lib/**/*.*ex",
+  ],
+};
 ```
 
 Your particular file will look different but all you need to do is make sure the last line is there.
@@ -90,7 +90,7 @@ controls toast/flash display on non-LiveView pages.
 `LiveToast` will hijack the usual display of your flash messages, so they will continue to work as normal. You can
 continue to use flashes as normal, if you want to.
 
-However, one of the reasons to *not* use flash messages, is the Phoenix flash system only allows one message for each
+However, one of the reasons to _not_ use flash messages, is the Phoenix flash system only allows one message for each
 kind of flash. The toast pattern, alternatively, generally allows for multiple messages displayed to the user at at time.
 
 From a LiveView, you can now use [`send_toast`](https://hexdocs.pm/live_toast/LiveToast.html#send_toast/3):
@@ -113,8 +113,7 @@ defmodule YourApp.SomeLiveView do
 end
 ```
 
-> **Note:**
-> `LiveToast` is the top-level module, so there's no need to `alias` or `import` anything.
+> **Note:** > `LiveToast` is the top-level module, so there's no need to `alias` or `import` anything.
 
 Or you can use the helper function, [`put_toast`](https://hexdocs.pm/live_toast/LiveToast.html#put_toast/4), similar to how you may use [`put_flash`](https://hexdocs.pm/phoenix/Phoenix.Controller.html#put_flash/3):
 
@@ -157,14 +156,14 @@ You can change which corner the toasts are anchored to by passing the `corner` s
 [`send_toast`](https://hexdocs.pm/live_toast/LiveToast.html#send_toast/3) takes a number of arguments to control it's behavior. They are currently:
 
 - `kind`: The 'level' of this toast. The `component` function can receive this and modify behavior based on severity.
-    the `toast_class_fn` also receives it, and it can be used there to modify styles, for example, making `:info` toasts
-    green and `:error` toasts red.
-- `body`: The primary text of the message. 
+  the `toast_class_fn` also receives it, and it can be used there to modify styles, for example, making `:info` toasts
+  green and `:error` toasts red.
+- `body`: The primary text of the message.
 - `title`: The optional title of the toast displayed at the top.
 - `icon`: An optional function component that renders next to the title. You can use this with the default toast to display an icon.
-- `action`: An optional function component that renders to the side. You can use this with the default toast to display an action, like a button.
+- `action`: An optional function component that renders to the side. You can use this with the default toast to display an action, like a button. See [Action Data](#action-data) for an example of how to pass data to this component).
 - `component`: Use this to totally override rendering of the toast. This is expected to be a function component that
-    will receive all of the above options. See [this part of the demo](https://github.com/srcrip/live_toast/blob/fddcd7c51be05ba9997eb300ca920985e98ab583/demo/lib/demo_web/live/home_live.ex#L61) as an example.
+  will receive all of the above options. See [this part of the demo](https://github.com/srcrip/live_toast/blob/fddcd7c51be05ba9997eb300ca920985e98ab583/demo/lib/demo_web/live/home_live.ex#L61) as an example.
 
 Note that if you use more than just `:info` and `:error` in your codebase for flashes, you can augment LiveToast using
 some of the methods below to support that.
@@ -199,6 +198,29 @@ And then use it to override the default styles:
 ```
 
 If you need to change the classes of the container, there is a similar function parameter called [`group_class_fn`](https://hexdocs.pm/live_toast/LiveToast.html#group_class_fn/1). Reference the documentation and apply the override just as you would `toast_class_fn/1` shown above.
+
+### Action Data
+
+Data can be assigned in the action function to make it available on click.
+
+```elixir
+defmodule YourApp.SomeLiveView do
+  def handle_event("submit", %{"file" => %{"id" => file_id}}, socket) do
+    options = [
+      action: fn assigns ->
+        assigns = assign(assigns, :file_id, file_id)
+        ~H"""
+        <.button phx-click="view_file" phx-value-file={@file_id} type="button">View File</.button>
+        """
+      end
+    ]
+
+    LiveToast.send_toast(:info, "Upload successful.", options)
+
+    {:noreply, socket}
+  end
+end
+```
 
 ### Custom Severity Levels
 
@@ -240,25 +262,24 @@ end
 
 Then just make sure you've passed it to the `live_group` component as seen above.
 
-
 ### JavaScript Options
 
 You can also change some options about the LiveView hook when it is initialized. Such as:
 
 ```javascript
-import { createLiveToastHook } from 'live_toast'
+import { createLiveToastHook } from "live_toast";
 
 // the duration for each toast to stay on screen in ms
-const duration = 4000
+const duration = 4000;
 
 // how many toasts to show on screen at once
-const maxItems = 3
+const maxItems = 3;
 
-const liveToastHook = createLiveToastHook(duration, maxItems)
+const liveToastHook = createLiveToastHook(duration, maxItems);
 
-let liveSocket = new LiveSocket('/live', Socket, {
-  hooks: { LiveToast: liveToastHook }
-})
+let liveSocket = new LiveSocket("/live", Socket, {
+  hooks: { LiveToast: liveToastHook },
+});
 ```
 
 ## Roadmap
