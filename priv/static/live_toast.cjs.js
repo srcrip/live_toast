@@ -759,11 +759,7 @@ function isHidden(el) {
   return el.offsetParent === null;
 }
 function isFlash(el) {
-  if (["server-error", "client-error", "flash-info", "flash-error"].includes(el.id)) {
-    return true;
-  } else {
-    return false;
-  }
+  return el.dataset.component === "flash";
 }
 function flashCount() {
   let num = 0;
@@ -823,7 +819,7 @@ function doAnimations(delayTime, maxItems, elToRemove) {
     } else {
       toast.classList.add("pointer-events-auto");
     }
-    let keyframes = { y: [`${direction}${val}px`], opacity: [opacity] };
+    const keyframes = { y: [`${direction}${val}px`], opacity: [opacity] };
     if (toast.order === 0 && lastTS.includes(toast) === false) {
       const val2 = toast.offsetHeight + gap;
       const oppositeDirection = direction === "-" ? "" : "-";
@@ -868,7 +864,7 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
       doAnimations.bind(this)(duration, maxItems);
     },
     updated() {
-      let keyframes = { y: [this.el.targetDestination] };
+      const keyframes = { y: [this.el.targetDestination] };
       animate2(this.el, keyframes, { duration: 0 });
     },
     mounted() {
@@ -889,7 +885,7 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
       }
       let durationOverride = duration;
       if (this.el.dataset.duration !== void 0) {
-        durationOverride = parseInt(this.el.dataset.duration);
+        durationOverride = Number.parseInt(this.el.dataset.duration);
       }
       window.setTimeout(async () => {
         await animateOut.bind(this)();
