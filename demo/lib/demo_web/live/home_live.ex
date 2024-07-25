@@ -14,7 +14,11 @@ defmodule DemoWeb.HomeLive do
     "action" => nil
   }
 
-  def handle_params(_params, _uri, socket) do
+  def handle_params(params, _uri, socket) do
+    params
+    |> Map.get("locale", "en")
+    |> Gettext.put_locale()
+
     socket =
       socket
       |> assign(:settings, @default_settings)

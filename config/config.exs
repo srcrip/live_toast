@@ -23,3 +23,6 @@ if Mix.env() == :dev do
         ~w(--format=iife --target=es2016 --global-name=LiveMotion --minify --outfile=../priv/static/live_toast.min.js)
       )
 end
+
+config :live_toast,
+  gettext_backend: LiveToast.Gettext

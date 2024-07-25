@@ -4,6 +4,7 @@ defmodule LiveToast.LiveComponent do
   use Phoenix.LiveComponent
 
   alias LiveToast.Components
+  alias LiveToast.Utility
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -61,16 +62,10 @@ defmodule LiveToast.LiveComponent do
           icon={icon}
           action={action}
           corner={@corner}
-          title={
-            if title do
-              title
-            else
-              nil
-            end
-          }
+          title={if title, do: Utility.translate(title), else: nil}
           target={@myself}
         >
-          <%= body %>
+          <%= Utility.translate(body) %>
         </Components.toast>
       </div>
 
