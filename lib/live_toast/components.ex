@@ -162,6 +162,7 @@ defmodule LiveToast.Components do
       phx-update="ignore"
       phx-disconnected={Utility.show(".phx-server-error #server-error")}
       phx-connected={Utility.hide("#server-error")}
+      delay={true}
       hidden
     >
       Hang in there while we get back on track
