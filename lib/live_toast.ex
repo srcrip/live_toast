@@ -148,6 +148,7 @@ defmodule LiveToast do
       "[@media(scripting:enabled)]:opacity-0 [@media(scripting:enabled){[data-phx-main]_&}]:opacity-100",
       # used to hide the disconnected flashes
       if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
+      if(assigns[:rest][:delay] == true, do: "delay-[3s]"),
       # override styles per severity
       assigns[:kind] == :info && "text-black",
       assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"

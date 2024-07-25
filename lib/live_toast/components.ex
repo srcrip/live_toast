@@ -15,6 +15,7 @@ defmodule LiveToast.Components do
   attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
   attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
   attr(:target, :any, default: nil, doc: "the target for the phx-click event")
+  attr(:delay, :boolean, default: false, doc: "add 3s delay before showing")
 
   attr(:duration, :integer,
     default: 6000,
@@ -162,6 +163,7 @@ defmodule LiveToast.Components do
       phx-update="ignore"
       phx-disconnected={Utility.show(".phx-server-error #server-error")}
       phx-connected={Utility.hide("#server-error")}
+      delay={true}
       hidden
     >
       Hang in there while we get back on track
