@@ -54,8 +54,21 @@ defmodule LiveToast.Components do
       class={@toast_class_fn.(assigns)}
       {@rest}
     >
+      <% close_args =
+        if Phoenix.Flash.get(@flash, @kind),
+          do: [
+            "phx-click":
+              JS.dispatch("flash-leave", to: "##{@id}")
+              |> JS.push("lv:clear-flash", value: %{key: @kind})
+              |> Utility.hide("##{@id}")
+          ],
+          else: [
+            "phx-target": @target,
+            "phx-click": "clear",
+            "phx-value-id": @id
+          ] %>
       <%= if @component do %>
-        <%= @component.(Map.merge(assigns, %{body: msg})) %>
+        <%= @component.(Map.merge(assigns, %{body: msg, close_args: close_args})) %>
       <% else %>
         <div class="grow flex flex-col items-start justify-center">
           <p
@@ -79,29 +92,23 @@ defmodule LiveToast.Components do
         <%= if @action do %>
           <%= @action.(assigns) %>
         <% end %>
+
+        <button
+          type="button"
+          class={[
+            "group-has-[[data-part='title']]/toast:absolute",
+            "right-[5px] top-[5px] rounded-md p-[5px] text-black/50 transition-opacity hover:text-black focus:opacity-100 focus:outline-none focus:ring-1 group group-hover:opacity-100"
+          ]}
+          aria-label="close"
+          { close_args
+                  }
+        >
+          <Utility.svg
+            name="hero-x-mark-solid"
+            class="h-[14px] w-[14px] opacity-40 group-hover:opacity-70"
+          />
+        </button>
       <% end %>
-      <button
-        type="button"
-        class={[
-          "group-has-[[data-part='title']]/toast:absolute",
-          "right-[5px] top-[5px] rounded-md p-[5px] text-black/50 transition-opacity hover:text-black focus:opacity-100 focus:outline-none focus:ring-1 group group-hover:opacity-100"
-        ]}
-        aria-label="close"
-        {
-        if Phoenix.Flash.get(@flash, @kind),
-          do: ["phx-click": JS.dispatch("flash-leave", to: "##{@id}") |> JS.push("lv:clear-flash", value: %{key: @kind}) |> Utility.hide("##{@id}")],
-          else: [
-            "phx-target": @target,
-            "phx-click": "clear",
-            "phx-value-id": @id
-          ]
-        }
-      >
-        <Utility.svg
-          name="hero-x-mark-solid"
-          class="h-[14px] w-[14px] opacity-40 group-hover:opacity-70"
-        />
-      </button>
     </div>
     """
   end
@@ -119,6 +126,11 @@ defmodule LiveToast.Components do
     doc: "function to override the toast classes"
   )
 
+  attr(:component, :any,
+    default: nil,
+    doc: "the optional component to render the flash message"
+  )
+
   attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
 
   @doc false
@@ -129,6 +141,7 @@ defmodule LiveToast.Components do
       data-component="flash"
       corner={@corner}
       toast_class_fn={@toast_class_fn}
+      component={@component}
       duration={0}
       kind={level}
       title={String.capitalize(to_string(level))}
@@ -140,6 +153,7 @@ defmodule LiveToast.Components do
       data-component="flash"
       corner={@corner}
       toast_class_fn={@toast_class_fn}
+      component={@component}
       id="client-error"
       kind={:error}
       title="We can't find the internet"
@@ -156,6 +170,7 @@ defmodule LiveToast.Components do
       data-component="flash"
       corner={@corner}
       toast_class_fn={@toast_class_fn}
+      component={@component}
       id="server-error"
       kind={:error}
       title="Something went wrong!"
@@ -190,12 +205,23 @@ defmodule LiveToast.Components do
     doc: "function to override the toast classes"
   )
 
+  attr(:component, :any,
+    default: nil,
+    doc: "the optional component to render the flash message"
+  )
+
   # Used to render flashes-only on regular non-LV pages.
   @doc false
   def flash_group(assigns) do
     ~H"""
     <div id={assigns[:id] || "flash-group"} class={@group_class_fn.(assigns)}>
-      <.flashes f={@flash} corner={@corner} toast_class_fn={@toast_class_fn} kinds={@kinds} />
+      <.flashes
+        f={@flash}
+        corner={@corner}
+        toast_class_fn={@toast_class_fn}
+        kinds={@kinds}
+        component={@component}
+      />
     </div>
     """
   end
