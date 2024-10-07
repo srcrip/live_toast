@@ -66,3 +66,7 @@ Releasing new bundle (meant to compile it in `v0.6.1`).
 - Fix required LV version to 0.20.
 - Added proper TypeScript types.
 - Added customization for the container class.
+
+## [v0.6.5] (unreleased)
+
+- Added gettext internationalization from #16 (thanks @elephantoss)

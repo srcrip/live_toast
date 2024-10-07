@@ -65,4 +65,10 @@ defmodule LiveToast.Utility do
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
   end
+
+  def translate(message) do
+    :live_toast
+    |> Application.get_env(:gettext_backend, LiveToast.Gettext)
+    |> Gettext.dgettext("live_toast", message)
+  end
 end

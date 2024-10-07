@@ -152,6 +152,41 @@ You can change which corner the toasts are anchored to by passing the `corner` s
 <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} corner={:top_right} />
 ```
 
+### Internationalization
+
+You can provide translations for the defaul error toasts by adding the following to your `config.exs`:
+
+```elixir
+config :live_toast,
+  gettext_backend: MyApp.Gettext
+```
+
+You have to create a `live_toast.po` file, inside the `priv/gettext/<language>/LC_MESSAGES/` folder for each language you want to support.
+
+For example, if you want to support spanish, you would create the file `live_toast.po` in the `priv/gettext/es/LC_MESSAGES/` folder, with the following content:
+
+```po
+msgid ""
+msgstr ""
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "We can't find the internet"
+msgstr "Nosotros no podemos encontrar internet"
+
+msgid "Attempting to reconnect"
+msgstr "Intentando reconectar"
+
+msgid "Something went wrong!"
+msgstr "¡Algo salió mal!"
+
+msgid "Hang in there while we get back on track"
+msgstr "Aguanta mientras volvemos a la normalidad"
+```
+
 ### Function Options
 
 [`send_toast`](https://hexdocs.pm/live_toast/LiveToast.html#send_toast/3) takes a number of arguments to control it's behavior. They are currently:
@@ -159,7 +194,7 @@ You can change which corner the toasts are anchored to by passing the `corner` s
 - `kind`: The 'level' of this toast. The `component` function can receive this and modify behavior based on severity.
     the `toast_class_fn` also receives it, and it can be used there to modify styles, for example, making `:info` toasts
     green and `:error` toasts red.
-- `body`: The primary text of the message. 
+- `body`: The primary text of the message.
 - `title`: The optional title of the toast displayed at the top.
 - `icon`: An optional function component that renders next to the title. You can use this with the default toast to display an icon.
 - `action`: An optional function component that renders to the side. You can use this with the default toast to display an action, like a button.

@@ -29,6 +29,9 @@ config :demo, DemoWeb.Endpoint,
   pubsub_server: Demo.PubSub,
   live_view: [signing_salt: "mca0adK+"]
 
+config :live_toast,
+  gettext_backend: Demo.Gettext
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
