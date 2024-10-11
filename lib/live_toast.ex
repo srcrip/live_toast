@@ -141,17 +141,25 @@ defmodule LiveToast do
   Since this is a public function, you can also write a new function that calls it and extends it's return values.
   """
   def toast_class_fn(assigns) do
-    [
-      # base classes
-      "bg-white group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
-      # start hidden if javascript is enabled
-      "[@media(scripting:enabled)]:opacity-0 [@media(scripting:enabled){[data-phx-main]_&}]:opacity-100",
-      # used to hide the disconnected flashes
-      if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
-      # override styles per severity
-      assigns[:kind] == :info && "text-black",
-      assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"
-    ]
+    shared_classes =
+      [
+        # start hidden if javascript is enabled
+        "[@media(scripting:enabled)]:opacity-0 [@media(scripting:enabled){[data-phx-main]_&}]:opacity-100",
+        # used to hide the disconnected flashes
+        if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex")
+      ]
+
+    if assigns[:component] do
+      shared_classes
+    else
+      [
+        # base classes
+        "bg-white group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
+        # override styles per severity
+        assigns[:kind] == :info && "text-black",
+        assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"
+      ] ++ shared_classes
+    end
   end
 
   @doc """
@@ -213,6 +221,8 @@ defmodule LiveToast do
     doc: "function to override the toast classes"
   )
 
+  attr(:component, :any, default: nil, doc: "the optional component to render the flash message")
+
   @doc """
   Renders a group of toasts and flashes.
 
@@ -229,6 +239,7 @@ defmodule LiveToast do
       group_class_fn={@group_class_fn}
       f={@flash}
       kinds={@kinds}
+      component={@component}
     />
     <Components.flash_group
       :if={!@connected}
@@ -238,6 +249,7 @@ defmodule LiveToast do
       group_class_fn={@group_class_fn}
       flash={@flash}
       kinds={@kinds}
+      component={@component}
     />
     """
   end
