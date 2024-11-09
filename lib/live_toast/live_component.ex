@@ -43,7 +43,7 @@ defmodule LiveToast.LiveComponent do
 
     ~H"""
     <div id={@id} class={@group_class_fn.(assigns)}>
-      <div class="contents" id={@id <> "-stream"} phx-update="stream">
+      <div class="contents" id={@id <> "-stream"} phx-update="stream" data-role="toast-group-stream">
         <Components.toast
           :for={
             {dom_id,
