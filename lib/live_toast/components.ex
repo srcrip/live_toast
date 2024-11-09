@@ -52,6 +52,7 @@ defmodule LiveToast.Components do
       data-duration={@duration}
       data-corner={@corner}
       class={@toast_class_fn.(assigns)}
+      data-role={"#{@kind}-toast"}
       {@rest}
     >
       <%= if @component do %>
@@ -86,6 +87,7 @@ defmodule LiveToast.Components do
           "group-has-[[data-part='title']]/toast:absolute",
           "right-[5px] top-[5px] rounded-md p-[5px] text-black/50 transition-opacity hover:text-black focus:opacity-100 focus:outline-none focus:ring-1 group group-hover:opacity-100"
         ]}
+        data-role="close-toast-button"
         aria-label="close"
         {
         if Phoenix.Flash.get(@flash, @kind),
