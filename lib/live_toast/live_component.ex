@@ -37,7 +37,9 @@ defmodule LiveToast.LiveComponent do
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
-    assigns = assign_new(assigns, :id, fn -> "toast-group" end)
+    assigns = assigns
+    |> assign_new(:id, fn -> "toast-group" end)
+    |> assign_new(:show_client_and_server_flashes, fn -> true end)
 
     ~H"""
     <div id={@id} class={@group_class_fn.(assigns)}>
@@ -71,7 +73,7 @@ defmodule LiveToast.LiveComponent do
         </Components.toast>
       </div>
 
-      <Components.flashes f={@f} corner={@corner} toast_class_fn={@toast_class_fn} kinds={@kinds} />
+      <Components.flashes :if={@show_client_and_server_flashes} f={@f} corner={@corner} toast_class_fn={@toast_class_fn} kinds={@kinds} />
     </div>
     """
   end

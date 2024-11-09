@@ -276,6 +276,14 @@ end
 Then just make sure you've passed it to the `live_group` component as seen above.
 
 
+### Using `live_render`
+
+When rendering a LiveView within another LiveView, the flash assigns (like all other assigns) are not shared.
+This means that the nested LiveView must use its own "flash group" (or equivalent, e.g. toast group) in its HTML.
+When doing this, it is prudent to set the `:show_client_and_server_flashes` attr to `false`.
+That way the nested LiveView will not show client/server error flashes, which will already be shown by the parent LiveView.
+
+
 ### JavaScript Options
 
 You can also change some options about the LiveView hook when it is initialized. Such as:
