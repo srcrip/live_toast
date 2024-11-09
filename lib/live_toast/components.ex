@@ -52,6 +52,7 @@ defmodule LiveToast.Components do
       data-duration={@duration}
       data-corner={@corner}
       class={@toast_class_fn.(assigns)}
+      data-role={"{@kind}-toast"}
       {@rest}
     >
       <%= if @component do %>
