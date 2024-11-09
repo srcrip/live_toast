@@ -37,9 +37,11 @@ defmodule LiveToast.LiveComponent do
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
+    assigns = assign_new(assigns, :id, fn -> "toast-group" end)
+
     ~H"""
-    <div id={assigns[:id] || "toast-group"} class={@group_class_fn.(assigns)}>
-      <div class="contents" id="toast-group-stream" phx-update="stream">
+    <div id={@id} class={@group_class_fn.(assigns)}>
+      <div class="contents" id={@id <> "-stream"} phx-update="stream">
         <Components.toast
           :for={
             {dom_id,
