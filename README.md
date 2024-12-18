@@ -32,7 +32,17 @@ def deps do
 end
 ```
 
-Next open up your `app.js` and import/setup the hook (Note that if you bundle through some external bundler, you may need to import from `../deps/live_toast`):
+Next open up your `app.js` and import/setup the hook.
+
+If you have a `package.json` file at the top of `assets`, you can add this to it:
+
+```json
+"dependencies": {
+  "live_toast": "file:../deps/live_toast",
+},
+```
+
+And then import and set up the bare module:
 
 ```javascript
 import { createLiveToastHook } from 'live_toast'
@@ -41,6 +51,19 @@ let liveSocket = new LiveSocket('/live', Socket, {
   hooks: {
     LiveToast: createLiveToastHook()
   }
+})
+```
+
+Or you can import the file directly:
+
+```javascript
+// this path would be relative to where your app.js happens to be.
+import { createLiveToastHook } from '../deps/live_toast'
+
+let liveSocket = new LiveSocket('/live', Socket, {
+    hooks: {
+        LiveToast: createLiveToastHook()
+    }
 })
 ```
 
