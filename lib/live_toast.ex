@@ -18,7 +18,8 @@ defmodule LiveToast do
     :component,
     :duration,
     :container_id,
-    :uuid
+    :uuid,
+    :sync
   ]
 
   @typedoc "Instance of a toast message. Mainly used internally."
@@ -31,7 +32,8 @@ defmodule LiveToast do
             component: component_fn() | nil,
             duration: non_neg_integer() | nil,
             container_id: binary() | nil,
-            uuid: Ecto.UUID.t() | nil
+            uuid: Ecto.UUID.t() | nil,
+            sync: boolean() | nil
           }
 
   @typedoc "`Phoenix.Component` that renders a part of the toast message."
@@ -46,6 +48,25 @@ defmodule LiveToast do
           | {:duration, non_neg_integer() | nil}
           | {:container_id, binary() | nil}
           | {:uuid, Ecto.UUID.t() | nil}
+          | {:sync, boolean() | nil}
+
+  defp make_toast(kind, msg, options \\ []) do
+    container_id = options[:container_id] || "toast-group"
+    uuid = options[:uuid] || Ecto.UUID.generate()
+
+    %LiveToast{
+      kind: kind,
+      msg: msg,
+      title: options[:title],
+      icon: options[:icon],
+      action: options[:action],
+      component: options[:component],
+      duration: options[:duration],
+      container_id: container_id,
+      uuid: uuid,
+      sync: options[:sync] || false
+    }
+  end
 
   @doc """
   Send a new toast message to the LiveToast component.
@@ -61,24 +82,11 @@ defmodule LiveToast do
   """
   @spec send_toast(atom(), binary(), [option()]) :: Ecto.UUID.t()
   def send_toast(kind, msg, options \\ []) do
-    container_id = options[:container_id] || "toast-group"
-    uuid = options[:uuid] || Ecto.UUID.generate()
+    toast = make_toast(kind, msg, options)
 
-    toast = %LiveToast{
-      kind: kind,
-      msg: msg,
-      title: options[:title],
-      icon: options[:icon],
-      action: options[:action],
-      component: options[:component],
-      duration: options[:duration],
-      container_id: container_id,
-      uuid: uuid
-    }
+    LiveView.send_update(LiveToast.LiveComponent, id: toast.container_id, toasts: [toast])
 
-    LiveView.send_update(LiveToast.LiveComponent, id: container_id, toasts: [toast])
-
-    uuid
+    toast.uuid
   end
 
   @doc """
@@ -107,9 +115,13 @@ defmodule LiveToast do
 
   @spec put_toast(LiveView.Socket.t(), atom(), binary(), [option()]) :: LiveView.Socket.t()
   def put_toast(%LiveView.Socket{} = socket, kind, msg, options) do
-    send_toast(kind, msg, options)
+    options = Keyword.put(options, :sync, true)
+
+    toast = make_toast(kind, msg, options)
 
     socket
+    |> Phoenix.LiveView.put_flash(kind, msg)
+    |> Phoenix.Component.assign(toasts_sync: [toast])
   end
 
   @doc """
@@ -213,6 +225,8 @@ defmodule LiveToast do
     doc: "function to override the toast classes"
   )
 
+  attr :toasts_sync, :list, default: nil
+
   @doc """
   Renders a group of toasts and flashes.
 
@@ -224,6 +238,7 @@ defmodule LiveToast do
       :if={@connected}
       id={@id}
       module={LiveToast.LiveComponent}
+      toasts_sync={@toasts_sync}
       corner={@corner}
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
