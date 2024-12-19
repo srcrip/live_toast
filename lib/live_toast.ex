@@ -188,7 +188,12 @@ defmodule LiveToast do
 
   Then use it in your layout:
 
-      <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} group_class_fn={MyModule.group_class_fn/1} />
+  <LiveToast.toast_group
+    flash={@flash}
+    connected={assigns[:socket] != nil}
+    toasts_sync={assigns[:toasts_sync]}
+    group_class_fn={MyModule.group_class_fn/1}
+  />
 
   Since this is a public function, you can also write a new function that calls it and extends it's return values.
   """
@@ -206,7 +211,7 @@ defmodule LiveToast do
 
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
-  attr(:connected, :boolean, default: false, doc: "whether we're in a liveview or not")
+  attr(:connected, :boolean, required: true, doc: "whether we're in a liveview or not")
   attr(:kinds, :list, default: [:info, :error], doc: "the valid severity level kinds")
 
   attr(:corner, :atom,
@@ -225,7 +230,7 @@ defmodule LiveToast do
     doc: "function to override the toast classes"
   )
 
-  attr :toasts_sync, :list, default: nil
+  attr :toasts_sync, :list, required: true, doc: "toasts that get synchronized when calling `put_toast`"
 
   @doc """
   Renders a group of toasts and flashes.
