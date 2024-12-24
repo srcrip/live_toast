@@ -42,7 +42,7 @@ defmodule LiveToast.MixProject do
       {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false},
       {:doctor, ">= 0.0.0", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.32.2", only: [:dev], runtime: false},
-      {:gettext, "~> 0.24.0"},
+      {:gettext, ">= 0.24.0"},
       {:mix_audit, ">= 0.0.0", only: [:dev], runtime: false},
       {:styler, "~> 0.11.9", only: [:dev, :test], runtime: false},
       {:makeup, "1.1.2", only: [:dev], runtime: false},

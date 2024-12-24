@@ -213,6 +213,11 @@ defmodule LiveToast do
     doc: "function to override the toast classes"
   )
 
+  attr(:show_client_and_server_flashes, :boolean,
+    default: true,
+    doc: "optional boolean to include/exclude the client-error and server-error flashes"
+  )
+
   @doc """
   Renders a group of toasts and flashes.
 
@@ -229,6 +234,7 @@ defmodule LiveToast do
       group_class_fn={@group_class_fn}
       f={@flash}
       kinds={@kinds}
+      show_client_and_server_flashes={@show_client_and_server_flashes}
     />
     <Components.flash_group
       :if={!@connected}
