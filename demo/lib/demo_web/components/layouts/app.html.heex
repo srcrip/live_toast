@@ -4,13 +4,14 @@
     group_class_fn={&demo_group_class_fn/1}
     flash={@flash}
     kinds={[:info, :error, :warn]}
+    toasts_sync={assigns[:toasts_sync]}
     connected={assigns[:socket] != nil}
     {
       if assigns[:settings] do
-        [
-          corner: case assigns[:settings]["corner"] do
-              "top_right" -> :top_right
-              "top_left" -> :top_left
+      [
+      corner: case assigns[:settings]["corner"] do
+      "top_right" -> :top_right
+      "top_left" -> :top_left
               "bottom_right" -> :bottom_right
               "bottom_left" -> :bottom_left
           end
