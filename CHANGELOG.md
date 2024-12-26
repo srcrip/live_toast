@@ -67,6 +67,7 @@ Releasing new bundle (meant to compile it in `v0.6.1`).
 - Added proper TypeScript types.
 - Added customization for the container class.
 
-## [v0.6.5] (unreleased)
+## [v0.7.0] (unreleased)
 
+- Big fix to longstanding issue where toasts don't work properly across navigations: #28
 - Added gettext internationalization from #16 (thanks @elephantoss)
