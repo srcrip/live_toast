@@ -73,6 +73,7 @@ defmodule LiveToast.MixProject do
     lib/live_toast/components.ex
     lib/live_toast/live_component.ex
     lib/live_toast/utility.ex
+    lib/live_toast/gettext.ex
     CHANGELOG.md
     LICENSE.md
     mix.exs
