@@ -50,7 +50,7 @@ defmodule LiveToast do
           | {:uuid, Ecto.UUID.t() | nil}
           | {:sync, boolean() | nil}
 
-  defp make_toast(kind, msg, options \\ []) do
+  defp make_toast(kind, msg, options) do
     container_id = options[:container_id] || "toast-group"
     uuid = options[:uuid] || Ecto.UUID.generate()
 
