@@ -211,6 +211,12 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         }
       }
 
+      window.addEventListener('phx:clear-flash', e => {
+        this.pushEvent('lv:clear-flash', {
+          key: (e as CustomEvent<{ key: string }>).detail.key
+        })
+      })
+
       window.addEventListener('flash-leave', async event => {
         if (event.target === this.el) {
           // animate this flash sliding out

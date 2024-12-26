@@ -860,6 +860,11 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
           return;
         }
       }
+      window.addEventListener("phx:clear-flash", (e) => {
+        this.pushEvent("lv:clear-flash", {
+          key: e.detail.key
+        });
+      });
       window.addEventListener("flash-leave", async (event) => {
         if (event.target === this.el) {
           doAnimations.bind(this, duration, maxItems, this.el)();

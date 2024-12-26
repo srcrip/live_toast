@@ -97,10 +97,18 @@ Finally, replace your `<.flash_group />` component with the new `<LiveToast.toas
 <.flash_group flash={@flash} />
 
 <!-- And replace it with this: -->
-<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} />
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toasts_sync={assigns[:toasts_sync]}
+/>
 
 <%= @inner_content %>
 ```
+
+Those three options, `flash`, `connected`, and `toasts_sync` are all required. The library will not function properly if
+you do not pass them in.
+
 
 > **Note:**
 > As far as I can tell in my testing, this usage of `assigns` in the layout has no negative impact on change tracking.
@@ -172,7 +180,12 @@ end
 You can change which corner the toasts are anchored to by passing the `corner` setting to `toast_group`, one of either `:top_left`, `:top_right`, `:bottom_left`, `:bottom_right`. The default is `:bottom_right`.
 
 ```heex
-<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} corner={:top_right} />
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  corner={:top_right}
+  toasts_sync={assigns[:toasts_sync]}
+/>
 ```
 
 ### Internationalization
@@ -253,7 +266,12 @@ end
 And then use it to override the default styles:
 
 ```heex
-<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={&MyModule.toast_class_fn/1} />
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toast_class_fn={&MyModule.toast_class_fn/1}
+  toasts_sync={assigns[:toasts_sync]}
+/>
 ```
 
 If you need to change the classes of the container, there is a similar function parameter called [`group_class_fn`](https://hexdocs.pm/live_toast/LiveToast.html#group_class_fn/1). Reference the documentation and apply the override just as you would `toast_class_fn/1` shown above.
@@ -270,6 +288,7 @@ additional severity level, like `:warning`, you can pass a list of these values 
   connected={assigns[:socket] != nil}
   kinds={[:info, :error, :warning]}
   toast_class_fn={&custom_toast_class_fn/1}
+  toasts_sync={assigns[:toasts_sync]}
 />
 ```
 
