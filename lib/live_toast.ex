@@ -108,12 +108,12 @@ defmodule LiveToast do
   """
   def put_toast(conn_or_socket, kind, msg, options \\ [])
 
-  @spec put_toast(Plug.Conn.t(), atom(), binary(), [option()]) :: Plug.Conn.t()
+  @spec put_toast(Plug.Conn.t(), atom(), String.Chars.t(), [option()]) :: Plug.Conn.t()
   def put_toast(%Plug.Conn{} = conn, kind, msg, _options) do
     Phoenix.Controller.put_flash(conn, kind, msg)
   end
 
-  @spec put_toast(LiveView.Socket.t(), atom(), binary(), [option()]) :: LiveView.Socket.t()
+  @spec put_toast(LiveView.Socket.t(), atom(), String.Chars.t(), [option()]) :: LiveView.Socket.t()
   def put_toast(%LiveView.Socket{} = socket, kind, msg, options) do
     options = Keyword.put(options, :sync, true)
 
