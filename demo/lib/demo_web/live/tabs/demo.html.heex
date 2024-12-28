@@ -117,6 +117,24 @@
 
     <.button
       class={
+        if @settings["corner"] == "top_center", do: "!border-2 !border-indigo-400/80", else: ""
+      }
+      phx-click={
+        JS.push("toast",
+          value: %{
+            "kind" => "info",
+            "title" => "Position changed",
+            "body" => "Position set to top center."
+          }
+        )
+        |> JS.push("change_settings", value: %{"corner" => "top_center"})
+      }
+    >
+      Top Center
+    </.button>
+
+    <.button
+      class={
         if @settings["corner"] == "top_left", do: "!border-2 !border-indigo-400/80", else: ""
       }
       phx-click={
@@ -149,6 +167,24 @@
       }
     >
       Bottom Right
+    </.button>
+
+    <.button
+      class={
+        if @settings["corner"] == "bottom_center", do: "!border-2 !border-indigo-400/80", else: ""
+      }
+      phx-click={
+        JS.push("toast",
+          value: %{
+            "kind" => "info",
+            "title" => "Position changed",
+            "body" => "Position set to bottom center."
+          }
+        )
+        |> JS.push("change_settings", value: %{"corner" => "bottom_center"})
+      }
+    >
+      Bottom Center
     </.button>
 
     <.button
