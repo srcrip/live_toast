@@ -109,7 +109,7 @@ defmodule LiveToast.Components do
   attr(:f, :map, required: true, doc: "the map of flash messages")
 
   attr(:corner, :atom,
-    values: [:top_left, :top_right, :bottom_left, :bottom_right],
+    values: [:top_left, :top_center, :top_right, :bottom_left, :bottom_center, :bottom_right],
     default: :bottom_right,
     doc: "the corner to display the toasts"
   )

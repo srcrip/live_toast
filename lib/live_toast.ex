@@ -203,8 +203,11 @@ defmodule LiveToast do
       "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center",
       # classes to set container positioning
       assigns[:corner] == :bottom_left && "items-end bottom-0 left-0 flex-col-reverse sm:top-auto",
+      assigns[:corner] == :bottom_center &&
+        "items-end bottom-0 left-1/2 transform -translate-x-1/2 flex-col-reverse sm:top-auto",
       assigns[:corner] == :bottom_right && "items-end bottom-0 right-0 flex-col-reverse sm:top-auto",
       assigns[:corner] == :top_left && "items-start top-0 left-0 flex-col sm:bottom-auto",
+      assigns[:corner] == :top_center && "items-start top-0 left-1/2 transform -translate-x-1/2 flex-col sm:bottom-auto",
       assigns[:corner] == :top_right && "items-start top-0 right-0 flex-col sm:bottom-auto"
     ]
   end
@@ -215,7 +218,7 @@ defmodule LiveToast do
   attr(:kinds, :list, default: [:info, :error], doc: "the valid severity level kinds")
 
   attr(:corner, :atom,
-    values: [:top_left, :top_right, :bottom_left, :bottom_right],
+    values: [:top_left, :top_center, :top_right, :bottom_left, :bottom_center, :bottom_right],
     default: :bottom_right,
     doc: "the corner to display the toasts"
   )
