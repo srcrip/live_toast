@@ -103,6 +103,7 @@ function doAnimations(
 
     if (
       toast.dataset.corner === 'bottom_left' ||
+      toast.dataset.corner === 'bottom_center' ||
       toast.dataset.corner === 'bottom_right'
     ) {
       direction = '-'
@@ -170,6 +171,7 @@ async function animateOut(this: ViewHook) {
 
   if (
     this.el.dataset.corner === 'bottom_left' ||
+    this.el.dataset.corner === 'bottom_center' ||
     this.el.dataset.corner === 'bottom_right'
   ) {
     direction = '-'
