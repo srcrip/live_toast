@@ -8,13 +8,15 @@
     connected={assigns[:socket] != nil}
     {
       if assigns[:settings] do
-      [
-      corner: case assigns[:settings]["corner"] do
-      "top_right" -> :top_right
-      "top_left" -> :top_left
+        [
+          corner: case assigns[:settings]["corner"] do
+              "top_right" -> :top_right
+              "top_center" -> :top_center
+              "top_left" -> :top_left
               "bottom_right" -> :bottom_right
+              "bottom_center" -> :bottom_center
               "bottom_left" -> :bottom_left
-          end
+            end,
         ]
       else
         []
