@@ -103,6 +103,7 @@ function doAnimations(
 
     if (
       toast.dataset.corner === 'bottom_left' ||
+      toast.dataset.corner === 'bottom_center' ||
       toast.dataset.corner === 'bottom_right'
     ) {
       direction = '-'
@@ -170,6 +171,7 @@ async function animateOut(this: ViewHook) {
 
   if (
     this.el.dataset.corner === 'bottom_left' ||
+    this.el.dataset.corner === 'bottom_center' ||
     this.el.dataset.corner === 'bottom_right'
   ) {
     direction = '-'
@@ -211,6 +213,12 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         }
       }
 
+      window.addEventListener('phx:clear-flash', e => {
+        this.pushEvent('lv:clear-flash', {
+          key: (e as CustomEvent<{ key: string }>).detail.key
+        })
+      })
+
       window.addEventListener('flash-leave', async event => {
         if (event.target === this.el) {
           // animate this flash sliding out
@@ -231,12 +239,15 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         durationOverride = Number.parseInt(this.el.dataset.duration)
       }
 
-      window.setTimeout(async () => {
-        // animate this element sliding down, opacity to 0, with delay time
-        await animateOut.bind(this)()
+      // you can set duration to 0 for infinite duration, basically
+      if (durationOverride !== 0) {
+        window.setTimeout(async () => {
+          // animate this element sliding down, opacity to 0, with delay time
+          await animateOut.bind(this)()
 
-        this.pushEventTo('#toast-group', 'clear', { id: this.el.id })
-      }, durationOverride + removalTime)
+          this.pushEventTo('#toast-group', 'clear', { id: this.el.id })
+        }, durationOverride + removalTime)
+      }
     }
   }
 }

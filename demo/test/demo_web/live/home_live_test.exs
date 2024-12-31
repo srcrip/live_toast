@@ -29,6 +29,22 @@ defmodule DemoWeb.HomeLiveTest do
     end
   end
 
+  describe "Localized demo page" do
+    test "renders error toasts in English", %{conn: conn} do
+      assert conn
+             |> get(~p"/")
+             |> html_response(200) =~
+               "We can&#39;t find the internet"
+    end
+
+    test "renders error toasts in Spanish", %{conn: conn} do
+      assert conn
+             |> get(~p"/?locale=es")
+             |> html_response(200) =~
+               "Nosotros no podemos encontrar internet"
+    end
+  end
+
   describe "LiveToast.send_toast/7" do
     test "renders correctly", %{conn: conn} do
       {:ok, view, html} = live(conn, ~p"/")

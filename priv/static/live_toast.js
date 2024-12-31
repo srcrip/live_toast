@@ -897,6 +897,11 @@ var LiveMotion = (() => {
             return;
           }
         }
+        window.addEventListener("phx:clear-flash", (e) => {
+          this.pushEvent("lv:clear-flash", {
+            key: e.detail.key
+          });
+        });
         window.addEventListener("flash-leave", (event) => __async(this, null, function* () {
           if (event.target === this.el) {
             doAnimations.bind(this, duration, maxItems, this.el)();

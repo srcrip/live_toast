@@ -110,7 +110,7 @@ defmodule LiveToast.Components do
   attr(:f, :map, required: true, doc: "the map of flash messages")
 
   attr(:corner, :atom,
-    values: [:top_left, :top_right, :bottom_left, :bottom_right],
+    values: [:top_left, :top_center, :top_right, :bottom_left, :bottom_center, :bottom_right],
     default: :bottom_right,
     doc: "the corner to display the toasts"
   )
@@ -143,13 +143,13 @@ defmodule LiveToast.Components do
       toast_class_fn={@toast_class_fn}
       id="client-error"
       kind={:error}
-      title="We can't find the internet"
+      title={Utility.translate("We can't find the internet")}
       phx-update="ignore"
       phx-disconnected={Utility.show(".phx-client-error #client-error")}
       phx-connected={Utility.hide("#client-error")}
       hidden
     >
-      Attempting to reconnect
+      <%= Utility.translate("Attempting to reconnect") %>
       <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
     </.toast>
 
@@ -159,14 +159,14 @@ defmodule LiveToast.Components do
       toast_class_fn={@toast_class_fn}
       id="server-error"
       kind={:error}
-      title="Something went wrong!"
+      title={Utility.translate("Something went wrong!")}
       phx-update="ignore"
       phx-disconnected={Utility.show(".phx-server-error #server-error")}
       phx-connected={Utility.hide("#server-error")}
       delay={true}
       hidden
     >
-      Hang in there while we get back on track
+      <%= Utility.translate("Hang in there while we get back on track") %>
       <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
     </.toast>
     """

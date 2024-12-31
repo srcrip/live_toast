@@ -18,7 +18,8 @@ defmodule LiveToast do
     :component,
     :duration,
     :container_id,
-    :uuid
+    :uuid,
+    :sync
   ]
 
   @typedoc "Instance of a toast message. Mainly used internally."
@@ -31,7 +32,8 @@ defmodule LiveToast do
             component: component_fn() | nil,
             duration: non_neg_integer() | nil,
             container_id: binary() | nil,
-            uuid: Ecto.UUID.t() | nil
+            uuid: Ecto.UUID.t() | nil,
+            sync: boolean() | nil
           }
 
   @typedoc "`Phoenix.Component` that renders a part of the toast message."
@@ -46,6 +48,25 @@ defmodule LiveToast do
           | {:duration, non_neg_integer() | nil}
           | {:container_id, binary() | nil}
           | {:uuid, Ecto.UUID.t() | nil}
+          | {:sync, boolean() | nil}
+
+  defp make_toast(kind, msg, options) do
+    container_id = options[:container_id] || "toast-group"
+    uuid = options[:uuid] || Ecto.UUID.generate()
+
+    %LiveToast{
+      kind: kind,
+      msg: msg,
+      title: options[:title],
+      icon: options[:icon],
+      action: options[:action],
+      component: options[:component],
+      duration: options[:duration],
+      container_id: container_id,
+      uuid: uuid,
+      sync: options[:sync] || false
+    }
+  end
 
   @doc """
   Send a new toast message to the LiveToast component.
@@ -61,24 +82,11 @@ defmodule LiveToast do
   """
   @spec send_toast(atom(), binary(), [option()]) :: Ecto.UUID.t()
   def send_toast(kind, msg, options \\ []) do
-    container_id = options[:container_id] || "toast-group"
-    uuid = options[:uuid] || Ecto.UUID.generate()
+    toast = make_toast(kind, msg, options)
 
-    toast = %LiveToast{
-      kind: kind,
-      msg: msg,
-      title: options[:title],
-      icon: options[:icon],
-      action: options[:action],
-      component: options[:component],
-      duration: options[:duration],
-      container_id: container_id,
-      uuid: uuid
-    }
+    LiveView.send_update(LiveToast.LiveComponent, id: toast.container_id, toasts: [toast])
 
-    LiveView.send_update(LiveToast.LiveComponent, id: container_id, toasts: [toast])
-
-    uuid
+    toast.uuid
   end
 
   @doc """
@@ -100,16 +108,20 @@ defmodule LiveToast do
   """
   def put_toast(conn_or_socket, kind, msg, options \\ [])
 
-  @spec put_toast(Plug.Conn.t(), atom(), binary(), [option()]) :: Plug.Conn.t()
+  @spec put_toast(Plug.Conn.t(), atom(), String.Chars.t(), [option()]) :: Plug.Conn.t()
   def put_toast(%Plug.Conn{} = conn, kind, msg, _options) do
     Phoenix.Controller.put_flash(conn, kind, msg)
   end
 
-  @spec put_toast(LiveView.Socket.t(), atom(), binary(), [option()]) :: LiveView.Socket.t()
+  @spec put_toast(LiveView.Socket.t(), atom(), String.Chars.t(), [option()]) :: LiveView.Socket.t()
   def put_toast(%LiveView.Socket{} = socket, kind, msg, options) do
-    send_toast(kind, msg, options)
+    options = Keyword.put(options, :sync, true)
+
+    toast = make_toast(kind, msg, options)
 
     socket
+    |> Phoenix.LiveView.put_flash(kind, msg)
+    |> Phoenix.Component.assign(toasts_sync: [toast])
   end
 
   @doc """
@@ -177,7 +189,12 @@ defmodule LiveToast do
 
   Then use it in your layout:
 
-      <LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} group_class_fn={MyModule.group_class_fn/1} />
+  <LiveToast.toast_group
+    flash={@flash}
+    connected={assigns[:socket] != nil}
+    toasts_sync={assigns[:toasts_sync]}
+    group_class_fn={MyModule.group_class_fn/1}
+  />
 
   Since this is a public function, you can also write a new function that calls it and extends it's return values.
   """
@@ -187,19 +204,22 @@ defmodule LiveToast do
       "fixed z-50 max-h-screen w-full p-4 md:max-w-[420px] pointer-events-none grid origin-center",
       # classes to set container positioning
       assigns[:corner] == :bottom_left && "items-end bottom-0 left-0 flex-col-reverse sm:top-auto",
+      assigns[:corner] == :bottom_center &&
+        "items-end bottom-0 left-1/2 transform -translate-x-1/2 flex-col-reverse sm:top-auto",
       assigns[:corner] == :bottom_right && "items-end bottom-0 right-0 flex-col-reverse sm:top-auto",
       assigns[:corner] == :top_left && "items-start top-0 left-0 flex-col sm:bottom-auto",
+      assigns[:corner] == :top_center && "items-start top-0 left-1/2 transform -translate-x-1/2 flex-col sm:bottom-auto",
       assigns[:corner] == :top_right && "items-start top-0 right-0 flex-col sm:bottom-auto"
     ]
   end
 
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
-  attr(:connected, :boolean, default: false, doc: "whether we're in a liveview or not")
+  attr(:connected, :boolean, required: true, doc: "whether we're in a liveview or not")
   attr(:kinds, :list, default: [:info, :error], doc: "the valid severity level kinds")
 
   attr(:corner, :atom,
-    values: [:top_left, :top_right, :bottom_left, :bottom_right],
+    values: [:top_left, :top_center, :top_right, :bottom_left, :bottom_center, :bottom_right],
     default: :bottom_right,
     doc: "the corner to display the toasts"
   )
@@ -214,6 +234,8 @@ defmodule LiveToast do
     doc: "function to override the toast classes"
   )
 
+  attr :toasts_sync, :list, required: true, doc: "toasts that get synchronized when calling `put_toast`"
+
   @doc """
   Renders a group of toasts and flashes.
 
@@ -225,6 +247,7 @@ defmodule LiveToast do
       :if={@connected}
       id={@id}
       module={LiveToast.LiveComponent}
+      toasts_sync={@toasts_sync}
       corner={@corner}
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}

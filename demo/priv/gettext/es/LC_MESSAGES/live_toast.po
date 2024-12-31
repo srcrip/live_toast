@@ -1,0 +1,19 @@
+msgid ""
+msgstr ""
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "We can't find the internet"
+msgstr "Nosotros no podemos encontrar internet"
+
+msgid "Attempting to reconnect"
+msgstr "Intentando reconectar"
+
+msgid "Something went wrong!"
+msgstr "¡Algo salió mal!"
+
+msgid "Hang in there while we get back on track"
+msgstr "Aguanta mientras volvemos a la normalidad"

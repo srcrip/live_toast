@@ -75,11 +75,63 @@
   </div>
 
   <p class="mt-6 mb-4">
-    You can also use arbitrary severity levels. If you want to add another level like "warning", refer to [the documentation here](https://hexdocs.pm/live_toast/readme.html#custom-severity-levels).
+    You can also use arbitrary severity levels. If you want to add another level like "warning", refer to <.link
+      href="https://hexdocs.pm/live_toast/readme.html#custom-severity-levels"
+      class="text-blue-700 hover:text-blue-500 underline"
+    >the
+      documentation here</.link>.
   </p>
   <div class="flex flex-wrap gap-3">
     <.button phx-click="flash" phx-value-kind="warn">
       Warning Flash
+    </.button>
+  </div>
+</div>
+
+<div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Duration</h2>
+  <p class="mt-2 mb-4">
+    You can set the duration of different toasts. If you set duration to 0, they will stay until dismissed (like
+    flashes). The default duration is 6000ms.
+  </p>
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click={
+      JS.push("toast",
+        value: %{
+          "kind" => "info",
+          "title" => "Duration",
+          "body" => "This toast will stay for 1000ms.",
+          "duration" => 1000
+        }
+      )
+    }>
+      Short Toast
+    </.button>
+
+    <.button phx-click={
+      JS.push("toast",
+        value: %{
+          "kind" => "info",
+          "title" => "Duration",
+          "body" => "This toast will stay for 8000ms.",
+          "duration" => 8000
+        }
+      )
+    }>
+      Long Toast
+    </.button>
+
+    <.button phx-click={
+      JS.push("toast",
+        value: %{
+          "kind" => "info",
+          "title" => "Duration",
+          "body" => "This toast will stay until dismissed.",
+          "duration" => 0
+        }
+      )
+    }>
+      Infinite Toast
     </.button>
   </div>
 </div>
@@ -117,6 +169,24 @@
 
     <.button
       class={
+        if @settings["corner"] == "top_center", do: "!border-2 !border-indigo-400/80", else: ""
+      }
+      phx-click={
+        JS.push("toast",
+          value: %{
+            "kind" => "info",
+            "title" => "Position changed",
+            "body" => "Position set to top center."
+          }
+        )
+        |> JS.push("change_settings", value: %{"corner" => "top_center"})
+      }
+    >
+      Top Center
+    </.button>
+
+    <.button
+      class={
         if @settings["corner"] == "top_left", do: "!border-2 !border-indigo-400/80", else: ""
       }
       phx-click={
@@ -149,6 +219,24 @@
       }
     >
       Bottom Right
+    </.button>
+
+    <.button
+      class={
+        if @settings["corner"] == "bottom_center", do: "!border-2 !border-indigo-400/80", else: ""
+      }
+      phx-click={
+        JS.push("toast",
+          value: %{
+            "kind" => "info",
+            "title" => "Position changed",
+            "body" => "Position set to bottom center."
+          }
+        )
+        |> JS.push("change_settings", value: %{"corner" => "bottom_center"})
+      }
+    >
+      Bottom Center
     </.button>
 
     <.button

@@ -32,7 +32,17 @@ def deps do
 end
 ```
 
-Next open up your `app.js` and import/setup the hook (Note that if you bundle through some external bundler, you may need to import from `../deps/live_toast`):
+Next open up your `app.js` and import/setup the hook.
+
+If you have a `package.json` file at the top of `assets`, you can add this to it:
+
+```json
+"dependencies": {
+  "live_toast": "file:../deps/live_toast",
+},
+```
+
+And then import and set up the bare module:
 
 ```javascript
 import { createLiveToastHook } from 'live_toast'
@@ -41,6 +51,19 @@ let liveSocket = new LiveSocket('/live', Socket, {
   hooks: {
     LiveToast: createLiveToastHook()
   }
+})
+```
+
+Or you can import the file directly:
+
+```javascript
+// this path would be relative to where your app.js happens to be.
+import { createLiveToastHook } from '../deps/live_toast'
+
+let liveSocket = new LiveSocket('/live', Socket, {
+    hooks: {
+        LiveToast: createLiveToastHook()
+    }
 })
 ```
 
@@ -74,10 +97,18 @@ Finally, replace your `<.flash_group />` component with the new `<LiveToast.toas
 <.flash_group flash={@flash} />
 
 <!-- And replace it with this: -->
-<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} />
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toasts_sync={assigns[:toasts_sync]}
+/>
 
 <%= @inner_content %>
 ```
+
+Those three options, `flash`, `connected`, and `toasts_sync` are all required. The library will not function properly if
+you do not pass them in.
+
 
 > **Note:**
 > As far as I can tell in my testing, this usage of `assigns` in the layout has no negative impact on change tracking.
@@ -149,7 +180,47 @@ end
 You can change which corner the toasts are anchored to by passing the `corner` setting to `toast_group`, one of either `:top_left`, `:top_right`, `:bottom_left`, `:bottom_right`. The default is `:bottom_right`.
 
 ```heex
-<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} corner={:top_right} />
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  corner={:top_right}
+  toasts_sync={assigns[:toasts_sync]}
+/>
+```
+
+### Internationalization
+
+You can provide translations for the defaul error toasts by adding the following to your `config.exs`:
+
+```elixir
+config :live_toast,
+  gettext_backend: MyApp.Gettext
+```
+
+You have to create a `live_toast.po` file, inside the `priv/gettext/<language>/LC_MESSAGES/` folder for each language you want to support.
+
+For example, if you want to support spanish, you would create the file `live_toast.po` in the `priv/gettext/es/LC_MESSAGES/` folder, with the following content:
+
+```po
+msgid ""
+msgstr ""
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "We can't find the internet"
+msgstr "Nosotros no podemos encontrar internet"
+
+msgid "Attempting to reconnect"
+msgstr "Intentando reconectar"
+
+msgid "Something went wrong!"
+msgstr "¡Algo salió mal!"
+
+msgid "Hang in there while we get back on track"
+msgstr "Aguanta mientras volvemos a la normalidad"
 ```
 
 ### Function Options
@@ -159,7 +230,7 @@ You can change which corner the toasts are anchored to by passing the `corner` s
 - `kind`: The 'level' of this toast. The `component` function can receive this and modify behavior based on severity.
     the `toast_class_fn` also receives it, and it can be used there to modify styles, for example, making `:info` toasts
     green and `:error` toasts red.
-- `body`: The primary text of the message. 
+- `body`: The primary text of the message.
 - `title`: The optional title of the toast displayed at the top.
 - `icon`: An optional function component that renders next to the title. You can use this with the default toast to display an icon.
 - `action`: An optional function component that renders to the side. You can use this with the default toast to display an action, like a button.
@@ -195,7 +266,12 @@ end
 And then use it to override the default styles:
 
 ```heex
-<LiveToast.toast_group flash={@flash} connected={assigns[:socket] != nil} toast_class_fn={&MyModule.toast_class_fn/1} />
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toast_class_fn={&MyModule.toast_class_fn/1}
+  toasts_sync={assigns[:toasts_sync]}
+/>
 ```
 
 If you need to change the classes of the container, there is a similar function parameter called [`group_class_fn`](https://hexdocs.pm/live_toast/LiveToast.html#group_class_fn/1). Reference the documentation and apply the override just as you would `toast_class_fn/1` shown above.
@@ -212,6 +288,7 @@ additional severity level, like `:warning`, you can pass a list of these values 
   connected={assigns[:socket] != nil}
   kinds={[:info, :error, :warning]}
   toast_class_fn={&custom_toast_class_fn/1}
+  toasts_sync={assigns[:toasts_sync]}
 />
 ```
 

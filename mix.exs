@@ -3,7 +3,7 @@ defmodule LiveToast.MixProject do
 
   use Mix.Project
 
-  @version "0.6.4"
+  @version "0.7.0"
 
   def project do
     [
@@ -35,6 +35,7 @@ defmodule LiveToast.MixProject do
       {:phoenix, ">= 1.7.0"},
       {:phoenix_live_view, ">= 0.20.0"},
       {:ecto, ">= 3.11.0"},
+      {:gettext, ">= 0.18.0"},
       {:esbuild, "~> 0.2", only: :dev},
       {:bandit, "~> 1.1", only: :dev},
       {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},
@@ -72,6 +73,7 @@ defmodule LiveToast.MixProject do
     lib/live_toast/components.ex
     lib/live_toast/live_component.ex
     lib/live_toast/utility.ex
+    lib/live_toast/gettext.ex
     CHANGELOG.md
     LICENSE.md
     mix.exs
