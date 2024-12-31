@@ -15,7 +15,11 @@ defmodule LiveToast.Components do
   attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
   attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
   attr(:target, :any, default: nil, doc: "the target for the phx-click event")
-  attr(:delay, :boolean, default: false, doc: "add 3s delay before showing")
+
+  attr(:delay, :integer,
+    default: 0,
+    doc: "adds a delay before being shown. not exposed by default, used only for 'client-error' and 'server-error'"
+  )
 
   attr(:duration, :integer,
     default: 6000,
@@ -51,6 +55,7 @@ defmodule LiveToast.Components do
       role="alert"
       phx-hook="LiveToast"
       data-duration={@duration}
+      data-delay={@delay}
       data-corner={@corner}
       class={@toast_class_fn.(assigns)}
       {@rest}
@@ -109,6 +114,8 @@ defmodule LiveToast.Components do
 
   attr(:f, :map, required: true, doc: "the map of flash messages")
 
+  attr(:client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown")
+
   attr(:corner, :atom,
     values: [:top_left, :top_center, :top_right, :bottom_left, :bottom_center, :bottom_right],
     default: :bottom_right,
@@ -144,9 +151,12 @@ defmodule LiveToast.Components do
       id="client-error"
       kind={:error}
       title={Utility.translate("We can't find the internet")}
+      delay={@client_error_delay}
       phx-update="ignore"
-      phx-disconnected={Utility.show(".phx-client-error #client-error")}
-      phx-connected={Utility.hide("#client-error")}
+      phx-disconnected={Utility.show_error(".phx-client-error #client-error")}
+      phx-connected={Utility.hide_error("#client-error")}
+      data-disconnected={Utility.show(".phx-client-error #client-error")}
+      data-connected={Utility.hide("#client-error")}
       hidden
     >
       <%= Utility.translate("Attempting to reconnect") %>
@@ -161,9 +171,11 @@ defmodule LiveToast.Components do
       kind={:error}
       title={Utility.translate("Something went wrong!")}
       phx-update="ignore"
-      phx-disconnected={Utility.show(".phx-server-error #server-error")}
-      phx-connected={Utility.hide("#server-error")}
-      delay={true}
+      phx-disconnected={Utility.show_error(".phx-server-error #server-error")}
+      phx-connected={Utility.hide_error("#server-error")}
+      data-disconnected={Utility.show(".phx-server-error #server-error")}
+      data-connected={Utility.hide("#server-error")}
+      delay={@client_error_delay}
       hidden
     >
       <%= Utility.translate("Hang in there while we get back on track") %>
@@ -191,6 +203,8 @@ defmodule LiveToast.Components do
     default: &LiveToast.toast_class_fn/1,
     doc: "function to override the toast classes"
   )
+
+  attr(:client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown")
 
   # Used to render flashes-only on regular non-LV pages.
   @doc false
