@@ -239,12 +239,15 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         durationOverride = Number.parseInt(this.el.dataset.duration)
       }
 
-      window.setTimeout(async () => {
-        // animate this element sliding down, opacity to 0, with delay time
-        await animateOut.bind(this)()
+      // you can set duration to 0 for infinite duration, basically
+      if (durationOverride !== 0) {
+        window.setTimeout(async () => {
+          // animate this element sliding down, opacity to 0, with delay time
+          await animateOut.bind(this)()
 
-        this.pushEventTo('#toast-group', 'clear', { id: this.el.id })
-      }, durationOverride + removalTime)
+          this.pushEventTo('#toast-group', 'clear', { id: this.el.id })
+        }, durationOverride + removalTime)
+      }
     }
   }
 }

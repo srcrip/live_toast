@@ -89,6 +89,54 @@
 </div>
 
 <div class="mb-12">
+  <h2 class="text-lg font-semibold mb-3">Duration</h2>
+  <p class="mt-2 mb-4">
+    You can set the duration of different toasts. If you set duration to 0, they will stay until dismissed (like
+    flashes). The default duration is 6000ms.
+  </p>
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click={
+      JS.push("toast",
+        value: %{
+          "kind" => "info",
+          "title" => "Duration",
+          "body" => "This toast will stay for 1000ms.",
+          "duration" => 1000
+        }
+      )
+    }>
+      Short Toast
+    </.button>
+
+    <.button phx-click={
+      JS.push("toast",
+        value: %{
+          "kind" => "info",
+          "title" => "Duration",
+          "body" => "This toast will stay for 8000ms.",
+          "duration" => 8000
+        }
+      )
+    }>
+      Long Toast
+    </.button>
+
+    <.button phx-click={
+      JS.push("toast",
+        value: %{
+          "kind" => "info",
+          "title" => "Duration",
+          "body" => "This toast will stay until dismissed.",
+          "duration" => 0
+        }
+      )
+    }>
+      Infinite Toast
+    </.button>
+  </div>
+</div>
+
+<div class="mb-12">
   <h2 class="text-lg font-semibold mb-3">Position</h2>
   <p class="mt-2 mb-4">
     The default component
