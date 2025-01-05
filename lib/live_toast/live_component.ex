@@ -80,7 +80,12 @@ defmodule LiveToast.LiveComponent do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div id={assigns[:id] || "toast-group"} class={@group_class_fn.(assigns)}>
+    <div
+      id={assigns[:id] || "toast-group"}
+      phx-hook="LiveToast"
+      data-part="toast-group"
+      class={@group_class_fn.(assigns)}
+    >
       <div class="contents" id="toast-group-stream" phx-update="stream">
         <Components.toast
           :for={
@@ -131,5 +136,20 @@ defmodule LiveToast.LiveComponent do
     # non matches are not unexpected, because the user may
     # have dismissed the toast before the animation ended.
     {:noreply, socket}
+  end
+
+  @impl Phoenix.LiveComponent
+  def handle_event("add_toast", %{"kind" => kind, "msg" => msg} = payload, socket) do
+    options = map_to_keyword(payload["options"] || %{})
+
+    LiveToast.send_toast(kind, msg, options)
+
+    {:noreply, socket}
+  end
+
+  defp map_to_keyword(map) when is_map(map) do
+    map
+    |> Map.to_list()
+    |> Enum.map(fn {key, value} -> {String.to_atom("#{key}"), value} end)
   end
 end
