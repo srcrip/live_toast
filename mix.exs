@@ -35,7 +35,7 @@ defmodule LiveToast.MixProject do
       {:phoenix, ">= 1.7.0"},
       {:phoenix_live_view, ">= 0.20.0"},
       {:ecto, ">= 3.11.0"},
-      {:gettext, ">= 0.24.0"},
+      {:gettext, ">= 0.26.2"},
       {:jason, "~> 1.4"},
       {:esbuild, "~> 0.2", only: :dev},
       {:bandit, "~> 1.1", only: :dev},
