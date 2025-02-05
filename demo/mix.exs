@@ -38,14 +38,14 @@ defmodule Demo.MixProject do
       {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false},
       {:doctor, ">= 0.0.0", only: [:dev], runtime: false},
       {:ex_doc, ">= 0.0.0", only: [:dev], runtime: false},
-      {:gettext, "~> 0.24"},
+      {:gettext, ">= 0.26.2"},
       {:mix_audit, ">= 0.0.0", only: [:dev], runtime: false},
       {:styler, "~> 0.11.9", only: [:dev, :test], runtime: false},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:floki, ">= 0.30.0", only: :test},
       {:tailwind, "~> 0.2"},
-      {:jason, "~> 1.2"},
+      {:jason, "~> 1.4"},
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"}
     ]
