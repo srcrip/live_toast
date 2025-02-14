@@ -107,7 +107,7 @@ defmodule LiveToast.LiveComponent do
           title={if title, do: Utility.translate(title), else: nil}
           target={@myself}
         >
-          <%= Utility.translate(body) %>
+          {Utility.translate(body)}
         </Components.toast>
       </div>
 
