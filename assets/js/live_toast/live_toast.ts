@@ -198,14 +198,35 @@ async function animateOut(this: ViewHook) {
 export function createLiveToastHook(duration = 6000, maxItems = 3) {
   return {
     destroyed(this: ViewHook) {
+      if (this.el.dataset.part === 'toast-group') {
+        return
+      }
+
       doAnimations.bind(this)(duration, maxItems)
     },
     updated(this: ViewHook) {
+      if (this.el.dataset.part === 'toast-group') {
+        return
+      }
+
       // animate to targetDestination in 0ms
       const keyframes = { y: [this.el.targetDestination] }
       animate(this.el, keyframes, { duration: 0 })
     },
     mounted(this: ViewHook) {
+      if (this.el.dataset.part === 'toast-group') {
+        window.addToast = (kind: string, msg: string, options = {}) => {
+          const payload = {
+            kind,
+            msg,
+            options
+          }
+          this.pushEventTo(this.el, 'add_toast', payload)
+        }
+
+        return
+      }
+
       // for the special flashes, check if they are visible, and if not, return early out of here.
       if (['server-error', 'client-error'].includes(this.el.id)) {
         if (isHidden(document.getElementById(this.el.id))) {
