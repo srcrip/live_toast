@@ -77,6 +77,8 @@ defmodule LiveToast.LiveComponent do
     {:ok, socket}
   end
 
+  # todo: if someone really wants it, we can implement the internally used `delay` option here.
+
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""

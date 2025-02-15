@@ -235,6 +235,8 @@ defmodule LiveToast do
 
   attr :toasts_sync, :list, required: true, doc: "toasts that get synchronized when calling `put_toast`"
 
+  attr(:client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown")
+
   @doc """
   Renders a group of toasts and flashes.
 
@@ -259,6 +261,7 @@ defmodule LiveToast do
       corner={@corner}
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
+      client_error_delay={@client_error_delay}
       flash={@flash}
       kinds={@kinds}
     />
