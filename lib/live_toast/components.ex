@@ -45,7 +45,7 @@ defmodule LiveToast.Components do
 
     ~H"""
     <div
-      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+      :if={render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       role="alert"
       phx-hook="LiveToast"
