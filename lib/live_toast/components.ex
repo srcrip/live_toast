@@ -55,7 +55,7 @@ defmodule LiveToast.Components do
       {@rest}
     >
       <%= if @component do %>
-        <%= @component.(Map.merge(assigns, %{body: msg})) %>
+        {@component.(Map.merge(assigns, %{body: msg}))}
       <% else %>
         <div class="grow flex flex-col items-start justify-center">
           <p
@@ -67,17 +67,17 @@ defmodule LiveToast.Components do
             ]}
           >
             <%= if @icon do %>
-              <%= @icon.(assigns) %>
+              {@icon.(assigns)}
             <% end %>
-            <%= @title %>
+            {@title}
           </p>
           <p class="text-sm leading-5">
-            <%= msg %>
+            {msg}
           </p>
         </div>
 
         <%= if @action do %>
-          <%= @action.(assigns) %>
+          {@action.(assigns)}
         <% end %>
       <% end %>
       <button
@@ -148,7 +148,7 @@ defmodule LiveToast.Components do
       phx-connected={Utility.hide("#client-error")}
       hidden
     >
-      <%= Utility.translate("Attempting to reconnect") %>
+      {Utility.translate("Attempting to reconnect")}
       <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
     </.toast>
 
@@ -164,7 +164,7 @@ defmodule LiveToast.Components do
       phx-connected={Utility.hide("#server-error")}
       hidden
     >
-      <%= Utility.translate("Hang in there while we get back on track") %>
+      {Utility.translate("Hang in there while we get back on track")}
       <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
     </.toast>
     """

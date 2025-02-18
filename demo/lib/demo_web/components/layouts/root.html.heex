@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix=" · Phoenix Framework">
-      <%= assigns[:page_title] || "Live Toast" %>
+      {assigns[:page_title] || "Live Toast"}
     </.live_title>
     <link
       rel="icon"
@@ -43,7 +43,7 @@
     />
   </head>
   <body class="h-full flex flex-col bg-white antialiased">
-    <%= @inner_content %>
+    {@inner_content}
     <footer class="mt-10 px-10 py-6 flex gap-4">
       <.link href="https://github.com/srcrip/live_toast" class="text-zinc-700 text-xs">
         github

@@ -27,7 +27,7 @@ application:
 ```elixir
 def deps do
   [
-    {:live_toast, "~> 0.7"}
+    {:live_toast, "~> 0.8.0"}
   ]
 end
 ```
