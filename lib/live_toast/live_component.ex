@@ -87,7 +87,7 @@ defmodule LiveToast.LiveComponent do
             {dom_id,
              %LiveToast{
                kind: k,
-               msg: body,
+               msg: msg,
                title: title,
                icon: icon,
                action: action,
@@ -107,7 +107,7 @@ defmodule LiveToast.LiveComponent do
           title={if title, do: Utility.translate(title), else: nil}
           target={@myself}
         >
-          <%= Utility.translate(body) %>
+          {Utility.translate(msg)}
         </Components.toast>
       </div>
 
