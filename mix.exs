@@ -32,8 +32,8 @@ defmodule LiveToast.MixProject do
 
   defp deps do
     [
-      {:phoenix, ">= 1.7.0"},
-      {:phoenix_live_view, ">= 0.20.0"},
+      {:phoenix, ">= 1.7.19"},
+      {:phoenix_live_view, ">= 1.0.0"},
       {:ecto, ">= 3.11.0"},
       {:gettext, ">= 0.26.2"},
       {:jason, "~> 1.4"},

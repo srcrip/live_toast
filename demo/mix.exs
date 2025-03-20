@@ -29,8 +29,8 @@ defmodule Demo.MixProject do
     [
       {:live_toast, path: ".."},
       {:bandit, "~> 1.1"},
-      {:phoenix, ">= 1.6.0 and < 1.8.0"},
-      {:phoenix_live_view, "~> 0.20"},
+      {:phoenix, "~> 1.7.19"},
+      {:phoenix_live_view, "~> 1.0.4"},
       {:ecto, ">= 0.0.0"},
       {:esbuild, "~> 0.2"},
       {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},

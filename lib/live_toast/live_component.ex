@@ -79,6 +79,9 @@ defmodule LiveToast.LiveComponent do
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
+    # don't ask me why, but the version of the formatter/compiler this is using doesn't think destructuring body below ends up getting used here.
+    # it may be fixed on the latest elixir but I don't really want to bother with it right now.
+    # referencing the fact that everything else besides body is destructured and the compiler see's that it gets used.
     ~H"""
     <div id={assigns[:id] || "toast-group"} class={@group_class_fn.(assigns)}>
       <div class="contents" id="toast-group-stream" phx-update="stream">
@@ -87,13 +90,12 @@ defmodule LiveToast.LiveComponent do
             {dom_id,
              %LiveToast{
                kind: k,
-               msg: body,
                title: title,
                icon: icon,
                action: action,
                duration: duration,
                component: component
-             }} <- @streams.toasts
+             } = lt} <- @streams.toasts
           }
           id={dom_id}
           data-count={@toast_count}
@@ -107,7 +109,7 @@ defmodule LiveToast.LiveComponent do
           title={if title, do: Utility.translate(title), else: nil}
           target={@myself}
         >
-          {Utility.translate(body)}
+          {Utility.translate(lt[:body])}
         </Components.toast>
       </div>
 
