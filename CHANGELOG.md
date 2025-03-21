@@ -81,3 +81,7 @@ Releasing new bundle (meant to compile it in `v0.6.1`).
 - Readme fixes in #32
 - Fix earlier weirdness with gettext usage in 0.7.0 in #34 (thanks @neilberkman)
 - Fix docs source ref in #39 (thanks @Flo0807)
+
+## [v0.9.0] (unreleased)
+
+- Made display of the disconnect error delayed and configurable in #19 (thanks @lardcanoe)
