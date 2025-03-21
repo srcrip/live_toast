@@ -235,6 +235,8 @@ defmodule LiveToast do
 
   attr :toasts_sync, :list, required: true, doc: "toasts that get synchronized when calling `put_toast`"
 
+  attr :clear_after, :integer, required: false, doc: "if provided clears flash after provided milliseconds"
+
   @doc """
   Renders a group of toasts and flashes.
 
@@ -246,6 +248,7 @@ defmodule LiveToast do
       :if={@connected}
       id={@id}
       module={LiveToast.LiveComponent}
+      clear_after={@clear_after}
       toasts_sync={@toasts_sync}
       corner={@corner}
       toast_class_fn={@toast_class_fn}
