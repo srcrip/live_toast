@@ -27,7 +27,7 @@ application:
 ```elixir
 def deps do
   [
-    {:live_toast, "~> 0.6.4"}
+    {:live_toast, "~> 0.8.0"}
   ]
 end
 ```
@@ -153,7 +153,7 @@ Or you can use the helper function, [`put_toast`](https://hexdocs.pm/live_toast/
 defmodule YourApp.SomeLiveView do
   def handle_event("submit", _payload, socket) do
     socket = socket
-    |> put_toast(:info, "Upload successful.")
+    |> LiveToast.put_toast(:info, "Upload successful.")
 
     {:noreply, socket}
   end
@@ -167,7 +167,7 @@ non-live pages.
 defmodule YourApp.SomeController do
   def create(conn, _params) do
     conn
-    |> put_toast(:info, "Upload successful.")
+    |> LiveToast.put_toast(:info, "Upload successful.")
     |> render(:whatever)
   end
 end

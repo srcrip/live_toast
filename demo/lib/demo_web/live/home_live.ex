@@ -249,10 +249,10 @@ defmodule DemoWeb.HomeLive do
             data-part="title"
             class="mb-2 flex items-center text-base font-semibold leading-6"
           >
-            <%= @title %>
+            {@title}
           </p>
           <p class="text-sm leading-5">
-            <%= @body %>
+            {@body}
           </p>
         </div>
       </div>
@@ -272,10 +272,10 @@ defmodule DemoWeb.HomeLive do
     ~H"""
     <div class="grow flex flex-col items-start justify-center">
       <h1 class="mb-2 text-lg font-bold text-zinc-900">
-        <%= @title %>
+        {@title}
       </h1>
       <p class="text-sm font-medium text-indigo-500">
-        <%= @body %>
+        {@body}
       </p>
     </div>
     """
@@ -308,10 +308,10 @@ defmodule DemoWeb.HomeLive do
                 clip-rule="evenodd"
               />
             </svg>
-            <%= @title %>
+            {@title}
           </p>
           <p class="text-sm leading-5">
-            <%= @body %>
+            {@body}
           </p>
         </div>
 
@@ -322,7 +322,7 @@ defmodule DemoWeb.HomeLive do
 
       <p class="w-full mt-2 text-xs font-medium text-gray-500 flex">
         <span class="grow text-indigo-600">View details</span>
-        <span><%= DateTime.utc_now() |> DateTime.to_iso8601() %></span>
+        <span>{DateTime.utc_now() |> DateTime.to_iso8601()}</span>
       </p>
     </div>
     """
