@@ -3,7 +3,7 @@ defmodule LiveToast.MixProject do
 
   use Mix.Project
 
-  @version "0.7.0"
+  @version "0.8.0"
 
   def project do
     [
@@ -32,10 +32,11 @@ defmodule LiveToast.MixProject do
 
   defp deps do
     [
-      {:phoenix, ">= 1.7.0"},
-      {:phoenix_live_view, ">= 0.20.0"},
+      {:phoenix, ">= 1.7.19"},
+      {:phoenix_live_view, ">= 1.0.0"},
       {:ecto, ">= 3.11.0"},
-      {:gettext, ">= 0.18.0"},
+      {:gettext, ">= 0.26.2"},
+      {:jason, "~> 1.4"},
       {:esbuild, "~> 0.2", only: :dev},
       {:bandit, "~> 1.1", only: :dev},
       {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},
@@ -86,7 +87,7 @@ defmodule LiveToast.MixProject do
     [
       main: "readme",
       extras: ["README.md", "CHANGELOG.md"],
-      source_ref: @version,
+      source_ref: "master",
       source_url: "https://github.com/srcrip/live_toast",
       skip_undefined_reference_warnings_on: ["CHANGELOG.md"]
     ]

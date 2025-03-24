@@ -46,6 +46,14 @@ defmodule LiveToast.Utility do
     """
   end
 
+  def show_error(js \\ %JS{}, selector) do
+    JS.dispatch(js, "show-error", to: selector)
+  end
+
+  def hide_error(js \\ %JS{}, selector) do
+    JS.dispatch(js, "hide-error", to: selector)
+  end
+
   def show(js \\ %JS{}, selector) do
     JS.show(js,
       to: selector,

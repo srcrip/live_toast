@@ -72,3 +72,16 @@ Releasing new bundle (meant to compile it in `v0.6.1`).
 - Big fix to longstanding issue where toasts don't work properly across navigations: #28
 - Added gettext internationalization from #16 (thanks @elephantoss)
 - A couple other random cleanups and docs changes.
+
+## [v0.8.0] (2024-02-14) ❤️
+
+- Fixed typespecs from #26 (thanks @wkirschbaum)
+- Added `:top_center` and `:bottom_center` positions in #29 (thanks @nallwhy)
+- Feature: infinite duration toasts from #31 (thanks @vanderhoop)
+- Readme fixes in #32
+- Fix earlier weirdness with gettext usage in 0.7.0 in #34 (thanks @neilberkman)
+- Fix docs source ref in #39 (thanks @Flo0807)
+
+## [v0.9.0] (unreleased)
+
+- Made display of the disconnect error delayed and configurable in #19 (thanks @lardcanoe)

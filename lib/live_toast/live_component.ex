@@ -83,6 +83,8 @@ defmodule LiveToast.LiveComponent do
     {:ok, socket}
   end
 
+  # todo: if someone really wants it, we can implement the internally used `delay` option here.
+
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
@@ -93,7 +95,7 @@ defmodule LiveToast.LiveComponent do
             {dom_id,
              %LiveToast{
                kind: k,
-               msg: body,
+               msg: msg,
                title: title,
                icon: icon,
                action: action,
@@ -113,7 +115,7 @@ defmodule LiveToast.LiveComponent do
           title={if title, do: Utility.translate(title), else: nil}
           target={@myself}
         >
-          <%= Utility.translate(body) %>
+          {Utility.translate(msg)}
         </Components.toast>
       </div>
 

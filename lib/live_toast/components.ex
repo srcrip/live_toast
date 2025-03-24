@@ -16,6 +16,11 @@ defmodule LiveToast.Components do
   attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
   attr(:target, :any, default: nil, doc: "the target for the phx-click event")
 
+  attr(:delay, :integer,
+    default: 0,
+    doc: "adds a delay before being shown. not exposed by default, used only for 'client-error' and 'server-error'"
+  )
+
   attr(:duration, :integer,
     default: 6000,
     doc: "the time in milliseconds before the message is automatically dismissed"
@@ -50,12 +55,13 @@ defmodule LiveToast.Components do
       role="alert"
       phx-hook="LiveToast"
       data-duration={@duration}
+      data-delay={@delay}
       data-corner={@corner}
       class={@toast_class_fn.(assigns)}
       {@rest}
     >
       <%= if @component do %>
-        <%= @component.(Map.merge(assigns, %{body: msg})) %>
+        {@component.(Map.merge(assigns, %{body: msg}))}
       <% else %>
         <div class="grow flex flex-col items-start justify-center">
           <p
@@ -67,17 +73,17 @@ defmodule LiveToast.Components do
             ]}
           >
             <%= if @icon do %>
-              <%= @icon.(assigns) %>
+              {@icon.(assigns)}
             <% end %>
-            <%= @title %>
+            {@title}
           </p>
           <p class="text-sm leading-5">
-            <%= msg %>
+            {msg}
           </p>
         </div>
 
         <%= if @action do %>
-          <%= @action.(assigns) %>
+          {@action.(assigns)}
         <% end %>
       <% end %>
       <button
@@ -108,6 +114,8 @@ defmodule LiveToast.Components do
 
   attr(:f, :map, required: true, doc: "the map of flash messages")
 
+  attr(:client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown")
+
   attr(:corner, :atom,
     values: [:top_left, :top_center, :top_right, :bottom_left, :bottom_center, :bottom_right],
     default: :bottom_right,
@@ -135,7 +143,6 @@ defmodule LiveToast.Components do
       phx-update="ignore"
       flash={@f}
     />
-
     <.toast
       data-component="flash"
       corner={@corner}
@@ -143,12 +150,15 @@ defmodule LiveToast.Components do
       id="client-error"
       kind={:error}
       title={Utility.translate("We can't find the internet")}
+      delay={@client_error_delay}
       phx-update="ignore"
-      phx-disconnected={Utility.show(".phx-client-error #client-error")}
-      phx-connected={Utility.hide("#client-error")}
+      phx-disconnected={Utility.show_error(".phx-client-error #client-error")}
+      phx-connected={Utility.hide_error("#client-error")}
+      data-disconnected={Utility.show(".phx-client-error #client-error")}
+      data-connected={Utility.hide("#client-error")}
       hidden
     >
-      <%= Utility.translate("Attempting to reconnect") %>
+      {Utility.translate("Attempting to reconnect")}
       <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
     </.toast>
 
@@ -160,11 +170,14 @@ defmodule LiveToast.Components do
       kind={:error}
       title={Utility.translate("Something went wrong!")}
       phx-update="ignore"
-      phx-disconnected={Utility.show(".phx-server-error #server-error")}
-      phx-connected={Utility.hide("#server-error")}
+      phx-disconnected={Utility.show_error(".phx-server-error #server-error")}
+      phx-connected={Utility.hide_error("#server-error")}
+      data-disconnected={Utility.show(".phx-server-error #server-error")}
+      data-connected={Utility.hide("#server-error")}
+      delay={@client_error_delay}
       hidden
     >
-      <%= Utility.translate("Hang in there while we get back on track") %>
+      {Utility.translate("Hang in there while we get back on track")}
       <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
     </.toast>
     """
@@ -189,6 +202,8 @@ defmodule LiveToast.Components do
     default: &LiveToast.toast_class_fn/1,
     doc: "function to override the toast classes"
   )
+
+  attr(:client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown")
 
   # Used to render flashes-only on regular non-LV pages.
   @doc false

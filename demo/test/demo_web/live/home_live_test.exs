@@ -34,14 +34,14 @@ defmodule DemoWeb.HomeLiveTest do
       assert conn
              |> get(~p"/")
              |> html_response(200) =~
-               "We can&#39;t find the internet"
+               Plug.HTML.html_escape("We can't find the internet")
     end
 
     test "renders error toasts in Spanish", %{conn: conn} do
       assert conn
              |> get(~p"/?locale=es")
              |> html_response(200) =~
-               "Nosotros no podemos encontrar internet"
+               Plug.HTML.html_escape("Nosotros no podemos encontrar internet")
     end
   end
 
