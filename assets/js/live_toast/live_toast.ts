@@ -1,5 +1,5 @@
-import { animate } from "motion"
-import type { ViewHook } from "phoenix_live_view"
+import { animate } from 'motion'
+import type { ViewHook } from 'phoenix_live_view'
 
 function isHidden(el: HTMLElement | null) {
   if (el === null) {
@@ -10,26 +10,26 @@ function isHidden(el: HTMLElement | null) {
 }
 
 function isFlash(el: HTMLElement) {
-  return el.dataset.component === "flash"
+  return el.dataset.component === 'flash'
 }
 
 // number of flashes that aren't hidden
 function flashCount() {
   let num = 0
 
-  if (!isHidden(document.getElementById("server-error"))) {
+  if (!isHidden(document.getElementById('server-error'))) {
     num += 1
   }
 
-  if (!isHidden(document.getElementById("client-error"))) {
+  if (!isHidden(document.getElementById('client-error'))) {
     num += 1
   }
 
-  if (!isHidden(document.getElementById("flash-info"))) {
+  if (!isHidden(document.getElementById('flash-info'))) {
     num += 1
   }
 
-  if (!isHidden(document.getElementById("flash-error"))) {
+  if (!isHidden(document.getElementById('flash-error'))) {
     num += 1
   }
 
@@ -99,14 +99,14 @@ function doAnimations(
 
     const toast = ts[i]
 
-    let direction = ""
+    let direction = ''
 
     if (
-      toast.dataset.corner === "bottom_left" ||
-      toast.dataset.corner === "bottom_center" ||
-      toast.dataset.corner === "bottom_right"
+      toast.dataset.corner === 'bottom_left' ||
+      toast.dataset.corner === 'bottom_center' ||
+      toast.dataset.corner === 'bottom_right'
     ) {
-      direction = "-"
+      direction = '-'
     }
 
     // Calculate the translateY value with gap
@@ -122,9 +122,9 @@ function doAnimations(
 
     // also if this item moved past the max limit, disable click events on it
     if (toast.order >= max) {
-      toast.classList.remove("pointer-events-auto")
+      toast.classList.remove('pointer-events-auto')
     } else {
-      toast.classList.add("pointer-events-auto")
+      toast.classList.add('pointer-events-auto')
     }
 
     const keyframes = { y: [`${direction}${val}px`], opacity: [opacity] }
@@ -132,7 +132,7 @@ function doAnimations(
     // if element is entering for the first time, start below the fold
     if (toast.order === 0 && lastTS.includes(toast) === false) {
       const val = toast.offsetHeight + gap
-      const oppositeDirection = direction === "-" ? "" : "-"
+      const oppositeDirection = direction === '-' ? '' : '-'
       keyframes.y.unshift(`${oppositeDirection}${val}px`)
 
       keyframes.opacity.unshift(0)
@@ -144,7 +144,7 @@ function doAnimations(
 
     // as of right now this is not exposed to end users, but
     // it's 'plumbed out' if we want to make it so in the future
-    const delayTime = Number.parseInt(this.el.dataset.delay || "0") / 1000
+    const delayTime = Number.parseInt(this.el.dataset.delay || '0') / 1000
 
     animate(toast, keyframes, {
       duration,
@@ -161,7 +161,7 @@ function doAnimations(
     // also what about elements moving down when you close one?
     window.setTimeout(() => {
       if (toast.order > max) {
-        this.pushEventTo("#toast-group", "clear", { id: toast.id })
+        this.pushEventTo('#toast-group', 'clear', { id: toast.id })
       }
     }, animationDelayTime + removalTime)
 
@@ -172,14 +172,14 @@ function doAnimations(
 async function animateOut(this: ViewHook) {
   const val = (this.el.order - 2) * 100 + (this.el.order - 2) * gap
 
-  let direction = ""
+  let direction = ''
 
   if (
-    this.el.dataset.corner === "bottom_left" ||
-    this.el.dataset.corner === "bottom_center" ||
-    this.el.dataset.corner === "bottom_right"
+    this.el.dataset.corner === 'bottom_left' ||
+    this.el.dataset.corner === 'bottom_center' ||
+    this.el.dataset.corner === 'bottom_right'
   ) {
-    direction = "-"
+    direction = '-'
   }
 
   const animation = animate(
@@ -188,10 +188,10 @@ async function animateOut(this: ViewHook) {
     {
       opacity: {
         duration: 0.2,
-        easing: "ease-out"
+        easing: 'ease-out'
       },
       duration: 0.3,
-      easing: "ease-out"
+      easing: 'ease-out'
     }
   )
 
@@ -211,8 +211,8 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
       animate(this.el, keyframes, { duration: 0 })
     },
     mounted(this: ViewHook) {
-      this.el.addEventListener("show-error", async _event => {
-        const delayTime = Number.parseInt(this.el.dataset.delay || "0")
+      this.el.addEventListener('show-error', async _event => {
+        const delayTime = Number.parseInt(this.el.dataset.delay || '0')
         await new Promise(resolve => setTimeout(resolve, delayTime))
 
         // todo: in the future use this to execute the data-disconnected command
@@ -224,27 +224,27 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         // (don't want to do this quite yet because 1.0 is pretty new)
         // also repeat this on hide.
 
-        this.el.style.display = "flex"
+        this.el.style.display = 'flex'
       })
 
-      this.el.addEventListener("hide-error", async _event => {
-        this.el.style.display = "none"
+      this.el.addEventListener('hide-error', async _event => {
+        this.el.style.display = 'none'
       })
 
       // for the special flashes, check if they are visible, and if not, return early out of here.
-      if (["server-error", "client-error"].includes(this.el.id)) {
+      if (['server-error', 'client-error'].includes(this.el.id)) {
         if (isHidden(document.getElementById(this.el.id))) {
           return
         }
       }
 
-      window.addEventListener("phx:clear-flash", e => {
-        this.pushEvent("lv:clear-flash", {
+      window.addEventListener('phx:clear-flash', e => {
+        this.pushEvent('lv:clear-flash', {
           key: (e as CustomEvent<{ key: string }>).detail.key
         })
       })
 
-      window.addEventListener("flash-leave", async event => {
+      window.addEventListener('flash-leave', async event => {
         if (event.target === this.el) {
           // animate this flash sliding out
           doAnimations.bind(this, duration, maxItems, this.el)()
@@ -255,24 +255,44 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
       // begin actually showing the toast through this call to the animation function
       doAnimations.bind(this)(duration, maxItems)
 
-      // skip the removal code if this is a flash
-      if (isFlash(this.el)) {
-        return
-      }
-
       let durationOverride = duration
       if (this.el.dataset.duration !== undefined) {
         durationOverride = Number.parseInt(this.el.dataset.duration)
       }
 
-      // you can set duration to 0 for infinite duration, basically
-      if (durationOverride !== 0) {
+      let flashDuration = undefined
+      if (this.el.dataset.flashDuration !== undefined) {
+        flashDuration = Number.parseInt(this.el.dataset.flashDuration)
+      }
+
+      // skip the removal code if this is a flash, if autoHideFlash is nullish
+      if (isFlash(this.el) && !flashDuration) {
+        return
+      }
+
+      // this could be condensed
+      if (flashDuration) {
+        // do stuff
         window.setTimeout(async () => {
           // animate this element sliding down, opacity to 0, with delay time
           await animateOut.bind(this)()
 
-          this.pushEventTo("#toast-group", "clear", { id: this.el.id })
-        }, durationOverride + removalTime)
+          const kind = this.el.dataset.kind
+
+          if (kind) {
+            this.pushEvent('lv:clear-flash', { key: kind })
+          }
+        }, flashDuration + removalTime)
+      } else {
+        // you can set duration to 0 for infinite duration, basically
+        if (durationOverride !== 0) {
+          window.setTimeout(async () => {
+            // animate this element sliding down, opacity to 0, with delay time
+            await animateOut.bind(this)()
+
+            this.pushEventTo('#toast-group', 'clear', { id: this.el.id })
+          }, durationOverride + removalTime)
+        }
       }
     }
   }

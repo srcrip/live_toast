@@ -29,12 +29,6 @@ defmodule LiveToast.LiveComponent do
     # If there was, we need to look for a corresponding flash message (with the same kind and message) and remove it.
     sync_toasts = Map.get(assigns, :toasts_sync, [])
 
-    clear_after = Map.get(assigns, :clear_after)
-
-    unless is_nil(clear_after) do
-      Process.send_after(self(), :clear_flash, clear_after)
-    end
-
     sync_toast =
       if sync_toasts && sync_toasts != [] do
         List.first(sync_toasts)
