@@ -113,7 +113,7 @@ defmodule LiveToast.LiveComponent do
         </Components.toast>
       </div>
 
-      <Components.flashes f={@f} corner={@corner} toast_class_fn={@toast_class_fn} kinds={@kinds} />
+      <Components.flashes f={@f} corner={@corner} flash_duration={@flash_duration} toast_class_fn={@toast_class_fn} kinds={@kinds} />
     </div>
     """
   end

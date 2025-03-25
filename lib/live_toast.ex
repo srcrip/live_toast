@@ -252,6 +252,7 @@ defmodule LiveToast do
       module={LiveToast.LiveComponent}
       toasts_sync={@toasts_sync}
       corner={@corner}
+      flash_duration={@flash_duration}
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
       f={@flash}
