@@ -37,6 +37,8 @@ defmodule LiveToast.Components do
   attr(:action, :any, default: nil, doc: "the optional action to render in the flash message")
   attr(:component, :any, default: nil, doc: "the optional component to render the flash message")
 
+  attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
+
   slot(:inner_block, doc: "the optional inner block that renders the flash message")
 
   @doc """
@@ -54,6 +56,8 @@ defmodule LiveToast.Components do
       id={@id}
       role="alert"
       phx-hook="LiveToast"
+      data-kind={@kind}
+      data-flash-duration={@flash_duration}
       data-duration={@duration}
       data-delay={@delay}
       data-corner={@corner}
@@ -129,6 +133,8 @@ defmodule LiveToast.Components do
 
   attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
 
+  attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
+
   @doc false
   def flashes(assigns) do
     ~H"""
@@ -137,6 +143,7 @@ defmodule LiveToast.Components do
       data-component="flash"
       corner={@corner}
       toast_class_fn={@toast_class_fn}
+      flash_duration={@flash_duration}
       duration={0}
       kind={level}
       title={String.capitalize(to_string(level))}
@@ -205,12 +212,20 @@ defmodule LiveToast.Components do
 
   attr(:client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown")
 
+  attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
+
   # Used to render flashes-only on regular non-LV pages.
   @doc false
   def flash_group(assigns) do
     ~H"""
     <div id={assigns[:id] || "flash-group"} class={@group_class_fn.(assigns)}>
-      <.flashes f={@flash} corner={@corner} toast_class_fn={@toast_class_fn} kinds={@kinds} />
+      <.flashes
+        f={@flash}
+        corner={@corner}
+        flash_duration={@flash_duration}
+        toast_class_fn={@toast_class_fn}
+        kinds={@kinds}
+      />
     </div>
     """
   end
