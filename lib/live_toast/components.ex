@@ -146,7 +146,7 @@ defmodule LiveToast.Components do
       flash_duration={@flash_duration}
       duration={0}
       kind={level}
-      title={String.capitalize(to_string(level))}
+      title={Utility.translate(String.capitalize(to_string(level)))}
       phx-update="ignore"
       flash={@f}
     />

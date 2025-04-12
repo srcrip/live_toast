@@ -80,6 +80,7 @@ defmodule LiveToast.MixProject do
     mix.exs
     package.json
     README.md
+    i18n
     """
   end
 

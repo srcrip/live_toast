@@ -1,0 +1,33 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Info"
+msgstr "Info"
+
+msgid "Error"
+msgstr "Fehler"
+
+msgid "We can't find the internet"
+msgstr "Keine Internet-Verbindung"
+
+msgid "Attempting to reconnect"
+msgstr "Verbindung wird wiederhergestellt"
+
+msgid "Something went wrong!"
+msgstr "Etwas ist schiefgelaufen!"
+
+msgid "Hang in there while we get back on track"
+msgstr "Bitte warten Sie, während wir das Problem beheben"
