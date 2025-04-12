@@ -190,38 +190,22 @@ You can change which corner the toasts are anchored to by passing the `corner` s
 
 ### Internationalization
 
-You can provide translations for the defaul error toasts by adding the following to your `config.exs`:
+You can provide translations for the default error toasts by adding the following to your `config.exs`:
 
 ```elixir
 config :live_toast,
   gettext_backend: MyApp.Gettext
 ```
 
-You have to create a `live_toast.po` file, inside the `priv/gettext/<language>/LC_MESSAGES/` folder for each language you want to support.
+Copy the provided template and translations:
 
-For example, if you want to support spanish, you would create the file `live_toast.po` in the `priv/gettext/es/LC_MESSAGES/` folder, with the following content:
-
-```po
-msgid ""
-msgstr ""
-"Language: es\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-msgid "We can't find the internet"
-msgstr "Nosotros no podemos encontrar internet"
-
-msgid "Attempting to reconnect"
-msgstr "Intentando reconectar"
-
-msgid "Something went wrong!"
-msgstr "¡Algo salió mal!"
-
-msgid "Hang in there while we get back on track"
-msgstr "Aguanta mientras volvemos a la normalidad"
+```sh
+cp -rv deps/live_toast/i18n/gettext/* priv/gettext
+# optionally create missing (empty) translation files (.po) based on the template (.pot):
+mix gettext.extract --merge
 ```
+
+You have to provide a `live_toast.po` file, inside the `priv/gettext/<language>/LC_MESSAGES/` folder for each language you want to support.
 
 ### Function Options
 
