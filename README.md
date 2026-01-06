@@ -73,16 +73,18 @@ Then, add the path to the `live_toast` dependency to your list of paths Tailwind
 
 ### Tailwind CSS v4
 
-Use this instruction if you use the CSS-first configuration of Tailwind. If your project still has a `tailwind.config.js` file look for the Tailwind CSS v3 instruction.
+Use this instruction if you use the CSS-first configuration of Tailwind. If your project still has a `tailwind.config.js` file, look for the Tailwind CSS v3 instruction.
 
 In your CSS file:
 
-```CSS
+```css
 /* assets/css/app.css */
 
 /* add this line */
 @source "../../deps/live_toast/lib/**/*.*ex";
 ```
+
+**Note:** The path uses `../../` because CSS files are typically in `assets/css/`.
 
 ### Tailwind CSS v3
 
