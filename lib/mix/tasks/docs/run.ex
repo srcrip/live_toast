@@ -28,6 +28,8 @@ defmodule Mix.Tasks.Docs.Run do
   def run(_) do
     Mix.Task.run("docs")
 
+    Application.ensure_all_started(:telemetry)
+
     bandit = {Bandit, plug: Router, scheme: :http, port: __MODULE__.Router.port()}
     {:ok, _} = Supervisor.start_link([bandit], strategy: :one_for_one)
 
