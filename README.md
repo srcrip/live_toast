@@ -21,8 +21,7 @@ Live Toast is a drop-in replacement for the flash system in Phoenix/LiveView.
 
 ## Installation
 
-Add `live_toast` to your list of dependencies in the `mix.exs` of your Phoenix
-application:
+Add `live_toast` to your list of dependencies in the `mix.exs` of your Phoenix app:
 
 ```elixir
 def deps do
