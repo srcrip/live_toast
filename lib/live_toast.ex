@@ -290,6 +290,11 @@ defmodule LiveToast do
     doc: "enter and exit motion settings for this toast group"
   )
 
+  attr(:connection_notifications, :map,
+    default: %{},
+    doc: "copy and kind overrides for connection-state notifications"
+  )
+
   attr :toasts_sync, :list, required: true, doc: "toasts that get synchronized when calling `put_toast`"
 
   attr :flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds"
@@ -313,6 +318,8 @@ defmodule LiveToast do
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
       motion={@motion}
+      connection_notifications={@connection_notifications}
+      client_error_delay={@client_error_delay}
       f={@flash}
       kinds={@kinds}
     />
@@ -324,6 +331,7 @@ defmodule LiveToast do
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
       motion={@motion}
+      connection_notifications={@connection_notifications}
       client_error_delay={@client_error_delay}
       flash={@flash}
       kinds={@kinds}

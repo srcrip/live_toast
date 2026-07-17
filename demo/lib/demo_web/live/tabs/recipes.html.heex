@@ -134,6 +134,44 @@ LiveToast.dismiss_toast(uuid)</code></pre>
 </div>
 
 <div class="mb-12 space-y-4">
+  <h3 id="connection-notifications" class="scroll-mt-20 text-zinc-900 font-medium">
+    Customize Connection Notices
+  </h3>
+  <p>
+    Override the copy or kind of the built-in connection notices at the toast host.
+    These notices remain persistent, cannot be dismissed, and do not consume the ordinary visible-toast limit.
+  </p>
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click={JS.dispatch("show-error", to: "#client-error")}>
+      Preview Notice
+    </.button>
+    <.button phx-click={JS.dispatch("hide-error", to: "#client-error")}>
+      Hide Preview
+    </.button>
+  </div>
+  <pre class="overflow-x-auto rounded-md bg-zinc-950 p-4 text-sm text-zinc-100"><code>&lt;LiveToast.toast_group
+  flash=&#123;@flash&#125;
+  connected=&#123;assigns[:socket] != nil&#125;
+  toasts_sync=&#123;assigns[:toasts_sync]&#125;
+  connection_notifications=&#123;%&#123;
+    client_error: %&#123;
+      kind: :error,
+      title: "Connection interrupted",
+      body: "Live updates will resume automatically."
+    &#125;
+  &#125;&#125;
+/&gt;</code></pre>
+  <p>
+    <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/lib/demo_web/components/layouts/app.html.heex"
+    >
+      View the host configuration
+    </.link>
+  </p>
+</div>
+
+<div class="mb-12 space-y-4">
   <h3 id="pause-timed-toast" class="scroll-mt-20 text-zinc-900 font-medium">
     Pause Timed Toast
   </h3>

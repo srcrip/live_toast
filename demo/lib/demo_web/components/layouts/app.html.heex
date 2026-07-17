@@ -6,6 +6,20 @@
     kinds={[:info, :error, :warn]}
     flash_duration={3000}
     motion={(assigns[:settings] || %{})["motion"] || %{}}
+    client_error_delay={0}
+    connection_notifications={
+      if assigns[:live_action] == :recipes do
+        %{
+          client_error: %{
+            kind: :error,
+            title: "Connection interrupted",
+            body: "Live updates will resume automatically."
+          }
+        }
+      else
+        %{}
+      end
+    }
     toasts_sync={assigns[:toasts_sync]}
     connected={assigns[:socket] != nil}
     {

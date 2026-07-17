@@ -135,6 +135,68 @@ function mountToast(
   }
 }
 
+function mountOverflowToast(flashVisible: boolean, connectionNotice = false) {
+  document.body.innerHTML = `
+    <div id="toast-group" data-live-toast-motion="{}">
+      <div
+        id="${connectionNotice ? 'client-error' : 'flash-success'}"
+        data-component="flash"
+        ${connectionNotice ? 'data-live-toast-connection="client_error"' : ''}
+      ></div>
+      <div phx-update="stream">
+        ${[1, 2, 3, 4]
+          .map(
+            id => `
+              <div
+                id="toast-${id}"
+                phx-hook="LiveToast"
+                data-corner="bottom_right"
+                data-duration="0"
+              ></div>
+            `
+          )
+          .join('')}
+      </div>
+    </div>
+  `
+
+  const flash = document.getElementById(
+    connectionNotice ? 'client-error' : 'flash-success'
+  ) as HTMLElement
+  const toasts = Array.from(
+    document.querySelectorAll<HTMLElement>('[phx-hook="LiveToast"]')
+  )
+
+  Object.defineProperty(flash, 'offsetParent', {
+    configurable: true,
+    get: () => (flashVisible ? document.body : null)
+  })
+
+  for (const toast of toasts) {
+    Object.defineProperty(toast, 'offsetParent', {
+      configurable: true,
+      get: () => document.body
+    })
+  }
+
+  const el = toasts[0]
+  const pushes: Array<[Element | string, string, Record<string, string>]> = []
+  const callbacks = createLiveToastHook(1000, 3)
+  const hook = {
+    el,
+    pushEvent: () => undefined,
+    pushEventTo: (
+      target: Element | string,
+      event: string,
+      payload: Record<string, string>
+    ) => pushes.push([target, event, payload])
+  }
+
+  callbacks.mounted.call(hook as never)
+
+  return { pushes }
+}
+
 function advance(milliseconds: number) {
   now += milliseconds
   jest.advanceTimersByTime(milliseconds)
@@ -307,6 +369,28 @@ describe('LiveToast motion configuration', () => {
     const exit = motionCalls.find(call => call.element === toast.el)
     expect(exit?.keyframes).toEqual({ opacity: 0 })
     expect(exit?.options.duration).toBe(0.001)
+  })
+})
+
+describe('LiveToast connection notifications', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+    now = 0
+    animationEvents.length = 0
+    motionCalls.length = 0
+    installDom()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  test('excludes a visible connection notice from the ordinary toast limit', () => {
+    const toast = mountOverflowToast(true, true)
+
+    advance(1005)
+
+    expect(toast.pushes).toHaveLength(0)
   })
 })
 

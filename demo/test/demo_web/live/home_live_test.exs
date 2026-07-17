@@ -119,6 +119,15 @@ defmodule DemoWeb.HomeLiveTest do
       assert render(view) =~ ~s(&quot;direction&quot;:&quot;left&quot;)
     end
 
+    test "renders the configured connection notice recipe", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Customize Connection Notices"
+      assert html =~ "Preview Notice"
+      assert html =~ ~s(data-live-toast-connection="client_error")
+      refute has_element?(view, "#client-error button[aria-label=close]")
+    end
+
     test "renders section links in the side navigation", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/recipes")
 
@@ -129,6 +138,7 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ ~s(href="/recipes#pause-timed-toast")
       assert html =~ ~s(href="/recipes#centered-positions")
       assert html =~ ~s(href="/recipes#toast-motion")
+      assert html =~ ~s(href="/recipes#connection-notifications")
     end
   end
 end

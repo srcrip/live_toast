@@ -296,6 +296,28 @@ msgstr "Aguanta mientras volvemos a la normalidad"
 - `component`: Use this to totally override rendering of the toast. This is expected to be a function component that
     will receive all of the above options. See [this part of the demo](https://github.com/srcrip/live_toast/blob/fddcd7c51be05ba9997eb300ca920985e98ab583/demo/lib/demo_web/live/home_live.ex#L61) as an example.
 
+### Connection-state notifications
+
+Override the built-in client and server connection notices with the `connection_notifications` host attribute. Each
+entry accepts `kind`, `title`, and `body`; unspecified values retain their defaults.
+
+```heex
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toasts_sync={assigns[:toasts_sync]}
+  connection_notifications={%{
+    client_error: %{
+      kind: :error,
+      title: "Connection interrupted",
+      body: "Live updates will resume automatically."
+    }
+  }}
+/>
+```
+
+Connection notices are always persistent, non-dismissible, and excluded from the ordinary visible-toast limit.
+
 Note that if you use more than just `:info` and `:error` in your codebase for flashes, you can augment LiveToast using
 some of the methods below to support that.
 

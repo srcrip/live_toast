@@ -136,6 +136,8 @@ defmodule LiveToast.LiveComponent do
         corner={@corner}
         flash_duration={@flash_duration}
         toast_class_fn={@toast_class_fn}
+        client_error_delay={@client_error_delay}
+        connection_notifications={@connection_notifications}
         kinds={@kinds}
       />
     </div>

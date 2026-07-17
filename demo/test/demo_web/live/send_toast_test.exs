@@ -40,6 +40,15 @@ defmodule DemoWeb.SendToastTest do
       ~H"""
       <LiveToast.toast_group
         flash={@flash}
+        connection_notifications={
+          %{
+            client_error: %{
+              kind: :error,
+              title: "Custom connection title",
+              body: "Custom connection body"
+            }
+          }
+        }
         toasts_sync={assigns[:toasts_sync]}
         connected={assigns[:socket] != nil}
       />
@@ -78,6 +87,16 @@ defmodule DemoWeb.SendToastTest do
   end
 
   describe "LiveToast.send_toast/3" do
+    test "renders a persistent, non-dismissible configured connection notice", %{conn: conn} do
+      {:ok, view, html} = live_isolated(conn, TestLive)
+
+      assert html =~ ~s(data-live-toast-connection="client_error")
+      assert html =~ ~s(data-duration="0")
+      assert html =~ "Custom connection title"
+      assert html =~ "Custom connection body"
+      refute has_element?(view, "#client-error button[aria-label=close]")
+    end
+
     test "renders info toast", %{conn: conn} do
       {:ok, view, _html} = live_isolated(conn, TestLive)
 
