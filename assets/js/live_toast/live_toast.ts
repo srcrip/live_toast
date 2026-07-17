@@ -44,6 +44,7 @@ const animationTime = 550
 const maxItemsIgnoresFlashes = true
 // gap in px between toasts
 const gap = 15
+const dismissEvent = 'live-toast-dismiss'
 
 let lastTS: any[] = []
 
@@ -161,12 +162,19 @@ function doAnimations(
     // also what about elements moving down when you close one?
     window.setTimeout(() => {
       if (toast.order > max) {
-        this.pushEventTo('#toast-group', 'clear', { id: toast.id })
+        this.pushEventTo(toastGroupTarget(toast), 'clear', { id: toast.id })
       }
     }, animationDelayTime + removalTime)
 
     lastTS = ts
   }
+}
+
+function toastGroupTarget(el: HTMLElement) {
+  const streamContainer = el.closest<HTMLElement>('[phx-update="stream"]')
+  const toastGroup = streamContainer?.parentElement
+
+  return toastGroup || '#toast-group'
 }
 
 async function animateOut(this: ViewHook) {
@@ -196,6 +204,23 @@ async function animateOut(this: ViewHook) {
   )
 
   await animation.finished
+}
+
+async function dismissToast(
+  this: ViewHook,
+  animationDelayTime: number,
+  maxItems: number
+) {
+  if (this.el.dataset.liveToastDismissing === 'true') {
+    return
+  }
+
+  this.el.dataset.liveToastDismissing = 'true'
+
+  doAnimations.bind(this, animationDelayTime, maxItems, this.el)()
+  await animateOut.bind(this)()
+
+  this.pushEventTo(toastGroupTarget(this.el), 'clear', { id: this.el.id })
 }
 
 // Create the Phoenix Hoook for live_toast.
@@ -252,6 +277,22 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         }
       })
 
+      this.el.addEventListener(dismissEvent, async event => {
+        event.stopPropagation()
+
+        await dismissToast.bind(this)(duration, maxItems)
+      })
+
+      window.addEventListener(`phx:${dismissEvent}`, async event => {
+        const detail = (event as CustomEvent<{ id?: string; uuid?: string }>)
+          .detail
+        const id = detail.id || `toast-${detail.uuid}`
+
+        if (id === this.el.id) {
+          await dismissToast.bind(this)(duration, maxItems)
+        }
+      })
+
       // begin actually showing the toast through this call to the animation function
       doAnimations.bind(this)(duration, maxItems)
 
@@ -288,9 +329,7 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         if (durationOverride !== 0) {
           window.setTimeout(async () => {
             // animate this element sliding down, opacity to 0, with delay time
-            await animateOut.bind(this)()
-
-            this.pushEventTo('#toast-group', 'clear', { id: this.el.id })
+            await dismissToast.bind(this)(duration, maxItems)
           }, durationOverride + removalTime)
         }
       }

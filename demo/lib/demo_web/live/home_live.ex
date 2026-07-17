@@ -83,6 +83,30 @@ defmodule DemoWeb.HomeLive do
     {:noreply, socket}
   end
 
+  def handle_event("show_dismissible_toast", _payload, socket) do
+    uuid = "dismissible-toast-recipe"
+
+    LiveToast.send_toast(
+      :info,
+      "This toast can be dismissed from the server or from its own custom button.",
+      title: "Dismiss by UUID",
+      icon: nil,
+      action: nil,
+      duration: 0,
+      component: &dismissible_toast/1,
+      container_id: "toast-group",
+      uuid: uuid
+    )
+
+    {:noreply, socket}
+  end
+
+  def handle_event("dismiss_toast_recipe", _payload, socket) do
+    LiveToast.dismiss_toast("dismissible-toast-recipe")
+
+    {:noreply, socket}
+  end
+
   def handle_event("toast", payload, socket) do
     kind = Map.get(payload, "kind", "info")
     title = Map.get(payload, "title")
@@ -277,6 +301,33 @@ defmodule DemoWeb.HomeLive do
       <p class="text-sm font-medium text-indigo-500">
         {@body}
       </p>
+    </div>
+    """
+  end
+
+  def dismissible_toast(assigns) do
+    ~H"""
+    <div class="grid gap-3">
+      <div class="grow flex flex-col items-start justify-center">
+        <p
+          :if={@title}
+          data-part="title"
+          class="mb-2 flex items-center text-sm font-semibold leading-6"
+        >
+          {@title}
+        </p>
+        <p class="text-sm leading-5">
+          {@body}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        phx-click={LiveToast.dismiss()}
+        class="justify-self-start text-sm font-medium bg-zinc-900 text-zinc-100 px-2 py-1 rounded-md hover:bg-zinc-800 hover:text-zinc-200"
+      >
+        Dismiss in component
+      </button>
     </div>
     """
   end

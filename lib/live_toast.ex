@@ -7,6 +7,7 @@ defmodule LiveToast do
 
   alias LiveToast.Components
   alias Phoenix.LiveView
+  alias Phoenix.LiveView.JS
 
   @enforce_keys [:kind, :msg]
   defstruct [
@@ -50,6 +51,8 @@ defmodule LiveToast do
           | {:uuid, Ecto.UUID.t() | nil}
           | {:sync, boolean() | nil}
 
+  @type dismiss_option() :: {:container_id, binary() | nil}
+
   defp make_toast(kind, msg, options) do
     container_id = options[:container_id] || "toast-group"
     uuid = options[:uuid] || Ecto.UUID.generate()
@@ -87,6 +90,55 @@ defmodule LiveToast do
     LiveView.send_update(LiveToast.LiveComponent, id: toast.container_id, toasts: [toast])
 
     toast.uuid
+  end
+
+  @doc """
+  Dismiss an active toast by UUID.
+
+  The toast exits through the client-side animation before it is removed from
+  the LiveToast component state.
+
+  Pass `:container_id` when the toast group was rendered with a custom `id`.
+
+  ## Examples
+
+      uuid = send_toast(:info, "Upload started", duration: 0)
+
+      dismiss_toast(uuid)
+
+      dismiss_toast(uuid, container_id: "admin-toast-group")
+
+  """
+  @spec dismiss_toast(Ecto.UUID.t(), [dismiss_option()]) :: :ok
+  def dismiss_toast(uuid, options \\ []) do
+    container_id = options[:container_id] || "toast-group"
+
+    LiveView.send_update(LiveToast.LiveComponent,
+      id: container_id,
+      dismiss_uuid: uuid
+    )
+
+    :ok
+  end
+
+  @doc """
+  Build a composable `Phoenix.LiveView.JS` command that dismisses a toast.
+
+  This is intended for custom toast components passed to `send_toast/3`.
+  Calling it dispatches the same client-side dismissal event used by
+  `dismiss_toast/2`, so the toast exits through the animation before being
+  removed.
+
+  ## Examples
+
+      <button type="button" phx-click={LiveToast.dismiss()}>
+        Dismiss
+      </button>
+
+  """
+  @spec dismiss(JS.t()) :: JS.t()
+  def dismiss(js \\ %JS{}) do
+    JS.dispatch(js, "live-toast-dismiss")
   end
 
   @doc """

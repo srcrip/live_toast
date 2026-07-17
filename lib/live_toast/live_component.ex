@@ -23,6 +23,8 @@ defmodule LiveToast.LiveComponent do
 
   @impl Phoenix.LiveComponent
   def update(assigns, socket) do
+    dismiss_uuid = Map.get(assigns, :dismiss_uuid)
+
     # todo: make sure this works when doing multiple toasts at once. even tho thats unlikely.
     # handling of synchronous toasts when calling put_toast
     # basically, we need to read assigns["toasts_sync"], to see if there was a new toast popped on from put_toast.
@@ -74,6 +76,16 @@ defmodule LiveToast.LiveComponent do
         |> assign(:toast_count, socket.assigns.toast_count + length(toasts))
       end
 
+    socket =
+      if dismiss_uuid do
+        push_event(socket, "live-toast-dismiss", %{
+          id: "toast-#{dismiss_uuid}",
+          uuid: dismiss_uuid
+        })
+      else
+        socket
+      end
+
     {:ok, socket}
   end
 
@@ -94,10 +106,12 @@ defmodule LiveToast.LiveComponent do
                icon: icon,
                action: action,
                duration: duration,
+               uuid: uuid,
                component: component
              }} <- @streams.toasts
           }
           id={dom_id}
+          uuid={uuid}
           data-count={@toast_count}
           duration={duration}
           kind={k}
@@ -113,7 +127,13 @@ defmodule LiveToast.LiveComponent do
         </Components.toast>
       </div>
 
-      <Components.flashes f={@f} corner={@corner} flash_duration={@flash_duration} toast_class_fn={@toast_class_fn} kinds={@kinds} />
+      <Components.flashes
+        f={@f}
+        corner={@corner}
+        flash_duration={@flash_duration}
+        toast_class_fn={@toast_class_fn}
+        kinds={@kinds}
+      />
     </div>
     """
   end

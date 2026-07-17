@@ -1,9 +1,9 @@
 <h2 class="mb-6 text-2xl font-bold">Recipes</h2>
 
 <div class="mb-12 space-y-4">
-  <span class="text-zinc-900 font-medium">
+  <h3 id="showing-progress" class="scroll-mt-20 text-zinc-900 font-medium">
     Showing Progress
-  </span>
+  </h3>
   <p>
     By passing the uuid you get back from adding a toast to a subsequent function call, you can update the attributes of an existing toast message.
   </p>
@@ -23,6 +23,34 @@
   <div class="flex flex-wrap gap-3">
     <.button phx-click="show_progress">
       Show Progress
+    </.button>
+  </div>
+</div>
+
+<div class="mb-12 space-y-4">
+  <h3 id="dismiss-programmatically" class="scroll-mt-20 text-zinc-900 font-medium">
+    Dismiss Programmatically
+  </h3>
+  <p>
+    Keep the UUID returned by <code>LiveToast.send_toast/3</code>
+    when an application needs to dismiss a toast from another server event.
+    Use <code>LiveToast.dismiss_toast/2</code>
+    with that UUID and LiveToast will run the exit animation before removing the toast.
+  </p>
+
+  <p>
+    Custom toast components can also compose <code>LiveToast.dismiss/1</code>
+    into their own buttons or actions, so they do not need to reach into LiveToast's component state.
+  </p>
+</div>
+
+<div class="mb-12">
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click="show_dismissible_toast">
+      Show Dismissible Toast
+    </.button>
+    <.button phx-click="dismiss_toast_recipe">
+      Dismiss From Server
     </.button>
   </div>
 </div>
