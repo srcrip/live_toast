@@ -6,9 +6,9 @@ name: Elixir CI
 # different name for the main branch like "master" or "production".
 on:
   push:
-    branches: [ "master" ]  # adapt branch for project
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]  # adapt branch for project
+    branches: [ "main" ]
 
 # Sets the ENV `MIX_ENV` to `test` for running tests
 env:
@@ -57,6 +57,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: 1.3.9
+
     # Step: Define how to cache deps. Restores existing cache if present.
     - name: Cache deps
       id: cache-deps
@@ -92,6 +97,18 @@ jobs:
     - name: Install demo dependencies
       working-directory: ./demo
       run: mix deps.get
+
+    - name: Install JavaScript dependencies
+      working-directory: ./assets
+      run: bun install --frozen-lockfile
+
+    - name: Typecheck JavaScript
+      working-directory: ./assets
+      run: bun run typecheck
+
+    - name: Test JavaScript
+      working-directory: ./assets
+      run: bun test
 
     # Step: Compile the project treating any warnings as errors.
     # Customize this step if a different behavior is desired.

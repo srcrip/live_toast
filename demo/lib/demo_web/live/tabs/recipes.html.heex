@@ -11,7 +11,7 @@
   <p>
     <.link
       class="text-blue-700 hover:text-blue-500 underline"
-      href="https://github.com/srcrip/live_toast/blob/cda3d9d9a10482e98dadd1e546a3dfd3cdb189f3/demo/lib/demo_web/live/home_live.ex#L56"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/lib/demo_web/live/home_live.ex"
     >
       Here's a little example
     </.link>
@@ -42,6 +42,17 @@
     Custom toast components can also compose <code>LiveToast.dismiss/1</code>
     into their own buttons or actions, so they do not need to reach into LiveToast's component state.
   </p>
+  <pre class="overflow-x-auto rounded-md bg-zinc-950 p-4 text-sm text-zinc-100"><code>uuid = LiveToast.send_toast(:info, "Uploading...", duration: 0)
+
+LiveToast.dismiss_toast(uuid)</code></pre>
+  <p>
+    <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/lib/demo_web/live/home_live.ex"
+    >
+      View the demo source
+    </.link>
+  </p>
 </div>
 
 <div class="mb-12">
@@ -51,6 +62,38 @@
     </.button>
     <.button phx-click="dismiss_toast_recipe">
       Dismiss From Server
+    </.button>
+  </div>
+</div>
+
+<div class="mb-12 space-y-4">
+  <h3 id="pause-timed-toast" class="scroll-mt-20 text-zinc-900 font-medium">
+    Pause Timed Toast
+  </h3>
+  <p>
+    Timed toasts pause while hovered or while keyboard focus is inside the toast.
+    When interaction ends, they continue for their remaining duration.
+  </p>
+  <pre class="overflow-x-auto rounded-md bg-zinc-950 p-4 text-sm text-zinc-100"><code>LiveToast.send_toast(
+  :info,
+  "Hover or focus this toast",
+  duration: 8_000,
+  action: &amp;pauseable_toast_action/1
+)</code></pre>
+  <p>
+    <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/lib/demo_web/live/home_live.ex"
+    >
+      View the demo source
+    </.link>
+  </p>
+</div>
+
+<div class="mb-12">
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click="show_pauseable_toast">
+      Show 8-Second Toast
     </.button>
   </div>
 </div>

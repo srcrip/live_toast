@@ -45,8 +45,15 @@ const maxItemsIgnoresFlashes = true
 // gap in px between toasts
 const gap = 15
 const dismissEvent = 'live-toast-dismiss'
+const remainingSelector = '[data-live-toast-remaining]'
 
-let lastTS: any[] = []
+let lastTS: HTMLElement[] = []
+
+type DismissTimer = {
+  cancel: () => void
+}
+
+const dismissTimers = new WeakMap<object, DismissTimer>()
 
 declare global {
   interface HTMLElement {
@@ -70,9 +77,9 @@ function doAnimations(
     .map(t => {
       if (isHidden(t)) {
         return null
-      } else {
-        return t
       }
+
+      return t
     })
     .filter(Boolean)
     // reverse
@@ -216,6 +223,8 @@ async function dismissToast(
   }
 
   this.el.dataset.liveToastDismissing = 'true'
+  dismissTimers.get(this)?.cancel()
+  dismissTimers.delete(this)
 
   doAnimations.bind(this, animationDelayTime, maxItems, this.el)()
   await animateOut.bind(this)()
@@ -223,11 +232,111 @@ async function dismissToast(
   this.pushEventTo(toastGroupTarget(this.el), 'clear', { id: this.el.id })
 }
 
+function isInteracting(el: HTMLElement) {
+  return el.matches(':hover') || el.matches(':focus-within')
+}
+
+function renderRemaining(el: HTMLElement, remaining: number, paused: boolean) {
+  const output = el.querySelector<HTMLElement>(remainingSelector)
+
+  if (!output) {
+    return
+  }
+
+  output.textContent = Math.ceil(remaining / 1000).toString()
+  output.dataset.paused = paused.toString()
+}
+
+function startDismissTimer(
+  this: ViewHook,
+  duration: number,
+  animationDelayTime: number,
+  maxItems: number
+) {
+  let remaining = duration
+  let startedAt: number | undefined
+  let timer: number | undefined
+  let displayTimer: number | undefined
+
+  const currentRemaining = () => {
+    if (startedAt === undefined) {
+      return remaining
+    }
+
+    return Math.max(0, remaining - (performance.now() - startedAt))
+  }
+
+  const clearTimers = () => {
+    if (timer !== undefined) {
+      window.clearTimeout(timer)
+      timer = undefined
+    }
+
+    if (displayTimer !== undefined) {
+      window.clearInterval(displayTimer)
+      displayTimer = undefined
+    }
+  }
+
+  const pause = () => {
+    if (startedAt === undefined) {
+      return
+    }
+
+    remaining = currentRemaining()
+    startedAt = undefined
+    clearTimers()
+    renderRemaining(this.el, remaining, true)
+  }
+
+  const resume = () => {
+    if (timer || isInteracting(this.el)) {
+      return
+    }
+
+    startedAt = performance.now()
+    renderRemaining(this.el, remaining, false)
+
+    if (this.el.querySelector(remainingSelector)) {
+      displayTimer = window.setInterval(() => {
+        renderRemaining(this.el, currentRemaining(), false)
+      }, 100)
+    }
+
+    timer = window.setTimeout(async () => {
+      clearTimers()
+      remaining = 0
+      startedAt = undefined
+      renderRemaining(this.el, remaining, false)
+
+      await dismissToast.bind(this)(animationDelayTime, maxItems)
+    }, remaining + removalTime)
+  }
+
+  const cancel = () => {
+    clearTimers()
+    this.el.removeEventListener('mouseenter', pause)
+    this.el.removeEventListener('focusin', pause)
+    this.el.removeEventListener('mouseleave', resume)
+    this.el.removeEventListener('focusout', resume)
+  }
+
+  this.el.addEventListener('mouseenter', pause)
+  this.el.addEventListener('focusin', pause)
+  this.el.addEventListener('mouseleave', resume)
+  this.el.addEventListener('focusout', resume)
+
+  dismissTimers.set(this, { cancel })
+  resume()
+}
+
 // Create the Phoenix Hoook for live_toast.
 // You can set custom animation durations.
 export function createLiveToastHook(duration = 6000, maxItems = 3) {
   return {
     destroyed(this: ViewHook) {
+      dismissTimers.get(this)?.cancel()
+      dismissTimers.delete(this)
       doAnimations.bind(this)(duration, maxItems)
     },
     updated(this: ViewHook) {
@@ -327,10 +436,7 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
       } else {
         // you can set duration to 0 for infinite duration, basically
         if (durationOverride !== 0) {
-          window.setTimeout(async () => {
-            // animate this element sliding down, opacity to 0, with delay time
-            await dismissToast.bind(this)(duration, maxItems)
-          }, durationOverride + removalTime)
+          startDismissTimer.bind(this)(durationOverride, duration, maxItems)
         }
       }
     }

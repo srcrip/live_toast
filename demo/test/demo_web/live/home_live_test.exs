@@ -68,6 +68,20 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ "Dismiss From Server"
     end
 
+    test "renders pause timed toast recipe", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Pause Timed Toast"
+      assert html =~ "Show 8-Second Toast"
+      assert html =~ "View the demo source"
+
+      view
+      |> element("button", "Show 8-Second Toast")
+      |> render_click()
+
+      assert render(view) =~ "data-live-toast-remaining"
+    end
+
     test "renders section links in the side navigation", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/recipes")
 
@@ -75,6 +89,7 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ ~s(href="/#duration")
       assert html =~ ~s(href="/recipes#showing-progress")
       assert html =~ ~s(href="/recipes#dismiss-programmatically")
+      assert html =~ ~s(href="/recipes#pause-timed-toast")
     end
   end
 end
