@@ -11,7 +11,8 @@ defmodule DemoWeb.HomeLive do
   @default_settings %{
     "corner" => "bottom_right",
     "icon" => nil,
-    "action" => nil
+    "action" => nil,
+    "motion" => %{}
   }
 
   def handle_params(params, _uri, socket) do

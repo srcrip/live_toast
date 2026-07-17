@@ -285,6 +285,11 @@ defmodule LiveToast do
     doc: "function to override the toast classes"
   )
 
+  attr(:motion, :map,
+    default: %{},
+    doc: "enter and exit motion settings for this toast group"
+  )
+
   attr :toasts_sync, :list, required: true, doc: "toasts that get synchronized when calling `put_toast`"
 
   attr :flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds"
@@ -307,6 +312,7 @@ defmodule LiveToast do
       flash_duration={@flash_duration}
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
+      motion={@motion}
       f={@flash}
       kinds={@kinds}
     />
@@ -317,6 +323,7 @@ defmodule LiveToast do
       flash_duration={@flash_duration}
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
+      motion={@motion}
       client_error_delay={@client_error_delay}
       flash={@flash}
       kinds={@kinds}

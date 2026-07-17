@@ -104,6 +104,21 @@ defmodule DemoWeb.HomeLiveTest do
       assert render(view) =~ "Bottom center stack item 4"
     end
 
+    test "renders configurable motion recipe", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Configure Motion"
+      assert html =~ "Horizontal"
+      assert html =~ "Fade Only"
+      assert html =~ "motion="
+
+      view
+      |> element("button", "Horizontal")
+      |> render_click()
+
+      assert render(view) =~ ~s(&quot;direction&quot;:&quot;left&quot;)
+    end
+
     test "renders section links in the side navigation", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/recipes")
 
@@ -113,6 +128,7 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ ~s(href="/recipes#dismiss-programmatically")
       assert html =~ ~s(href="/recipes#pause-timed-toast")
       assert html =~ ~s(href="/recipes#centered-positions")
+      assert html =~ ~s(href="/recipes#toast-motion")
     end
   end
 end

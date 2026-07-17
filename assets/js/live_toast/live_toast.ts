@@ -1,4 +1,5 @@
 import { animate } from 'motion'
+import type { Easing } from 'motion'
 import type { ViewHook } from 'phoenix_live_view'
 
 function isHidden(el: HTMLElement | null) {
@@ -38,8 +39,6 @@ function flashCount() {
 
 // time in ms to wait before removal, but after animation
 const removalTime = 5
-// animation time in ms
-const animationTime = 550
 // whether flashes should be counted in maxItems
 const maxItemsIgnoresFlashes = true
 // gap in px between toasts
@@ -54,6 +53,136 @@ type DismissTimer = {
 }
 
 const dismissTimers = new WeakMap<object, DismissTimer>()
+
+type MotionDirection = 'auto' | 'up' | 'down' | 'left' | 'right' | 'none'
+type MotionPhase = {
+  direction: MotionDirection
+  duration: number
+  easing: Easing
+}
+type MotionConfig = {
+  enter: MotionPhase
+  exit: MotionPhase
+}
+
+const defaultMotion: MotionConfig = {
+  enter: {
+    direction: 'auto',
+    duration: 550,
+    easing: [0.22, 1, 0.36, 1]
+  },
+  exit: {
+    direction: 'auto',
+    duration: 300,
+    easing: 'ease-out'
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function isDirection(value: unknown): value is MotionDirection {
+  return ['auto', 'up', 'down', 'left', 'right', 'none'].includes(
+    value as MotionDirection
+  )
+}
+
+function isEasing(value: unknown): value is Easing {
+  if (Array.isArray(value)) {
+    return value.length === 4 && value.every(item => typeof item === 'number')
+  }
+
+  return (
+    typeof value === 'string' &&
+    (['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out'].includes(value) ||
+      /^steps\(\d+, (start|end)\)$/.test(value))
+  )
+}
+
+function normalizeMotionPhase(
+  value: unknown,
+  defaults: MotionPhase
+): MotionPhase {
+  if (!isRecord(value)) {
+    return defaults
+  }
+
+  return {
+    direction: isDirection(value.direction)
+      ? value.direction
+      : defaults.direction,
+    duration:
+      typeof value.duration === 'number' && value.duration >= 0
+        ? value.duration
+        : defaults.duration,
+    easing: isEasing(value.easing) ? value.easing : defaults.easing
+  }
+}
+
+function motionConfig(el: HTMLElement): MotionConfig {
+  const host = el.closest<HTMLElement>('[data-live-toast-motion]')
+  const encoded = host?.dataset.liveToastMotion
+
+  if (!encoded) {
+    return defaultMotion
+  }
+
+  try {
+    const value: unknown = JSON.parse(encoded)
+
+    if (!isRecord(value)) {
+      return defaultMotion
+    }
+
+    return {
+      enter: normalizeMotionPhase(value.enter, defaultMotion.enter),
+      exit: normalizeMotionPhase(value.exit, defaultMotion.exit)
+    }
+  } catch {
+    return defaultMotion
+  }
+}
+
+function reducedMotion() {
+  return (
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+  )
+}
+
+function resolvedDirection(
+  direction: MotionDirection,
+  corner: string | undefined
+) {
+  if (direction !== 'auto') {
+    return direction
+  }
+
+  return corner?.startsWith('bottom') ? 'down' : 'up'
+}
+
+function translation(
+  direction: MotionDirection,
+  corner: string | undefined,
+  distance: number
+) {
+  switch (resolvedDirection(direction, corner)) {
+    case 'up':
+      return { y: `-${distance}px` }
+    case 'down':
+      return { y: `${distance}px` }
+    case 'left':
+      return { x: `-${distance}px` }
+    case 'right':
+      return { x: `${distance}px` }
+    default:
+      return {}
+  }
+}
+
+function translatedY(destination: string, offset: string) {
+  return destination === '0px' ? offset : `calc(${destination} + ${offset})`
+}
 
 declare global {
   interface HTMLElement {
@@ -135,28 +264,43 @@ function doAnimations(
       toast.classList.add('pointer-events-auto')
     }
 
-    const keyframes = { y: [`${direction}${val}px`], opacity: [opacity] }
+    const destination = val === 0 ? '0px' : `${direction}${val}px`
+    const keyframes: Record<string, Array<string | number>> = {
+      y: [destination],
+      opacity: [opacity]
+    }
 
     // if element is entering for the first time, start below the fold
     if (toast.order === 0 && lastTS.includes(toast) === false) {
-      const val = toast.offsetHeight + gap
-      const oppositeDirection = direction === '-' ? '' : '-'
-      keyframes.y.unshift(`${oppositeDirection}${val}px`)
+      const enter = motionConfig(toast).enter
+
+      if (!reducedMotion()) {
+        const offset = translation(
+          enter.direction,
+          toast.dataset.corner,
+          toast.offsetHeight + gap
+        )
+
+        if (offset.y) {
+          keyframes.y.unshift(translatedY(destination, offset.y))
+        }
+
+        if (offset.x) {
+          keyframes.x = [offset.x, '0px']
+        }
+      }
 
       keyframes.opacity.unshift(0)
     }
 
-    toast.targetDestination = `${direction}${val}px`
+    toast.targetDestination = destination
+    const enter = motionConfig(toast).enter
 
-    const duration = animationTime / 1000
-
-    // as of right now this is not exposed to end users, but
-    // it's 'plumbed out' if we want to make it so in the future
     const delayTime = Number.parseInt(this.el.dataset.delay || '0') / 1000
 
     animate(toast, keyframes, {
-      duration,
-      easing: [0.22, 1.0, 0.36, 1.0],
+      duration: reducedMotion() ? 0.001 : enter.duration / 1000,
+      easing: reducedMotion() ? 'linear' : enter.easing,
       delay: delayTime
     })
     toast.order += 1
@@ -169,7 +313,7 @@ function doAnimations(
     // also what about elements moving down when you close one?
     window.setTimeout(() => {
       if (toast.order > max) {
-        this.pushEventTo(toastGroupTarget(toast), 'clear', { id: toast.id })
+        toast.dispatchEvent(new CustomEvent(dismissEvent))
       }
     }, animationDelayTime + removalTime)
 
@@ -185,30 +329,28 @@ function toastGroupTarget(el: HTMLElement) {
 }
 
 async function animateOut(this: ViewHook) {
-  const val = (this.el.order - 2) * 100 + (this.el.order - 2) * gap
+  const exit = motionConfig(this.el).exit
+  const offset = translation(
+    exit.direction,
+    this.el.dataset.corner,
+    this.el.offsetHeight + gap
+  )
+  const keyframes: Record<string, string | number> = { opacity: 0 }
 
-  let direction = ''
+  if (!reducedMotion()) {
+    if (offset.y) {
+      keyframes.y = translatedY(this.el.targetDestination || '0px', offset.y)
+    }
 
-  if (
-    this.el.dataset.corner === 'bottom_left' ||
-    this.el.dataset.corner === 'bottom_center' ||
-    this.el.dataset.corner === 'bottom_right'
-  ) {
-    direction = '-'
+    if (offset.x) {
+      keyframes.x = offset.x
+    }
   }
 
-  const animation = animate(
-    this.el,
-    { y: `${direction}${val}%`, opacity: 0 },
-    {
-      opacity: {
-        duration: 0.2,
-        easing: 'ease-out'
-      },
-      duration: 0.3,
-      easing: 'ease-out'
-    }
-  )
+  const animation = animate(this.el, keyframes, {
+    duration: reducedMotion() ? 0.001 : exit.duration / 1000,
+    easing: reducedMotion() ? 'linear' : exit.easing
+  })
 
   await animation.finished
 }

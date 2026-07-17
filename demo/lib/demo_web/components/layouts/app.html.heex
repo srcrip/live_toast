@@ -5,6 +5,7 @@
     flash={@flash}
     kinds={[:info, :error, :warn]}
     flash_duration={3000}
+    motion={(assigns[:settings] || %{})["motion"] || %{}}
     toasts_sync={assigns[:toasts_sync]}
     connected={assigns[:socket] != nil}
     {

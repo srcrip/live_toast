@@ -10,10 +10,20 @@ import {
 import { JSDOM } from 'jsdom'
 
 const animationEvents: string[] = []
+const motionCalls: Array<{
+  element: Element
+  keyframes: Record<string, unknown>
+  options: Record<string, unknown>
+}> = []
 
 mock.module('motion', () => ({
-  animate: () => {
+  animate: (
+    element: Element,
+    keyframes: Record<string, unknown>,
+    options: Record<string, unknown>
+  ) => {
     animationEvents.push('animate')
+    motionCalls.push({ element, keyframes, options })
     return { finished: Promise.resolve() }
   }
 }))
@@ -50,14 +60,19 @@ function installDom() {
   return dom
 }
 
-function mountToast(duration = 1000, countdown = false) {
+function mountToast(
+  duration = 1000,
+  countdown = false,
+  motion: Record<string, unknown> = {},
+  corner = 'bottom_right'
+) {
   document.body.innerHTML = `
-    <div id="toast-group">
+      <div id="toast-group" data-live-toast-motion>
       <div id="toast-stream" phx-update="stream">
         <div
           id="toast-one"
           phx-hook="LiveToast"
-          data-corner="bottom_right"
+          data-corner="${corner}"
           data-duration="${duration}"
         >
           <button type="button">Focus me</button>
@@ -69,6 +84,7 @@ function mountToast(duration = 1000, countdown = false) {
 
   const el = document.getElementById('toast-one') as HTMLElement
   const group = document.getElementById('toast-group') as HTMLElement
+  group.dataset.liveToastMotion = JSON.stringify(motion)
   const pushes: Array<[Element | string, string, Record<string, string>]> = []
   let hovered = false
   let focused = false
@@ -134,6 +150,7 @@ describe('LiveToast timed dismissal', () => {
     jest.useFakeTimers()
     now = 0
     animationEvents.length = 0
+    motionCalls.length = 0
     installDom()
   })
 
@@ -219,6 +236,77 @@ describe('LiveToast timed dismissal', () => {
 
     expect(animationEvents).toEqual(['animate', 'clear'])
     expect(toast.pushes).toHaveLength(1)
+  })
+})
+
+describe('LiveToast motion configuration', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+    now = 0
+    animationEvents.length = 0
+    motionCalls.length = 0
+    installDom()
+    window.matchMedia = () => ({ matches: false }) as MediaQueryList
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  test('preserves the default enter motion', () => {
+    const toast = mountToast()
+    const enter = motionCalls.find(call => call.element === toast.el)
+
+    expect(enter?.options.duration).toBe(0.55)
+    expect(enter?.options.easing).toEqual([0.22, 1, 0.36, 1])
+    expect(enter?.keyframes.y).toEqual(['15px', '0px'])
+  })
+
+  test('applies per-host enter direction, duration, and easing', () => {
+    const toast = mountToast(1000, false, {
+      enter: { direction: 'left', duration: 120, easing: 'ease-in' }
+    })
+    const enter = motionCalls.find(call => call.element === toast.el)
+
+    expect(enter?.options.duration).toBe(0.12)
+    expect(enter?.options.easing).toBe('ease-in')
+    expect(enter?.keyframes.x).toEqual(['-15px', '0px'])
+  })
+
+  test('applies configured exit motion to programmatic dismissal', async () => {
+    const toast = mountToast(1000, false, {
+      exit: { direction: 'right', duration: 180, easing: 'linear' }
+    })
+    motionCalls.length = 0
+
+    window.dispatchEvent(
+      new CustomEvent('phx:live-toast-dismiss', {
+        detail: { uuid: 'one' }
+      })
+    )
+    await settle()
+
+    const exit = motionCalls.find(call => call.element === toast.el)
+    expect(exit?.keyframes.x).toBe('15px')
+    expect(exit?.options.duration).toBe(0.18)
+    expect(exit?.options.easing).toBe('linear')
+  })
+
+  test('removes translation when reduced motion is preferred', async () => {
+    window.matchMedia = () => ({ matches: true }) as MediaQueryList
+    const toast = mountToast()
+    const enter = motionCalls.find(call => call.element === toast.el)
+
+    expect(enter?.keyframes.y).toEqual(['0px'])
+    expect(enter?.options.duration).toBe(0.001)
+
+    motionCalls.length = 0
+    toast.el.dispatchEvent(new CustomEvent('live-toast-dismiss'))
+    await settle()
+
+    const exit = motionCalls.find(call => call.element === toast.el)
+    expect(exit?.keyframes).toEqual({ opacity: 0 })
+    expect(exit?.options.duration).toBe(0.001)
   })
 })
 

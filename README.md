@@ -221,6 +221,28 @@ You can change where toasts are anchored by passing the `corner` setting to `toa
 />
 ```
 
+### Configuring motion
+
+Configure enter and exit motion per toast host with the `motion` attribute. Directions may be `:auto`, `:up`, `:down`,
+`:left`, `:right`, or `:none`; durations are expressed in milliseconds. Easing accepts a Motion easing name or a
+four-number cubic-bezier list.
+
+```heex
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toasts_sync={assigns[:toasts_sync]}
+  motion={%{
+    enter: %{direction: :left, duration: 450, easing: "ease-out"},
+    exit: %{direction: :right, duration: 250, easing: "ease-in"}
+  }}
+/>
+```
+
+The configuration applies to automatic expiry, manual and programmatic dismissal, and overflow eviction. LiveToast
+automatically avoids translation and uses an effectively immediate fade when the browser reports
+`prefers-reduced-motion: reduce`.
+
 ### Internationalization
 
 You can provide translations for the defaul error toasts by adding the following to your `config.exs`:

@@ -130,6 +130,8 @@ defmodule LiveToast.Components do
     doc: "function to override the toast classes"
   )
 
+  attr(:motion, :map, default: %{}, doc: "enter and exit motion settings for this toast group")
+
   attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
 
   attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
@@ -209,6 +211,8 @@ defmodule LiveToast.Components do
     doc: "function to override the toast classes"
   )
 
+  attr(:motion, :map, default: %{}, doc: "enter and exit motion settings for this toast group")
+
   attr(:client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown")
 
   attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
@@ -217,7 +221,11 @@ defmodule LiveToast.Components do
   @doc false
   def flash_group(assigns) do
     ~H"""
-    <div id={assigns[:id] || "flash-group"} class={@group_class_fn.(assigns)}>
+    <div
+      id={assigns[:id] || "flash-group"}
+      class={@group_class_fn.(assigns)}
+      data-live-toast-motion={Jason.encode!(@motion)}
+    >
       <.flashes
         f={@flash}
         corner={@corner}

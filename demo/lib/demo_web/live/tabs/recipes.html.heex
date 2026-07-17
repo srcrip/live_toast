@@ -28,6 +28,73 @@
 </div>
 
 <div class="mb-12 space-y-4">
+  <h3 id="toast-motion" class="scroll-mt-20 text-zinc-900 font-medium">
+    Configure Motion
+  </h3>
+  <p>
+    Motion is configured on the toast host and applies to default and custom toast items across every dismissal path.
+    LiveToast automatically removes translation when the visitor prefers reduced motion.
+  </p>
+  <div class="flex flex-wrap gap-3" role="group" aria-label="Toast motion preset">
+    <.button phx-click={JS.push("change_settings", value: %{"motion" => %{}})}>
+      Default
+    </.button>
+    <.button phx-click={
+      JS.push("change_settings",
+        value: %{
+          "motion" => %{
+            "enter" => %{"direction" => "left", "duration" => 450, "easing" => "ease-out"},
+            "exit" => %{"direction" => "right", "duration" => 250, "easing" => "ease-in"}
+          }
+        }
+      )
+    }>
+      Horizontal
+    </.button>
+    <.button phx-click={
+      JS.push("change_settings",
+        value: %{
+          "motion" => %{
+            "enter" => %{"direction" => "none", "duration" => 150, "easing" => "linear"},
+            "exit" => %{"direction" => "none", "duration" => 100, "easing" => "linear"}
+          }
+        }
+      )
+    }>
+      Fade Only
+    </.button>
+    <.button phx-click={
+      JS.push("toast",
+        value: %{
+          "kind" => "info",
+          "title" => "Motion",
+          "body" => "This toast uses the selected preset."
+        }
+      )
+    }>
+      Show Toast
+    </.button>
+  </div>
+  <pre class="overflow-x-auto rounded-md bg-zinc-950 p-4 text-sm text-zinc-100"><code>&lt;LiveToast.toast_group
+  flash=&#123;@flash&#125;
+  connected=&#123;assigns[:socket] != nil&#125;
+  toasts_sync=&#123;assigns[:toasts_sync]&#125;
+  motion=&#123;%&#123;
+    enter: %&#123;direction: :left, duration: 450, easing: "ease-out"&#125;,
+    exit: %&#123;direction: :right, duration: 250, easing: "ease-in"&#125;
+  &#125;&#125;
+/&gt;</code></pre>
+  <p>
+    <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/lib/demo_web/components/layouts/app.html.heex"
+    >
+      View the demo source
+    </.link>
+  </p>
+</div>
+
+<div class="mb-12 space-y-4">
   <h3 id="dismiss-programmatically" class="scroll-mt-20 text-zinc-900 font-medium">
     Dismiss Programmatically
   </h3>
