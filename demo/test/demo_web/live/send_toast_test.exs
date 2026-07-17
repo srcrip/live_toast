@@ -24,6 +24,18 @@ defmodule DemoWeb.SendToastTest do
       {:noreply, socket}
     end
 
+    def handle_event("send_persistent", _, socket) do
+      uuid = LiveToast.send_toast(:info, "Persistent toast message", duration: 0)
+
+      {:noreply, Phoenix.Component.assign(socket, :last_toast_uuid, uuid)}
+    end
+
+    def handle_event("dismiss_persistent", _, socket) do
+      LiveToast.dismiss_toast(socket.assigns.last_toast_uuid)
+
+      {:noreply, socket}
+    end
+
     def render(assigns) do
       ~H"""
       <LiveToast.toast_group
@@ -34,6 +46,8 @@ defmodule DemoWeb.SendToastTest do
       <div>
         <button phx-click="send_info">Send Info Toast</button>
         <button phx-click="send_error">Send Error Toast</button>
+        <button phx-click="send_persistent">Send Persistent Toast</button>
+        <button phx-click="dismiss_persistent">Dismiss Persistent Toast</button>
       </div>
       """
     end
@@ -45,7 +59,7 @@ defmodule DemoWeb.SendToastTest do
 
       view
       |> element("button", "Send Info Toast")
-      |> render_click() =~ "Success info message"
+      |> render_click() =~ "Info toast message"
     end
 
     test "renders error toast", %{conn: conn} do
@@ -53,7 +67,26 @@ defmodule DemoWeb.SendToastTest do
 
       view
       |> element("button", "Send Error Toast")
-      |> render_click() =~ "Error error message"
+      |> render_click() =~ "Error toast message"
+    end
+
+    test "dismisses a toast by UUID", %{conn: conn} do
+      {:ok, view, _html} = live_isolated(conn, TestLive)
+
+      view
+      |> element("button", "Send Persistent Toast")
+      |> render_click()
+
+      view
+      |> element("button", "Dismiss Persistent Toast")
+      |> render_click()
+
+      assert_push_event(view, "live-toast-dismiss", %{
+        id: "toast-" <> uuid,
+        uuid: uuid
+      })
+
+      assert uuid =~ ~r/^[0-9a-f-]{36}$/
     end
   end
 end

@@ -10,6 +10,7 @@ defmodule LiveToast.Components do
   alias Phoenix.LiveView.JS
 
   attr(:id, :string, doc: "the optional id of flash container")
+  attr(:uuid, :string, default: nil, doc: "the UUID for the toast")
   attr(:flash, :map, default: %{}, doc: "the map of flash messages to display")
   attr(:title, :string, default: nil)
   attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
@@ -101,9 +102,7 @@ defmodule LiveToast.Components do
         if Phoenix.Flash.get(@flash, @kind),
           do: ["phx-click": JS.dispatch("flash-leave", to: "##{@id}") |> JS.push("lv:clear-flash", value: %{key: @kind}) |> Utility.hide("##{@id}")],
           else: [
-            "phx-target": @target,
-            "phx-click": "clear",
-            "phx-value-id": @id
+            "phx-click": LiveToast.dismiss()
           ]
         }
       >

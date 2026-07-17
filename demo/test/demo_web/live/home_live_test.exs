@@ -56,4 +56,25 @@ defmodule DemoWeb.HomeLiveTest do
       |> render_click() =~ "This is a toast event."
     end
   end
+
+  describe "Recipes page" do
+    test "renders dismiss by UUID recipe", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Dismiss Programmatically"
+      assert html =~ "LiveToast.dismiss_toast/2"
+      assert html =~ "LiveToast.dismiss/1"
+      assert html =~ "Show Dismissible Toast"
+      assert html =~ "Dismiss From Server"
+    end
+
+    test "renders section links in the side navigation", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ ~s(href="/#what-is-live-toast")
+      assert html =~ ~s(href="/#duration")
+      assert html =~ ~s(href="/recipes#showing-progress")
+      assert html =~ ~s(href="/recipes#dismiss-programmatically")
+    end
+  end
 end

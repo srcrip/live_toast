@@ -21,8 +21,7 @@ Live Toast is a drop-in replacement for the flash system in Phoenix/LiveView.
 
 ## Installation
 
-Add `live_toast` to your list of dependencies in the `mix.exs` of your Phoenix
-application:
+Add `live_toast` to your list of dependencies in the `mix.exs` of your Phoenix app:
 
 ```elixir
 def deps do
@@ -171,6 +170,38 @@ end
 
 > **Note:**
 > `LiveToast` is the top-level module, so there's no need to `alias` or `import` anything.
+
+`send_toast/3` returns the toast UUID. You can use that UUID to dismiss the toast later from the server with
+[`dismiss_toast`](https://hexdocs.pm/live_toast/LiveToast.html#dismiss_toast/2):
+
+```elixir
+defmodule YourApp.SomeLiveView do
+  def handle_event("start_upload", _payload, socket) do
+    uuid = LiveToast.send_toast(:info, "Upload started.", duration: 0)
+
+    {:noreply, assign(socket, upload_toast_uuid: uuid)}
+  end
+
+  def handle_event("finish_upload", _payload, socket) do
+    LiveToast.dismiss_toast(socket.assigns.upload_toast_uuid)
+
+    {:noreply, socket}
+  end
+end
+```
+
+If your toast group uses a custom `id`, pass the same value as `:container_id`.
+
+Custom toast components can also dismiss themselves with the composable client-side action
+[`dismiss`](https://hexdocs.pm/live_toast/LiveToast.html#dismiss/1):
+
+```heex
+<button type="button" phx-click={LiveToast.dismiss()}>
+  Dismiss
+</button>
+```
+
+Both dismissal paths run the exit animation before removing the toast.
 
 Or you can use the helper function, [`put_toast`](https://hexdocs.pm/live_toast/LiveToast.html#put_toast/4), similar to how you may use [`put_flash`](https://hexdocs.pm/phoenix/Phoenix.Controller.html#put_flash/3):
 

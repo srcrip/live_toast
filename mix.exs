@@ -40,7 +40,7 @@ defmodule LiveToast.MixProject do
       {:esbuild, "~> 0.2", only: :dev},
       {:bandit, "~> 1.1", only: :dev},
       {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},
-      {:credo, ">= 0.0.0", only: [:dev], runtime: false},
+      {:credo, "~> 1.7.12", only: [:dev], runtime: false},
       {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false},
       {:doctor, ">= 0.0.0", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.32.2", only: [:dev], runtime: false},
