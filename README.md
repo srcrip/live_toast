@@ -290,9 +290,9 @@ msgstr "Aguanta mientras volvemos a la normalidad"
 - `icon`: An optional function component that renders next to the title. You can use this with the default toast to display an icon.
 - `action`: An optional function component that renders to the side. You can use this with the default toast to display an action, like a button.
 - `duration`: How long the toast stays visible in milliseconds. Timed toasts pause while hovered or while keyboard focus
-    is inside the toast, then resume with their remaining duration. Set this to `0` to keep a toast visible until it is
-    dismissed. A custom component can include a `[data-live-toast-remaining]` element when it needs LiveToast to display
-    the remaining whole seconds.
+    is inside the toast, then resume with their remaining duration. Set this to `0` or `:infinity` to keep a toast visible
+    until it is dismissed. A custom component can include a `[data-live-toast-remaining]` element when it needs LiveToast
+    to display the remaining whole seconds.
 - `component`: Use this to totally override rendering of the toast. This is expected to be a function component that
     will receive all of the above options. See [this part of the demo](https://github.com/srcrip/live_toast/blob/fddcd7c51be05ba9997eb300ca920985e98ab583/demo/lib/demo_web/live/home_live.ex#L61) as an example.
 
@@ -317,6 +317,17 @@ entry accepts `kind`, `title`, and `body`; unspecified values retain their defau
 ```
 
 Connection notices are always persistent, non-dismissible, and excluded from the ordinary visible-toast limit.
+
+### Persistent toasts
+
+Pass `duration: 0` or `duration: :infinity` to disable automatic expiry. Persistent toasts can still be replaced with
+the same UUID and dismissed manually or programmatically.
+
+```elixir
+uuid = LiveToast.send_toast(:info, "Export ready", duration: :infinity)
+
+LiveToast.dismiss_toast(uuid)
+```
 
 Note that if you use more than just `:info` and `:error` in your codebase for flashes, you can augment LiveToast using
 some of the methods below to support that.
