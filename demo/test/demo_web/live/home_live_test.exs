@@ -104,6 +104,41 @@ defmodule DemoWeb.HomeLiveTest do
       assert render(view) =~ "Bottom center stack item 4"
     end
 
+    test "supports both persistent duration forms", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Persistent Toasts"
+
+      view
+      |> element("button", "Show duration: 0")
+      |> render_click()
+
+      assert render(view) =~ ~s(id="toast-persistent-zero")
+      assert render(view) =~ ~s(data-duration="0")
+
+      view
+      |> element("button", "Show :infinity")
+      |> render_click()
+
+      assert render(view) =~ ~s(id="toast-persistent-infinity")
+      assert render(view) =~ ~s(data-duration="Infinity")
+
+      view
+      |> element("button", "Replace Persistent")
+      |> render_click()
+
+      assert render(view) =~ "Persistent toast replaced"
+
+      view
+      |> element("button", "Dismiss Persistent")
+      |> render_click()
+
+      assert_push_event(view, "live-toast-dismiss", %{
+        id: "toast-persistent-infinity",
+        uuid: "persistent-infinity"
+      })
+    end
+
     test "renders section links in the side navigation", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/recipes")
 
@@ -113,6 +148,7 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ ~s(href="/recipes#dismiss-programmatically")
       assert html =~ ~s(href="/recipes#pause-timed-toast")
       assert html =~ ~s(href="/recipes#centered-positions")
+      assert html =~ ~s(href="/recipes#persistent-toasts")
     end
   end
 end

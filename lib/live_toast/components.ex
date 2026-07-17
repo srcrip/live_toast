@@ -22,7 +22,7 @@ defmodule LiveToast.Components do
     doc: "adds a delay before being shown. not exposed by default, used only for 'client-error' and 'server-error'"
   )
 
-  attr(:duration, :integer,
+  attr(:duration, :any,
     default: 6000,
     doc: "the time in milliseconds before the message is automatically dismissed"
   )
@@ -59,7 +59,7 @@ defmodule LiveToast.Components do
       phx-hook="LiveToast"
       data-kind={@kind}
       data-flash-duration={@flash_duration}
-      data-duration={@duration}
+      data-duration={duration_value(@duration)}
       data-delay={@delay}
       data-corner={@corner}
       class={@toast_class_fn.(assigns)}
@@ -188,6 +188,9 @@ defmodule LiveToast.Components do
     </.toast>
     """
   end
+
+  defp duration_value(:infinity), do: "Infinity"
+  defp duration_value(duration), do: duration
 
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:id, :string, default: "toast-group", doc: "the optional id of flash container")
