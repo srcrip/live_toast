@@ -92,6 +92,7 @@ jobs:
     # Step: Download project dependencies. If unchanged, uses
     # the cached version.
     - name: Install dependencies
+      working-directory: .
       run: mix deps.get
 
     - name: Install demo dependencies
