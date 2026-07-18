@@ -53,6 +53,30 @@ defmodule DemoWeb.SendToastTest do
     end
   end
 
+  defmodule CenteredPositionLive do
+    @moduledoc false
+
+    use Phoenix.LiveView
+
+    def mount(_params, session, socket) do
+      {:ok, Phoenix.Component.assign(socket, :corner, centered_corner(session["corner"]))}
+    end
+
+    def render(assigns) do
+      ~H"""
+      <LiveToast.toast_group
+        flash={@flash}
+        corner={@corner}
+        toasts_sync={assigns[:toasts_sync]}
+        connected={assigns[:socket] != nil}
+      />
+      """
+    end
+
+    defp centered_corner("bottom_center"), do: :bottom_center
+    defp centered_corner(_corner), do: :top_center
+  end
+
   describe "LiveToast.send_toast/3" do
     test "renders info toast", %{conn: conn} do
       {:ok, view, _html} = live_isolated(conn, TestLive)
@@ -87,6 +111,35 @@ defmodule DemoWeb.SendToastTest do
       })
 
       assert uuid =~ ~r/^[0-9a-f-]{36}$/
+    end
+  end
+
+  describe "centered positioning" do
+    for corner <- [:top_center, :bottom_center] do
+      test "renders a live host at #{corner}", %{conn: conn} do
+        {:ok, _view, html} =
+          live_isolated(conn, CenteredPositionLive, session: %{"corner" => unquote(Atom.to_string(corner))})
+
+        assert html =~ ~s(data-corner="#{unquote(Atom.to_string(corner))}")
+        assert html =~ "left-1/2"
+        assert html =~ unquote(if corner == :top_center, do: "top-0", else: "bottom-0")
+      end
+    end
+
+    test "renders dead-view hosts at both centered positions" do
+      Enum.each([:top_center, :bottom_center], fn corner ->
+        html =
+          render_component(&LiveToast.toast_group/1,
+            flash: %{},
+            connected: false,
+            toasts_sync: [],
+            corner: corner
+          )
+
+        assert html =~ ~s(data-corner="#{corner}")
+        assert html =~ "left-1/2"
+        assert html =~ if(corner == :top_center, do: "top-0", else: "bottom-0")
+      end)
     end
   end
 end

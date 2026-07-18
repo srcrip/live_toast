@@ -82,6 +82,28 @@ defmodule DemoWeb.HomeLiveTest do
       assert render(view) =~ "data-live-toast-remaining"
     end
 
+    test "renders and exercises centered position recipe", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Centered Positions"
+      assert html =~ "Show Top-Center Stack"
+      assert html =~ "Show Bottom-Center Stack"
+
+      view
+      |> element("button", "Show Top-Center Stack")
+      |> render_click()
+
+      assert render(view) =~ ~s(data-corner="top_center")
+      assert render(view) =~ "Top center stack item 4"
+
+      view
+      |> element("button", "Show Bottom-Center Stack")
+      |> render_click()
+
+      assert render(view) =~ ~s(data-corner="bottom_center")
+      assert render(view) =~ "Bottom center stack item 4"
+    end
+
     test "renders section links in the side navigation", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/recipes")
 
@@ -90,6 +112,7 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ ~s(href="/recipes#showing-progress")
       assert html =~ ~s(href="/recipes#dismiss-programmatically")
       assert html =~ ~s(href="/recipes#pause-timed-toast")
+      assert html =~ ~s(href="/recipes#centered-positions")
     end
   end
 end

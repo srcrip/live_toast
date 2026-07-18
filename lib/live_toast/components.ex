@@ -194,7 +194,7 @@ defmodule LiveToast.Components do
   attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
 
   attr(:corner, :atom,
-    values: [:top_left, :top_right, :bottom_left, :bottom_right],
+    values: [:top_left, :top_center, :top_right, :bottom_left, :bottom_center, :bottom_right],
     default: :bottom_right,
     doc: "the corner to display the toasts"
   )

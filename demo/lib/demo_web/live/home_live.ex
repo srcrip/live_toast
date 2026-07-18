@@ -122,6 +122,23 @@ defmodule DemoWeb.HomeLive do
     {:noreply, socket}
   end
 
+  def handle_event("show_centered_stack", %{"position" => position}, socket) do
+    {corner, label} = centered_position(position)
+
+    Enum.each(1..4, fn index ->
+      LiveToast.send_toast(
+        :info,
+        "#{label} stack item #{index}",
+        title: label,
+        duration: 8_000
+      )
+    end)
+
+    settings = Map.put(socket.assigns.settings, "corner", Atom.to_string(corner))
+
+    {:noreply, assign(socket, :settings, settings)}
+  end
+
   def handle_event("toast", payload, socket) do
     kind = Map.get(payload, "kind", "info")
     title = Map.get(payload, "title")
@@ -409,6 +426,9 @@ defmodule DemoWeb.HomeLive do
     </div>
     """
   end
+
+  defp centered_position("bottom"), do: {:bottom_center, "Bottom center"}
+  defp centered_position(_position), do: {:top_center, "Top center"}
 
   defp navbar(assigns) do
     ~H"""
