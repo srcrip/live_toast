@@ -107,6 +107,21 @@ defmodule DemoWeb.HomeLive do
     {:noreply, socket}
   end
 
+  def handle_event("show_pauseable_toast", _payload, socket) do
+    LiveToast.send_toast(
+      :info,
+      "Hover over this toast or focus its action before the timer ends.",
+      title: "Paused while interacting",
+      icon: nil,
+      action: &pauseable_toast_action/1,
+      duration: 8_000,
+      component: nil,
+      container_id: "toast-group"
+    )
+
+    {:noreply, socket}
+  end
+
   def handle_event("toast", payload, socket) do
     kind = Map.get(payload, "kind", "info")
     title = Map.get(payload, "title")
@@ -260,6 +275,22 @@ defmodule DemoWeb.HomeLive do
     <button class="my-4 mr-4 text-sm font-medium bg-zinc-900 text-zinc-100 px-2 py-1 rounded-md hover:bg-zinc-800 hover:text-zinc-200">
       Undo
     </button>
+    """
+  end
+
+  def pauseable_toast_action(assigns) do
+    ~H"""
+    <div class="my-4 mr-4 grid justify-items-end gap-1">
+      <button
+        type="button"
+        class="text-sm font-medium bg-zinc-900 text-zinc-100 px-2 py-1 rounded-md hover:bg-zinc-800 hover:text-zinc-200"
+      >
+        Focus me
+      </button>
+      <output class="text-xs tabular-nums text-zinc-500" aria-live="off">
+        <span data-live-toast-remaining>8</span>s remaining
+      </output>
+    </div>
     """
   end
 

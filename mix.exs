@@ -87,7 +87,7 @@ defmodule LiveToast.MixProject do
     [
       main: "readme",
       extras: ["README.md", "CHANGELOG.md"],
-      source_ref: "master",
+      source_ref: "main",
       source_url: "https://github.com/srcrip/live_toast",
       skip_undefined_reference_warnings_on: ["CHANGELOG.md"]
     ]
@@ -95,7 +95,7 @@ defmodule LiveToast.MixProject do
 
   defp aliases do
     [
-      setup: ["deps.get", "cmd --cd assets npm install"],
+      setup: ["deps.get", "cmd --cd assets bun install"],
       "assets.build": ["esbuild module", "esbuild cdn", "esbuild cdn_min", "esbuild main"],
       "assets.watch": ["esbuild module --watch"]
     ]
