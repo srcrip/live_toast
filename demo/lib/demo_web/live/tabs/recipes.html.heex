@@ -162,3 +162,40 @@ LiveToast.dismiss_toast(uuid)</code></pre>
     </.link>
   </p>
 </div>
+
+<div class="mb-12 space-y-4">
+  <h3 id="connection-notifications" class="scroll-mt-20 text-zinc-900 font-medium">
+    Customize Connection Notices
+  </h3>
+  <p>
+    Change the built-in notice copy and kind, or provide custom content with named slots. LiveToast continues to manage connection events, animation, persistence, and stacking.
+  </p>
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click={JS.dispatch("show-error", to: "#client-error")}>
+      Preview Custom Notice
+    </.button>
+    <.button phx-click={JS.dispatch("hide-error", to: "#client-error")}>
+      Hide Preview
+    </.button>
+  </div>
+  <pre class="overflow-x-auto rounded-md bg-zinc-950 p-4 text-sm text-zinc-100"><code>&lt;LiveToast.toast_group
+  flash=&#123;@flash&#125;
+  connected=&#123;assigns[:socket] != nil&#125;
+  toasts_sync=&#123;assigns[:toasts_sync]&#125;
+  connection_notifications=&#123;%&#123;
+    client_error: %&#123;kind: :info, title: "Reconnecting", body: "Your changes are safe."&#125;
+  &#125;&#125;
+&gt;
+  &lt;:client_error :let=&#123;notice&#125;&gt;
+    &lt;.reconnecting_notice title=&#123;notice.title&#125; body=&#123;notice.body&#125; /&gt;
+  &lt;/:client_error&gt;
+&lt;/LiveToast.toast_group&gt;</code></pre>
+  <p>
+    <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/lib/demo_web/components/layouts/app.html.heex"
+    >
+      View the host configuration
+    </.link>
+  </p>
+</div>

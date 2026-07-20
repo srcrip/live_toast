@@ -104,6 +104,17 @@ defmodule DemoWeb.HomeLiveTest do
       assert render(view) =~ "Bottom center stack item 4"
     end
 
+    test "renders the custom connection notice recipe", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Customize Connection Notices"
+      assert html =~ "Preview Custom Notice"
+      assert html =~ ~s(data-live-toast-connection="client_error")
+      assert html =~ ~s(data-connection-notice-id="client-error")
+      assert html =~ "Connection interrupted"
+      refute has_element?(view, "#client-error button[aria-label=close]")
+    end
+
     test "supports both persistent duration forms", %{conn: conn} do
       {:ok, view, html} = live(conn, ~p"/recipes")
 
@@ -149,6 +160,7 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ ~s(href="/recipes#pause-timed-toast")
       assert html =~ ~s(href="/recipes#centered-positions")
       assert html =~ ~s(href="/recipes#persistent-toasts")
+      assert html =~ ~s(href="/recipes#connection-notifications")
     end
   end
 end

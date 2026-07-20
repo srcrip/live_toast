@@ -294,6 +294,14 @@ defmodule LiveToast do
 
   attr :client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown"
 
+  attr(:connection_notifications, :map,
+    default: %{},
+    doc: "copy and kind overrides for connection-state notifications"
+  )
+
+  slot(:client_error, doc: "optional custom content for the client connection notice")
+  slot(:server_error, doc: "optional custom content for the server connection notice")
+
   @doc """
   Renders a group of toasts and flashes.
 
@@ -308,8 +316,12 @@ defmodule LiveToast do
       toasts_sync={@toasts_sync}
       corner={@corner}
       flash_duration={@flash_duration}
+      client_error_delay={@client_error_delay}
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
+      connection_notifications={@connection_notifications}
+      client_error={@client_error}
+      server_error={@server_error}
       f={@flash}
       kinds={@kinds}
     />
@@ -321,6 +333,9 @@ defmodule LiveToast do
       toast_class_fn={@toast_class_fn}
       group_class_fn={@group_class_fn}
       client_error_delay={@client_error_delay}
+      connection_notifications={@connection_notifications}
+      client_error={@client_error}
+      server_error={@server_error}
       flash={@flash}
       kinds={@kinds}
     />

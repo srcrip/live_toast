@@ -37,6 +37,7 @@ defmodule LiveToast.Components do
   attr(:icon, :any, default: nil, doc: "the optional icon to render in the flash message")
   attr(:action, :any, default: nil, doc: "the optional action to render in the flash message")
   attr(:component, :any, default: nil, doc: "the optional component to render the flash message")
+  attr(:dismissible, :boolean, default: true, doc: "whether the toast can be dismissed manually")
 
   attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
 
@@ -92,6 +93,7 @@ defmodule LiveToast.Components do
         <% end %>
       <% end %>
       <button
+        :if={@dismissible}
         type="button"
         class={[
           "group-has-[[data-part='title']]/toast:absolute",
@@ -130,12 +132,22 @@ defmodule LiveToast.Components do
     doc: "function to override the toast classes"
   )
 
+  attr(:connection_notifications, :map,
+    default: %{},
+    doc: "copy and kind overrides for connection-state notifications"
+  )
+
+  attr(:client_error, :list, default: [], doc: "optional custom content for the client connection notice")
+  attr(:server_error, :list, default: [], doc: "optional custom content for the server connection notice")
+
   attr(:kinds, :list, required: true, doc: "the valid severity level kinds")
 
   attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
 
   @doc false
   def flashes(assigns) do
+    assigns = assign(assigns, :connection_notifications, connection_notifications(assigns.connection_notifications))
+
     ~H"""
     <.toast
       :for={level <- @kinds}
@@ -154,8 +166,11 @@ defmodule LiveToast.Components do
       corner={@corner}
       toast_class_fn={@toast_class_fn}
       id="client-error"
-      kind={:error}
-      title={Utility.translate("We can't find the internet")}
+      kind={@connection_notifications.client_error.kind}
+      title={Utility.translate(@connection_notifications.client_error.title)}
+      duration={0}
+      dismissible={false}
+      data-live-toast-connection="client_error"
       delay={@client_error_delay}
       phx-update="ignore"
       phx-disconnected={Utility.show_error(".phx-client-error #client-error")}
@@ -164,8 +179,15 @@ defmodule LiveToast.Components do
       data-connected={Utility.hide("#client-error")}
       hidden
     >
-      {Utility.translate("Attempting to reconnect")}
-      <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+      <%= if @client_error == [] do %>
+        {Utility.translate(@connection_notifications.client_error.body)}
+        <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+      <% else %>
+        {render_slot(
+          @client_error,
+          connection_notice_assigns(@connection_notifications.client_error, "client-error", @corner)
+        )}
+      <% end %>
     </.toast>
 
     <.toast
@@ -173,8 +195,11 @@ defmodule LiveToast.Components do
       corner={@corner}
       toast_class_fn={@toast_class_fn}
       id="server-error"
-      kind={:error}
-      title={Utility.translate("Something went wrong!")}
+      kind={@connection_notifications.server_error.kind}
+      title={Utility.translate(@connection_notifications.server_error.title)}
+      duration={0}
+      dismissible={false}
+      data-live-toast-connection="server_error"
       phx-update="ignore"
       phx-disconnected={Utility.show_error(".phx-server-error #server-error")}
       phx-connected={Utility.hide_error("#server-error")}
@@ -183,8 +208,15 @@ defmodule LiveToast.Components do
       delay={@client_error_delay}
       hidden
     >
-      {Utility.translate("Hang in there while we get back on track")}
-      <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+      <%= if @server_error == [] do %>
+        {Utility.translate(@connection_notifications.server_error.body)}
+        <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+      <% else %>
+        {render_slot(
+          @server_error,
+          connection_notice_assigns(@connection_notifications.server_error, "server-error", @corner)
+        )}
+      <% end %>
     </.toast>
     """
   end
@@ -216,6 +248,14 @@ defmodule LiveToast.Components do
 
   attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
 
+  attr(:connection_notifications, :map,
+    default: %{},
+    doc: "copy and kind overrides for connection-state notifications"
+  )
+
+  attr(:client_error, :list, default: [], doc: "optional custom content for the client connection notice")
+  attr(:server_error, :list, default: [], doc: "optional custom content for the server connection notice")
+
   # Used to render flashes-only on regular non-LV pages.
   @doc false
   def flash_group(assigns) do
@@ -226,9 +266,36 @@ defmodule LiveToast.Components do
         corner={@corner}
         flash_duration={@flash_duration}
         toast_class_fn={@toast_class_fn}
+        client_error_delay={@client_error_delay}
+        connection_notifications={@connection_notifications}
+        client_error={@client_error}
+        server_error={@server_error}
         kinds={@kinds}
       />
     </div>
     """
+  end
+
+  defp connection_notifications(overrides) do
+    defaults = %{
+      client_error: %{
+        kind: :error,
+        title: "We can't find the internet",
+        body: "Attempting to reconnect"
+      },
+      server_error: %{
+        kind: :error,
+        title: "Something went wrong!",
+        body: "Hang in there while we get back on track"
+      }
+    }
+
+    Map.new(defaults, fn {name, notification} ->
+      {name, Map.merge(notification, Map.get(overrides, name, %{}))}
+    end)
+  end
+
+  defp connection_notice_assigns(notification, id, corner) do
+    Map.merge(notification, %{id: id, corner: corner})
   end
 end
