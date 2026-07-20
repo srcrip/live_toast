@@ -61,7 +61,7 @@ function installDom() {
 }
 
 function mountToast(
-  duration = 1000,
+  duration: number | 'Infinity' = 1000,
   countdown = false,
   motion: Record<string, unknown> = {},
   corner = 'bottom_right'
@@ -270,6 +270,14 @@ describe('LiveToast timed dismissal', () => {
 
   test('does not schedule dismissal for a persistent toast', () => {
     const toast = mountToast(0)
+
+    advance(60_000)
+
+    expect(toast.pushes).toHaveLength(0)
+  })
+
+  test('does not schedule dismissal for an Infinity duration', () => {
+    const toast = mountToast('Infinity')
 
     advance(60_000)
 

@@ -240,3 +240,30 @@ LiveToast.dismiss_toast(uuid)</code></pre>
     </.link>
   </p>
 </div>
+
+<div class="mb-12 space-y-4">
+  <h3 id="persistent-toasts" class="scroll-mt-20 text-zinc-900 font-medium">
+    Persistent Toasts
+  </h3>
+  <p>
+    Set <code>duration: 0</code> or <code>duration: :infinity</code> to disable automatic expiry.
+    Persistent toasts can still be replaced with the same UUID or dismissed programmatically.
+  </p>
+  <div class="flex flex-wrap gap-3">
+    <.button phx-click="show_persistent_zero">Show duration: 0</.button>
+    <.button phx-click="show_persistent_infinity">Show :infinity</.button>
+    <.button phx-click="replace_persistent_infinity">Replace Persistent</.button>
+    <.button phx-click="dismiss_persistent_infinity">Dismiss Persistent</.button>
+  </div>
+  <pre class="overflow-x-auto rounded-md bg-zinc-950 p-4 text-sm text-zinc-100"><code>uuid = LiveToast.send_toast(:info, "Export ready", duration: :infinity)
+
+LiveToast.dismiss_toast(uuid)</code></pre>
+  <p>
+    <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/lib/demo_web/live/home_live.ex"
+    >
+      View the persistent toast example
+    </.link>
+  </p>
+</div>
