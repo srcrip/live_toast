@@ -122,6 +122,20 @@ defmodule DemoWeb.HomeLive do
     {:noreply, socket}
   end
 
+  def handle_event("show_conditional_icon_toast", %{"has_icon" => has_icon}, socket) do
+    LiveToast.send_toast(
+      :info,
+      "This custom component reads its icon setting from application metadata.",
+      title: "Conditional custom rendering",
+      component: &conditional_icon_toast/1,
+      metadata: %{has_icon: has_icon == "true"},
+      duration: 8_000,
+      uuid: "conditional-icon-recipe"
+    )
+
+    {:noreply, socket}
+  end
+
   def handle_event("show_centered_stack", %{"position" => position}, socket) do
     {corner, label} = centered_position(position)
 
@@ -400,6 +414,26 @@ defmodule DemoWeb.HomeLive do
       >
         Dismiss in component
       </button>
+    </div>
+    """
+  end
+
+  def conditional_icon_toast(assigns) do
+    ~H"""
+    <div class="grow flex flex-col items-start justify-center">
+      <p :if={@title} data-part="title" class="mb-2 flex items-center text-sm font-semibold leading-6">
+        <span
+          :if={Map.get(@metadata, :has_icon, true)}
+          aria-hidden="true"
+          class="mr-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-xs text-white"
+        >
+          &check;
+        </span>
+        {@title}
+      </p>
+      <p class="text-sm leading-5">
+        {@body}
+      </p>
     </div>
     """
   end

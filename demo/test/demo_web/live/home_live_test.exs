@@ -82,6 +82,28 @@ defmodule DemoWeb.HomeLiveTest do
       assert render(view) =~ "data-live-toast-remaining"
     end
 
+    test "renders and exercises conditional custom rendering recipe", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Conditional Rendering in Custom Component Functions"
+      assert html =~ "metadata: %{has_icon: false}"
+      assert html =~ "View the demo source"
+
+      view
+      |> element("button", "Show With Icon")
+      |> render_click()
+
+      assert render(view) =~ ~s(data-part="title")
+      assert render(view) =~ "Conditional custom rendering"
+      assert render(view) =~ "bg-emerald-500"
+
+      view
+      |> element("button", "Show Without Icon")
+      |> render_click()
+
+      refute render(view) =~ "bg-emerald-500"
+    end
+
     test "renders and exercises centered position recipe", %{conn: conn} do
       {:ok, view, html} = live(conn, ~p"/recipes")
 

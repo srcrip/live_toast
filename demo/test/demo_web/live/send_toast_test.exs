@@ -37,6 +37,19 @@ defmodule DemoWeb.SendToastTest do
       {:noreply, socket}
     end
 
+    def handle_event("send_metadata_toast", %{"has_icon" => has_icon}, socket) do
+      LiveToast.send_toast(
+        :info,
+        "Metadata controls this custom component.",
+        title: "Custom metadata",
+        component: &metadata_toast/1,
+        metadata: %{has_icon: has_icon == "true", reference: "receipt-123"},
+        uuid: "metadata-toast"
+      )
+
+      {:noreply, socket}
+    end
+
     def render(assigns) do
       ~H"""
       <LiveToast.toast_group
@@ -49,6 +62,23 @@ defmodule DemoWeb.SendToastTest do
         <button phx-click="send_error">Send Error Toast</button>
         <button phx-click="send_persistent">Send Persistent Toast</button>
         <button phx-click="dismiss_persistent">Dismiss Persistent Toast</button>
+        <button phx-click="send_metadata_toast" phx-value-has_icon="true">
+          Send Metadata Toast With Icon
+        </button>
+        <button phx-click="send_metadata_toast" phx-value-has_icon="false">
+          Send Metadata Toast Without Icon
+        </button>
+      </div>
+      """
+    end
+
+    defp metadata_toast(assigns) do
+      ~H"""
+      <div>
+        <span :if={Map.get(@metadata, :has_icon, true)} data-metadata-icon>Icon</span>
+        <p data-part="title">{@title}</p>
+        <p>{@body}</p>
+        <span data-reference={@metadata.reference}></span>
       </div>
       """
     end
@@ -163,6 +193,28 @@ defmodule DemoWeb.SendToastTest do
       })
 
       assert uuid =~ ~r/^[0-9a-f-]{36}$/
+    end
+
+    test "passes application metadata to a custom toast component", %{conn: conn} do
+      {:ok, view, _html} = live_isolated(conn, TestLive)
+
+      view
+      |> element("button", "Send Metadata Toast With Icon")
+      |> render_click()
+
+      html = render(view)
+
+      assert html =~ ~s(data-metadata-icon)
+      assert html =~ ~s(data-reference="receipt-123")
+
+      view
+      |> element("button", "Send Metadata Toast Without Icon")
+      |> render_click()
+
+      html = render(view)
+
+      refute html =~ ~s(data-metadata-icon)
+      assert html =~ ~s(data-reference="receipt-123")
     end
   end
 
