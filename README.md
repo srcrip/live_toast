@@ -284,6 +284,32 @@ uuid = LiveToast.send_toast(:info, "Export ready", duration: :infinity)
 
 LiveToast.dismiss_toast(uuid)
 ```
+
+### Connection-state notifications
+
+Customize the built-in client and server connection notices with `connection_notifications`. Each entry accepts
+`kind`, `title`, and `body`; unspecified values retain their defaults. Notices are persistent, non-dismissible, and
+excluded from the ordinary visible-toast limit.
+
+Use the optional `:client_error` and `:server_error` slots when an application needs custom markup. LiveToast retains
+the connection-event wiring, animation, and toast shell while the slot receives `id`, `kind`, `title`, `body`, and
+`corner` through `:let`.
+
+```heex
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toasts_sync={assigns[:toasts_sync]}
+  connection_notifications={%{
+    client_error: %{kind: :info, title: "Reconnecting", body: "Your changes are safe."}
+  }}
+>
+  <:client_error :let={notice}>
+    <.reconnecting_notice title={notice.title} body={notice.body} />
+  </:client_error>
+</LiveToast.toast_group>
+```
+
 Note that if you use more than just `:info` and `:error` in your codebase for flashes, you can augment LiveToast using
 some of the methods below to support that.
 

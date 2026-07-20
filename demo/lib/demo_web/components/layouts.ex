@@ -33,4 +33,22 @@ defmodule DemoWeb.Layouts do
       assigns[:corner] == :top_right && "items-start top-0 right-0 flex-col sm:bottom-auto"
     ]
   end
+
+  attr(:notice, :map, required: true)
+
+  def connection_notice(assigns) do
+    ~H"""
+    <div
+      class="grid w-full grid-cols-[auto_1fr] items-center gap-3"
+      data-connection-notice-id={@notice.id}
+      data-connection-notice-kind={@notice.kind}
+    >
+      <span class="size-2 rounded-full bg-sky-500 motion-safe:animate-pulse"></span>
+      <div>
+        <p class="text-sm font-semibold text-zinc-900">{@notice.title}</p>
+        <p class="text-sm text-zinc-600">{@notice.body}</p>
+      </div>
+    </div>
+    """
+  end
 end

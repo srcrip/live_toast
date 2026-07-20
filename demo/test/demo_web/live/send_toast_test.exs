@@ -1,5 +1,6 @@
 defmodule DemoWeb.SendToastTest do
   use DemoWeb.ConnCase
+  use Phoenix.Component
 
   import Phoenix.LiveViewTest
 
@@ -77,6 +78,57 @@ defmodule DemoWeb.SendToastTest do
     defp centered_corner(_corner), do: :top_center
   end
 
+  defmodule ConnectionNotificationLive do
+    @moduledoc false
+
+    use Phoenix.LiveView
+
+    def mount(_params, _session, socket), do: {:ok, socket}
+
+    def render(assigns) do
+      ~H"""
+      <LiveToast.toast_group
+        flash={@flash}
+        connected={assigns[:socket] != nil}
+        toasts_sync={assigns[:toasts_sync]}
+        connection_notifications={
+          %{
+            client_error: %{kind: :info, title: "Custom title", body: "Custom body"}
+          }
+        }
+      >
+        <:client_error :let={notice}>
+          <div id="custom-client-notice" data-notice-id={notice.id} data-notice-kind={notice.kind}>
+            <span>{notice.title}</span>
+            <span>{notice.body}</span>
+          </div>
+        </:client_error>
+      </LiveToast.toast_group>
+      """
+    end
+  end
+
+  attr :flash, :map, required: true
+  attr :toasts_sync, :list, required: true
+
+  defp dead_connection_notification_host(assigns) do
+    ~H"""
+    <LiveToast.toast_group
+      flash={@flash}
+      connected={false}
+      toasts_sync={@toasts_sync}
+      connection_notifications={%{server_error: %{title: "Offline", body: "Trying again"}}}
+    >
+      <:server_error :let={notice}>
+        <div id="custom-server-notice" data-notice-id={notice.id}>
+          <span>{notice.title}</span>
+          <span>{notice.body}</span>
+        </div>
+      </:server_error>
+    </LiveToast.toast_group>
+    """
+  end
+
   describe "LiveToast.send_toast/3" do
     test "renders info toast", %{conn: conn} do
       {:ok, view, _html} = live_isolated(conn, TestLive)
@@ -140,6 +192,33 @@ defmodule DemoWeb.SendToastTest do
         assert html =~ "left-1/2"
         assert html =~ if(corner == :top_center, do: "top-0", else: "bottom-0")
       end)
+    end
+  end
+
+  describe "connection notification slots" do
+    test "renders custom client notice content in a live host", %{conn: conn} do
+      {:ok, view, html} = live_isolated(conn, ConnectionNotificationLive)
+
+      assert html =~ ~s(data-live-toast-connection="client_error")
+      assert html =~ ~s(data-notice-id="client-error")
+      assert html =~ ~s(data-notice-kind="info")
+      assert html =~ "Custom title"
+      assert html =~ "Custom body"
+      refute has_element?(view, "#client-error button[aria-label=close]")
+    end
+
+    test "renders custom server notice content in a dead host" do
+      html =
+        render_component(&dead_connection_notification_host/1,
+          flash: %{},
+          toasts_sync: []
+        )
+
+      assert html =~ ~s(data-live-toast-connection="server_error")
+      assert html =~ ~s(data-notice-id="server-error")
+      assert html =~ "Offline"
+      assert html =~ "Trying again"
+      refute html =~ ~s(aria-label="close")
     end
   end
 end

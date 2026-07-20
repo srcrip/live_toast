@@ -5,6 +5,19 @@
     flash={@flash}
     kinds={[:info, :error, :warn]}
     flash_duration={3000}
+    connection_notifications={
+      if assigns[:live_action] == :recipes do
+        %{
+          client_error: %{
+            kind: :info,
+            title: "Connection interrupted",
+            body: "Live updates will resume automatically."
+          }
+        }
+      else
+        %{}
+      end
+    }
     toasts_sync={assigns[:toasts_sync]}
     connected={assigns[:socket] != nil}
     {
@@ -23,5 +36,10 @@
         []
       end
     }
-  /> {@inner_content}
+  >
+    <:client_error :let={notice} :if={assigns[:live_action] == :recipes}>
+      <.connection_notice notice={notice} />
+    </:client_error>
+  </LiveToast.toast_group>
+  {@inner_content}
 </div>
