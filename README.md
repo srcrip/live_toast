@@ -273,6 +273,36 @@ msgstr "Aguanta mientras volvemos a la normalidad"
     to display the remaining whole seconds.
 - `component`: Use this to totally override rendering of the toast. This is expected to be a function component that
     will receive all of the above options. See [this part of the demo](https://github.com/srcrip/live_toast/blob/fddcd7c51be05ba9997eb300ca920985e98ab583/demo/lib/demo_web/live/home_live.ex#L61) as an example.
+- `metadata`: An application-defined map passed unchanged to a custom `component` function. Use this for
+    component-specific presentation or behavior without adding library-level options. LiveToast does not interpret
+    metadata.
+
+### Custom component metadata
+
+Custom component functions receive `metadata` alongside the standard toast assigns such as `kind`, `title`, `body`,
+`uuid`, `duration`, and `dismissible`. This gives an application a stable extension point for renderer-specific options.
+
+For example, a component can show its semantic icon by default and let individual toasts opt out:
+
+```elixir
+def notification_toast(assigns) do
+  ~H"""
+  <div>
+    <span :if={Map.get(@metadata, :has_icon, true)} aria-hidden="true">*</span>
+    <p :if={@title} data-part="title">{@title}</p>
+    <p>{@body}</p>
+  </div>
+  """
+end
+
+LiveToast.send_toast(
+  :info,
+  "The message was sent.",
+  title: "Sent",
+  component: &notification_toast/1,
+  metadata: %{has_icon: false}
+)
+```
 
 ### Persistent toasts
 

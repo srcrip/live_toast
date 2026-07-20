@@ -17,6 +17,7 @@ defmodule LiveToast do
     :icon,
     :action,
     :component,
+    :metadata,
     :duration,
     :container_id,
     :uuid,
@@ -31,6 +32,7 @@ defmodule LiveToast do
             icon: component_fn() | nil,
             action: component_fn() | nil,
             component: component_fn() | nil,
+            metadata: map(),
             duration: duration() | nil,
             container_id: binary() | nil,
             uuid: Ecto.UUID.t() | nil,
@@ -49,6 +51,7 @@ defmodule LiveToast do
           | {:icon, component_fn() | nil}
           | {:action, component_fn() | nil}
           | {:component, component_fn() | nil}
+          | {:metadata, map()}
           | {:duration, duration() | nil}
           | {:container_id, binary() | nil}
           | {:uuid, Ecto.UUID.t() | nil}
@@ -67,6 +70,7 @@ defmodule LiveToast do
       icon: options[:icon],
       action: options[:action],
       component: options[:component],
+      metadata: options[:metadata] || %{},
       duration: options[:duration],
       container_id: container_id,
       uuid: uuid,
@@ -79,6 +83,9 @@ defmodule LiveToast do
 
   Returns the UUID of the new toast message. This UUID can be passed back
   to another call to `send_toast/3` to update the properties of an existing toast.
+
+  Use the `:metadata` option to provide application-defined data to a custom
+  component function. LiveToast preserves this map without interpreting it.
 
   ## Examples
 

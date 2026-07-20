@@ -105,6 +105,7 @@ defmodule LiveToast.LiveComponent do
                title: title,
                icon: icon,
                action: action,
+               metadata: metadata,
                duration: duration,
                uuid: uuid,
                component: component
@@ -119,6 +120,7 @@ defmodule LiveToast.LiveComponent do
           component={component}
           icon={icon}
           action={action}
+          metadata={metadata}
           corner={@corner}
           title={if title, do: Utility.translate(title), else: nil}
           target={@myself}

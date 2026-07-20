@@ -37,6 +37,7 @@ defmodule LiveToast.Components do
   attr(:icon, :any, default: nil, doc: "the optional icon to render in the flash message")
   attr(:action, :any, default: nil, doc: "the optional action to render in the flash message")
   attr(:component, :any, default: nil, doc: "the optional component to render the flash message")
+  attr(:metadata, :map, default: %{}, doc: "application-defined data passed to a custom toast component")
   attr(:dismissible, :boolean, default: true, doc: "whether the toast can be dismissed manually")
 
   attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
