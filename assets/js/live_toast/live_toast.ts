@@ -13,6 +13,20 @@ function isFlash(el: HTMLElement) {
   return el.dataset.component === 'flash'
 }
 
+function parseDuration(value: string | undefined, fallback: number) {
+  if (value === undefined) {
+    return fallback
+  }
+
+  if (value === 'Infinity') {
+    return Number.POSITIVE_INFINITY
+  }
+
+  const parsed = Number.parseInt(value)
+
+  return Number.isNaN(parsed) ? fallback : parsed
+}
+
 // number of flashes that aren't hidden
 function flashCount() {
   let num = 0
@@ -405,10 +419,7 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
       // begin actually showing the toast through this call to the animation function
       doAnimations.bind(this)(duration, maxItems)
 
-      let durationOverride = duration
-      if (this.el.dataset.duration !== undefined) {
-        durationOverride = Number.parseInt(this.el.dataset.duration)
-      }
+      const durationOverride = parseDuration(this.el.dataset.duration, duration)
 
       let flashDuration = undefined
       if (this.el.dataset.flashDuration !== undefined) {
@@ -434,8 +445,7 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
           }
         }, flashDuration + removalTime)
       } else {
-        // you can set duration to 0 for infinite duration, basically
-        if (durationOverride !== 0) {
+        if (Number.isFinite(durationOverride) && durationOverride > 0) {
           startDismissTimer.bind(this)(durationOverride, duration, maxItems)
         }
       }

@@ -31,7 +31,7 @@ defmodule LiveToast do
             icon: component_fn() | nil,
             action: component_fn() | nil,
             component: component_fn() | nil,
-            duration: non_neg_integer() | nil,
+            duration: duration() | nil,
             container_id: binary() | nil,
             uuid: Ecto.UUID.t() | nil,
             sync: boolean() | nil
@@ -40,13 +40,16 @@ defmodule LiveToast do
   @typedoc "`Phoenix.Component` that renders a part of the toast message."
   @type component_fn() :: (map() -> Phoenix.LiveView.Rendered.t())
 
+  @typedoc "Milliseconds before expiry, or `:infinity` for a persistent toast."
+  @type duration() :: non_neg_integer() | :infinity
+
   @typedoc "Set of public options to augment the default toast behavior."
   @type option() ::
           {:title, binary() | nil}
           | {:icon, component_fn() | nil}
           | {:action, component_fn() | nil}
           | {:component, component_fn() | nil}
-          | {:duration, non_neg_integer() | nil}
+          | {:duration, duration() | nil}
           | {:container_id, binary() | nil}
           | {:uuid, Ecto.UUID.t() | nil}
           | {:sync, boolean() | nil}

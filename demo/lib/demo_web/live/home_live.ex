@@ -139,6 +139,30 @@ defmodule DemoWeb.HomeLive do
     {:noreply, assign(socket, :settings, settings)}
   end
 
+  def handle_event("show_persistent_zero", _payload, socket) do
+    send_persistent_toast("persistent-zero", "Persistent with duration 0", 0)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("show_persistent_infinity", _payload, socket) do
+    send_persistent_toast("persistent-infinity", "Persistent with :infinity", :infinity)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("replace_persistent_infinity", _payload, socket) do
+    send_persistent_toast("persistent-infinity", "Persistent toast replaced", :infinity)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("dismiss_persistent_infinity", _payload, socket) do
+    LiveToast.dismiss_toast("persistent-infinity")
+
+    {:noreply, socket}
+  end
+
   def handle_event("toast", payload, socket) do
     kind = Map.get(payload, "kind", "info")
     title = Map.get(payload, "title")
@@ -425,6 +449,16 @@ defmodule DemoWeb.HomeLive do
       </p>
     </div>
     """
+  end
+
+  defp send_persistent_toast(uuid, body, duration) do
+    LiveToast.send_toast(
+      :info,
+      body,
+      uuid: uuid,
+      title: "Persistent toast",
+      duration: duration
+    )
   end
 
   defp centered_position("bottom"), do: {:bottom_center, "Bottom center"}
