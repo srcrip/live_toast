@@ -137,6 +137,14 @@ defmodule DemoWeb.HomeLiveTest do
       refute has_element?(view, "#client-error button[aria-label=close]")
     end
 
+    test "renders the disabled connection notice recipe", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/recipes")
+
+      assert html =~ "Disable Connection Notices"
+      assert html =~ "connection_notifications={false}"
+      assert html =~ "View the recipe source"
+    end
+
     test "supports both persistent duration forms", %{conn: conn} do
       {:ok, view, html} = live(conn, ~p"/recipes")
 
@@ -183,6 +191,7 @@ defmodule DemoWeb.HomeLiveTest do
       assert html =~ ~s(href="/recipes#centered-positions")
       assert html =~ ~s(href="/recipes#persistent-toasts")
       assert html =~ ~s(href="/recipes#connection-notifications")
+      assert html =~ ~s(href="/recipes#disable-connection-notifications")
     end
   end
 end

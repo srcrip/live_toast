@@ -186,6 +186,25 @@ defmodule DemoWeb.SendToastTest do
     end
   end
 
+  defmodule ConnectionNotificationsDisabledLive do
+    @moduledoc false
+
+    use Phoenix.LiveView
+
+    def mount(_params, _session, socket), do: {:ok, socket}
+
+    def render(assigns) do
+      ~H"""
+      <LiveToast.toast_group
+        flash={@flash}
+        connected={assigns[:socket] != nil}
+        toasts_sync={assigns[:toasts_sync]}
+        connection_notifications={false}
+      />
+      """
+    end
+  end
+
   attr :flash, :map, required: true
   attr :toasts_sync, :list, required: true
 
@@ -204,6 +223,17 @@ defmodule DemoWeb.SendToastTest do
         </div>
       </:server_error>
     </LiveToast.toast_group>
+    """
+  end
+
+  defp disabled_connection_notification_host(assigns) do
+    ~H"""
+    <LiveToast.toast_group
+      flash={@flash}
+      connected={false}
+      toasts_sync={@toasts_sync}
+      connection_notifications={false}
+    />
     """
   end
 
@@ -342,6 +372,28 @@ defmodule DemoWeb.SendToastTest do
       assert html =~ "Offline"
       assert html =~ "Trying again"
       refute html =~ ~s(aria-label="close")
+    end
+  end
+
+  describe "disabled connection notifications" do
+    test "omits connection notices in a live host", %{conn: conn} do
+      {:ok, _view, html} = live_isolated(conn, ConnectionNotificationsDisabledLive)
+
+      refute html =~ ~s(id="client-error")
+      refute html =~ ~s(id="server-error")
+      refute html =~ "data-live-toast-connection"
+    end
+
+    test "omits connection notices in a dead host" do
+      html =
+        render_component(&disabled_connection_notification_host/1,
+          flash: %{},
+          toasts_sync: []
+        )
+
+      refute html =~ ~s(id="client-error")
+      refute html =~ ~s(id="server-error")
+      refute html =~ "data-live-toast-connection"
     end
   end
 end

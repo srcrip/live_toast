@@ -133,9 +133,9 @@ defmodule LiveToast.Components do
     doc: "function to override the toast classes"
   )
 
-  attr(:connection_notifications, :map,
+  attr(:connection_notifications, :any,
     default: %{},
-    doc: "copy and kind overrides for connection-state notifications"
+    doc: "false disables connection-state notifications; a map overrides their copy and kind"
   )
 
   attr(:client_error, :list, default: [], doc: "optional custom content for the client connection notice")
@@ -162,63 +162,65 @@ defmodule LiveToast.Components do
       phx-update="ignore"
       flash={@f}
     />
-    <.toast
-      data-component="flash"
-      corner={@corner}
-      toast_class_fn={@toast_class_fn}
-      id="client-error"
-      kind={@connection_notifications.client_error.kind}
-      title={Utility.translate(@connection_notifications.client_error.title)}
-      duration={0}
-      dismissible={false}
-      data-live-toast-connection="client_error"
-      delay={@client_error_delay}
-      phx-update="ignore"
-      phx-disconnected={Utility.show_error(".phx-client-error #client-error")}
-      phx-connected={Utility.hide_error("#client-error")}
-      data-disconnected={Utility.show(".phx-client-error #client-error")}
-      data-connected={Utility.hide("#client-error")}
-      hidden
-    >
-      <%= if @client_error == [] do %>
-        {Utility.translate(@connection_notifications.client_error.body)}
-        <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
-      <% else %>
-        {render_slot(
-          @client_error,
-          connection_notice_assigns(@connection_notifications.client_error, "client-error", @corner)
-        )}
-      <% end %>
-    </.toast>
+    <%= if @connection_notifications do %>
+      <.toast
+        data-component="flash"
+        corner={@corner}
+        toast_class_fn={@toast_class_fn}
+        id="client-error"
+        kind={@connection_notifications.client_error.kind}
+        title={Utility.translate(@connection_notifications.client_error.title)}
+        duration={0}
+        dismissible={false}
+        data-live-toast-connection="client_error"
+        delay={@client_error_delay}
+        phx-update="ignore"
+        phx-disconnected={Utility.show_error(".phx-client-error #client-error")}
+        phx-connected={Utility.hide_error("#client-error")}
+        data-disconnected={Utility.show(".phx-client-error #client-error")}
+        data-connected={Utility.hide("#client-error")}
+        hidden
+      >
+        <%= if @client_error == [] do %>
+          {Utility.translate(@connection_notifications.client_error.body)}
+          <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+        <% else %>
+          {render_slot(
+            @client_error,
+            connection_notice_assigns(@connection_notifications.client_error, "client-error", @corner)
+          )}
+        <% end %>
+      </.toast>
 
-    <.toast
-      data-component="flash"
-      corner={@corner}
-      toast_class_fn={@toast_class_fn}
-      id="server-error"
-      kind={@connection_notifications.server_error.kind}
-      title={Utility.translate(@connection_notifications.server_error.title)}
-      duration={0}
-      dismissible={false}
-      data-live-toast-connection="server_error"
-      phx-update="ignore"
-      phx-disconnected={Utility.show_error(".phx-server-error #server-error")}
-      phx-connected={Utility.hide_error("#server-error")}
-      data-disconnected={Utility.show(".phx-server-error #server-error")}
-      data-connected={Utility.hide("#server-error")}
-      delay={@client_error_delay}
-      hidden
-    >
-      <%= if @server_error == [] do %>
-        {Utility.translate(@connection_notifications.server_error.body)}
-        <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
-      <% else %>
-        {render_slot(
-          @server_error,
-          connection_notice_assigns(@connection_notifications.server_error, "server-error", @corner)
-        )}
-      <% end %>
-    </.toast>
+      <.toast
+        data-component="flash"
+        corner={@corner}
+        toast_class_fn={@toast_class_fn}
+        id="server-error"
+        kind={@connection_notifications.server_error.kind}
+        title={Utility.translate(@connection_notifications.server_error.title)}
+        duration={0}
+        dismissible={false}
+        data-live-toast-connection="server_error"
+        phx-update="ignore"
+        phx-disconnected={Utility.show_error(".phx-server-error #server-error")}
+        phx-connected={Utility.hide_error("#server-error")}
+        data-disconnected={Utility.show(".phx-server-error #server-error")}
+        data-connected={Utility.hide("#server-error")}
+        delay={@client_error_delay}
+        hidden
+      >
+        <%= if @server_error == [] do %>
+          {Utility.translate(@connection_notifications.server_error.body)}
+          <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
+        <% else %>
+          {render_slot(
+            @server_error,
+            connection_notice_assigns(@connection_notifications.server_error, "server-error", @corner)
+          )}
+        <% end %>
+      </.toast>
+    <% end %>
     """
   end
 
@@ -249,9 +251,9 @@ defmodule LiveToast.Components do
 
   attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
 
-  attr(:connection_notifications, :map,
+  attr(:connection_notifications, :any,
     default: %{},
-    doc: "copy and kind overrides for connection-state notifications"
+    doc: "false disables connection-state notifications; a map overrides their copy and kind"
   )
 
   attr(:client_error, :list, default: [], doc: "optional custom content for the client connection notice")
@@ -276,6 +278,8 @@ defmodule LiveToast.Components do
     </div>
     """
   end
+
+  defp connection_notifications(false), do: false
 
   defp connection_notifications(overrides) do
     defaults = %{

@@ -307,9 +307,9 @@ defmodule LiveToast do
 
   attr :client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown"
 
-  attr(:connection_notifications, :map,
+  attr(:connection_notifications, :any,
     default: %{},
-    doc: "copy and kind overrides for connection-state notifications"
+    doc: "false disables connection-state notifications; a map overrides their copy and kind"
   )
 
   slot(:client_error, doc: "optional custom content for the client connection notice")

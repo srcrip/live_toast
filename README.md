@@ -343,7 +343,19 @@ LiveToast.dismiss_toast(uuid)
 
 ### Connection-state notifications
 
-Customize the built-in client and server connection notices with `connection_notifications`. Each entry accepts
+Set `connection_notifications={false}` when your application supplies its own connection-state UI. This removes both
+built-in notices, including their connection-event wiring.
+
+```heex
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toasts_sync={assigns[:toasts_sync]}
+  connection_notifications={false}
+/>
+```
+
+Otherwise, customize the built-in client and server connection notices with `connection_notifications`. Each entry accepts
 `kind`, `title`, and `body`; unspecified values retain their defaults. Notices are persistent, non-dismissible, and
 excluded from the ordinary visible-toast limit.
 
