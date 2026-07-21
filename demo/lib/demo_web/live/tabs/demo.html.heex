@@ -365,6 +365,17 @@
   <p class="mt-2 mb-4">
     It will totally take over rendering for that call, so that you can render totally custom toasts. It receives all the assigns of the built in toast function. See the default implementation in GitHub for an example.
   </p>
+
+  <p class="mt-2 mb-4">
+    If you want every call to
+    <code class="text-rose-600 bg-zinc-50 rounded px-1">send_toast</code>
+    to use a custom function, you can also define it up in the call to <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://hexdocs.pm/live_toast/LiveToast.html#toast_group/1"
+    >
+      <code class="text-rose-600 bg-zinc-50 rounded px-1">toast_group</code>
+    </.link>.
+  </p>
   <div class="flex flex-wrap gap-3">
     <.button phx-click={
       JS.push("toast",
