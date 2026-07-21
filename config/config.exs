@@ -1,8 +1,9 @@
 import Config
 
-config :phoenix, :json_library, Jason
-config :logger, :level, :debug
 config :logger, :backends, []
+config :logger, :level, :debug
+
+config :phoenix, :json_library, Jason
 
 if Mix.env() == :dev do
   esbuild = fn args ->

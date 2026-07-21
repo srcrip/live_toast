@@ -34,7 +34,7 @@ defmodule Mix.Tasks.Docs.Run do
     {:ok, _} = Supervisor.start_link([bandit], strategy: :one_for_one)
 
     # unless running from IEx, sleep idenfinitely so we can serve requests
-    unless IEx.started?() do
+    if !IEx.started?() do
       Process.sleep(:infinity)
     end
   end

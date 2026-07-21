@@ -8,6 +8,7 @@ defmodule LiveToast do
   alias LiveToast.Components
   alias Phoenix.LiveView
   alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Rendered
 
   @enforce_keys [:kind, :msg]
   defstruct [
@@ -40,7 +41,7 @@ defmodule LiveToast do
           }
 
   @typedoc "`Phoenix.Component` that renders a part of the toast message."
-  @type component_fn() :: (map() -> Phoenix.LiveView.Rendered.t())
+  @type component_fn() :: (map() -> Rendered.t())
 
   @typedoc "Milliseconds before expiry, or `:infinity` for a persistent toast."
   @type duration() :: non_neg_integer() | :infinity

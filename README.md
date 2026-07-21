@@ -277,6 +277,13 @@ msgstr "Aguanta mientras volvemos a la normalidad"
     component-specific presentation or behavior without adding library-level options. LiveToast does not interpret
     metadata.
 
+### Custom rendering and classes
+
+The `component` option and `toast_component_fn` render the content inside a LiveToast-managed toast shell. The shell
+continues to provide the hook, timing attributes, enter and exit animations, stacking, and dismiss button. Use
+[`toast_class_fn/1`](https://hexdocs.pm/live_toast/LiveToast.html#toast_class_fn/1) to change that outer shell's
+classes; use a custom component function for the icon, title, body, action, and other toast content.
+
 ### Default custom toast component
 
 Pass `toast_component_fn` to `LiveToast.toast_group` when all programmatic toasts in that host should use the same
