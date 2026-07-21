@@ -295,6 +295,11 @@ defmodule LiveToast do
     doc: "function to override the toast classes"
   )
 
+  attr(:toast_component_fn, :any,
+    default: nil,
+    doc: "default component function used to render programmatic toasts"
+  )
+
   attr :toasts_sync, :list, required: true, doc: "toasts that get synchronized when calling `put_toast`"
 
   attr :flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds"
@@ -325,6 +330,7 @@ defmodule LiveToast do
       flash_duration={@flash_duration}
       client_error_delay={@client_error_delay}
       toast_class_fn={@toast_class_fn}
+      toast_component_fn={@toast_component_fn}
       group_class_fn={@group_class_fn}
       connection_notifications={@connection_notifications}
       client_error={@client_error}

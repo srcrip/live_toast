@@ -277,6 +277,25 @@ msgstr "Aguanta mientras volvemos a la normalidad"
     component-specific presentation or behavior without adding library-level options. LiveToast does not interpret
     metadata.
 
+### Default custom toast component
+
+Pass `toast_component_fn` to `LiveToast.toast_group` when all programmatic toasts in that host should use the same
+custom component. A `component:` passed to an individual `send_toast/3` call takes precedence. This host default does
+not change Phoenix flash or connection-notice rendering.
+
+```heex
+<LiveToast.toast_group
+  flash={@flash}
+  connected={assigns[:socket] != nil}
+  toasts_sync={assigns[:toasts_sync]}
+  toast_component_fn={&MyAppWeb.Components.NotificationToast.render/1}
+/>
+```
+
+```elixir
+LiveToast.send_toast(:info, "The message was sent.", title: "Sent")
+```
+
 ### Custom component metadata
 
 Custom component functions receive `metadata` alongside the standard toast assigns such as `kind`, `title`, `body`,

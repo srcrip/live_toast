@@ -108,6 +108,54 @@ defmodule DemoWeb.SendToastTest do
     defp centered_corner(_corner), do: :top_center
   end
 
+  defmodule DefaultComponentLive do
+    @moduledoc false
+
+    use Phoenix.LiveView
+
+    def mount(_params, _session, socket), do: {:ok, socket}
+
+    def handle_event("send_default", _, socket) do
+      LiveToast.send_toast(:info, "Rendered by the host default.", uuid: "component-precedence")
+
+      {:noreply, socket}
+    end
+
+    def handle_event("send_override", _, socket) do
+      LiveToast.send_toast(:info, "Rendered by the per-toast override.",
+        component: &override_toast/1,
+        uuid: "component-precedence"
+      )
+
+      {:noreply, socket}
+    end
+
+    def render(assigns) do
+      ~H"""
+      <LiveToast.toast_group
+        flash={@flash}
+        toasts_sync={assigns[:toasts_sync]}
+        connected={assigns[:socket] != nil}
+        toast_component_fn={&default_toast/1}
+      />
+      <button phx-click="send_default">Send Default Component Toast</button>
+      <button phx-click="send_override">Send Override Component Toast</button>
+      """
+    end
+
+    defp default_toast(assigns) do
+      ~H"""
+      <p data-toast-renderer="default">{@body}</p>
+      """
+    end
+
+    defp override_toast(assigns) do
+      ~H"""
+      <p data-toast-renderer="override">{@body}</p>
+      """
+    end
+  end
+
   defmodule ConnectionNotificationLive do
     @moduledoc false
 
@@ -215,6 +263,29 @@ defmodule DemoWeb.SendToastTest do
 
       refute html =~ ~s(data-metadata-icon)
       assert html =~ ~s(data-reference="receipt-123")
+    end
+
+    test "uses the host default component unless a toast supplies an override", %{conn: conn} do
+      {:ok, view, _html} = live_isolated(conn, DefaultComponentLive)
+
+      view
+      |> element("button", "Send Default Component Toast")
+      |> render_click()
+
+      html = render(view)
+
+      assert html =~ ~s(data-toast-renderer="default")
+      assert html =~ "Rendered by the host default."
+
+      view
+      |> element("button", "Send Override Component Toast")
+      |> render_click()
+
+      html = render(view)
+
+      assert html =~ ~s(data-toast-renderer="override")
+      assert html =~ "Rendered by the per-toast override."
+      refute html =~ ~s(data-toast-renderer="default")
     end
   end
 

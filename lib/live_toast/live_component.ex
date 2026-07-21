@@ -117,7 +117,7 @@ defmodule LiveToast.LiveComponent do
           duration={duration}
           kind={k}
           toast_class_fn={@toast_class_fn}
-          component={component}
+          component={component || @toast_component_fn}
           icon={icon}
           action={action}
           metadata={metadata}
