@@ -228,6 +228,7 @@ describe('LiveToast timed dismissal', () => {
     expect(animationEvents).toEqual(['animate', 'clear'])
     expect(toast.pushes).toHaveLength(1)
   })
+
 })
 
 const remainingSelector = '[data-live-toast-remaining]'
