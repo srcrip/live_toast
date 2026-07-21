@@ -29,7 +29,8 @@ defmodule DemoWeb.Layouts do
         "items-end bottom-0 left-1/2 transform -translate-x-1/2 flex-col-reverse sm:top-auto",
       assigns[:corner] == :bottom_right && "items-end bottom-0 right-0 flex-col-reverse sm:top-auto",
       assigns[:corner] == :top_left && "items-start top-0 left-0 flex-col sm:bottom-auto",
-      assigns[:corner] == :top_center && "items-start top-0 left-1/2 transform -translate-x-1/2 flex-col sm:bottom-auto",
+      assigns[:corner] == :top_center &&
+        "items-start top-0 left-1/2 transform -translate-x-1/2 flex-col sm:bottom-auto",
       assigns[:corner] == :top_right && "items-start top-0 right-0 flex-col sm:bottom-auto"
     ]
   end
