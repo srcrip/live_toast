@@ -343,8 +343,8 @@ LiveToast.dismiss_toast(uuid)
 
 ### Connection-state notifications
 
-Set `connection_notifications={false}` when your application supplies its own connection-state UI. This removes both
-built-in notices, including their connection-event wiring.
+Set `connection_notifications={false}` if you prefer not to show LiveToast's built-in connection failure notices. This
+removes both client and server notices, including their connection-event wiring.
 
 ```heex
 <LiveToast.toast_group
