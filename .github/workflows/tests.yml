@@ -43,8 +43,11 @@ jobs:
       # Specify the OTP and Elixir versions to use when building
       # and running the workflow steps.
       matrix:
-        otp: ['26.2.4']       # Define the OTP version [required]
-        elixir: ['1.16.2']    # Define the elixir version [required]
+        include:
+          - otp: '26.2.4'
+            elixir: '1.16.2'
+          - otp: '28.5.0.2'
+            elixir: '1.20.2'
     steps:
     # Step: Setup Elixir + Erlang image as the base.
     - name: Set up Elixir
@@ -70,9 +73,9 @@ jobs:
         cache-name: cache-elixir-deps
       with:
         path: deps
-        key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-otp-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix-${{ env.cache-name }}-
+          ${{ runner.os }}-otp-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-mix-${{ env.cache-name }}-
 
     # Step: Define how to cache the `_build` directory. After the first run,
     # this speeds up tests runs a lot. This includes not re-compiling our
@@ -84,10 +87,10 @@ jobs:
         cache-name: cache-compiled-build
       with:
         path: _build
-        key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-otp-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix-${{ env.cache-name }}-
-          ${{ runner.os }}-mix-
+          ${{ runner.os }}-otp-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-mix-${{ env.cache-name }}-
+          ${{ runner.os }}-otp-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-mix-
 
     # Step: Download project dependencies. If unchanged, uses
     # the cached version.
