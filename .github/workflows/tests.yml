@@ -111,6 +111,11 @@ jobs:
       working-directory: ./assets
       run: bun test
 
+    - name: Verify packaged JavaScript is current
+      run: |
+        mix assets.build
+        git diff --exit-code -- priv/static
+
     # Step: Compile the project treating any warnings as errors.
     # Customize this step if a different behavior is desired.
     - name: Compiles without warnings
