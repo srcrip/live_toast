@@ -8,6 +8,7 @@ var __export = (target, all) => {
 
 // js/live_toast/index.ts
 __export(exports, {
+  addToast: () => addToast,
   createLiveToastHook: () => createLiveToastHook
 });
 
@@ -793,9 +794,15 @@ var animationTime = 550;
 var maxItemsIgnoresFlashes = true;
 var gap = 15;
 var dismissEvent = "live-toast-dismiss";
+var clientToastEvent = "live-toast:add";
 var remainingSelector = "[data-live-toast-remaining]";
 var lastTS = [];
 var dismissTimers = new WeakMap();
+function addToast(kind, message, options = {}) {
+  document.getElementById("toast-group")?.dispatchEvent(new CustomEvent(clientToastEvent, {
+    detail: { kind, message, options }
+  }));
+}
 function doAnimations(animationDelayTime, maxItems, elToRemove) {
   const ts = [];
   let toasts = Array.from(document.querySelectorAll('#toast-group [phx-hook="LiveToast"]')).map((t) => {
@@ -966,15 +973,36 @@ function startDismissTimer(duration, animationDelayTime, maxItems) {
 function createLiveToastHook(duration = 6e3, maxItems = 3) {
   return {
     destroyed() {
+      if (this.el.dataset.liveToastGroup === "true") {
+        return;
+      }
       dismissTimers.get(this)?.cancel();
       dismissTimers.delete(this);
       doAnimations.bind(this)(duration, maxItems);
     },
     updated() {
+      if (this.el.dataset.liveToastGroup === "true") {
+        return;
+      }
       const keyframes = { y: [this.el.targetDestination] };
       animate2(this.el, keyframes, { duration: 0 });
     },
     mounted() {
+      if (this.el.dataset.liveToastGroup === "true") {
+        const clientToastListener = (event) => {
+          const request = event.detail;
+          if (!request) {
+            return;
+          }
+          this.pushEventTo(this.el, "add_toast", {
+            kind: request.kind,
+            message: request.message,
+            options: request.options
+          });
+        };
+        this.el.addEventListener(clientToastEvent, clientToastListener);
+        return;
+      }
       this.el.addEventListener("show-error", async (_event) => {
         const delayTime = Number.parseInt(this.el.dataset.delay || "0");
         await new Promise((resolve) => setTimeout(resolve, delayTime));

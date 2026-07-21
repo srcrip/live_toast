@@ -6,6 +6,8 @@ defmodule LiveToast.LiveComponent do
   alias LiveToast.Components
   alias LiveToast.Utility
 
+  @client_toast_option_keys ~w(duration metadata title)
+
   @impl Phoenix.LiveComponent
   def mount(socket) do
     socket =
@@ -94,7 +96,13 @@ defmodule LiveToast.LiveComponent do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div id={assigns[:id] || "toast-group"} class={@group_class_fn.(assigns)}>
+    <div
+      id={assigns[:id] || "toast-group"}
+      phx-hook="LiveToast"
+      phx-target={@myself}
+      data-live-toast-group="true"
+      class={@group_class_fn.(assigns)}
+    >
       <div class="contents" id="toast-group-stream" phx-update="stream">
         <Components.toast
           :for={
@@ -160,4 +168,52 @@ defmodule LiveToast.LiveComponent do
     # have dismissed the toast before the animation ended.
     {:noreply, socket}
   end
+
+  @impl Phoenix.LiveComponent
+  def handle_event("add_toast", %{"kind" => kind, "message" => message} = payload, socket) do
+    with {:ok, toast_kind} <- client_toast_kind(kind, socket.assigns.kinds),
+         {:ok, toast_message} <- client_toast_message(message),
+         {:ok, toast_options} <- client_toast_options(Map.get(payload, "options", %{})) do
+      LiveToast.send_toast(toast_kind, toast_message, Keyword.put(toast_options, :container_id, socket.assigns.id))
+    end
+
+    {:noreply, socket}
+  end
+
+  def handle_event("add_toast", _payload, socket), do: {:noreply, socket}
+
+  defp client_toast_kind(kind, kinds) when is_binary(kind) do
+    case Enum.find(kinds, &(Atom.to_string(&1) == kind)) do
+      nil -> :error
+      toast_kind -> {:ok, toast_kind}
+    end
+  end
+
+  defp client_toast_kind(_kind, _kinds), do: :error
+
+  defp client_toast_message(message) when is_binary(message), do: {:ok, message}
+  defp client_toast_message(_message), do: :error
+
+  defp client_toast_options(options) when is_map(options) do
+    options
+    |> Map.take(@client_toast_option_keys)
+    |> Enum.reduce_while({:ok, []}, fn
+      {"title", title}, {:ok, parsed_options} when is_binary(title) ->
+        {:cont, {:ok, [{:title, title} | parsed_options]}}
+
+      {"metadata", metadata}, {:ok, parsed_options} when is_map(metadata) ->
+        {:cont, {:ok, [{:metadata, metadata} | parsed_options]}}
+
+      {"duration", duration}, {:ok, parsed_options} when is_integer(duration) and duration >= 0 ->
+        {:cont, {:ok, [{:duration, duration} | parsed_options]}}
+
+      {"duration", "infinity"}, {:ok, parsed_options} ->
+        {:cont, {:ok, [{:duration, :infinity} | parsed_options]}}
+
+      _option, _result ->
+        {:halt, :error}
+    end)
+  end
+
+  defp client_toast_options(_options), do: :error
 end

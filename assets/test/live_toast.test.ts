@@ -18,7 +18,7 @@ mock.module('motion', () => ({
   }
 }))
 
-const { createLiveToastHook } = await import('../js/live_toast/live_toast.ts')
+const { addToast, createLiveToastHook } = await import('../js/live_toast/live_toast.ts')
 
 type MountedToast = ReturnType<typeof mountToast>
 
@@ -117,6 +117,28 @@ function mountToast(duration: number | 'Infinity' = 1000, countdown = false) {
       el.dispatchEvent(new Event(value ? 'mouseenter' : 'mouseleave'))
     }
   }
+}
+
+function mountToastGroup() {
+  document.body.insertAdjacentHTML(
+    'beforeend',
+    '<div id="toast-group" phx-hook="LiveToast" data-live-toast-group="true"></div>'
+  )
+
+  const el = document.getElementById('toast-group') as HTMLElement
+  const pushes: Array<[string, Record<string, unknown>]> = []
+  const callbacks = createLiveToastHook()
+  const hook = {
+    el,
+    pushEvent: () => undefined,
+    pushEventTo: (_target: Element | string, event: string, payload: Record<string, unknown>) => {
+      pushes.push([event, payload])
+    }
+  }
+
+  callbacks.mounted.call(hook as never)
+
+  return { callbacks, el, hook, pushes }
 }
 
 function advance(milliseconds: number) {
@@ -227,6 +249,42 @@ describe('LiveToast timed dismissal', () => {
 
     expect(animationEvents).toEqual(['animate', 'clear'])
     expect(toast.pushes).toHaveLength(1)
+  })
+
+})
+
+describe('LiveToast client API', () => {
+  beforeEach(() => {
+    installDom()
+  })
+
+  test('routes a browser toast request to the default host', () => {
+    const toastGroup = mountToastGroup()
+
+    addToast('info', 'Copied to clipboard', {
+      duration: 3_000,
+      metadata: { has_icon: false },
+      title: 'Copied'
+    })
+
+    expect(toastGroup.pushes).toEqual([
+      [
+        'add_toast',
+        {
+          kind: 'info',
+          message: 'Copied to clipboard',
+          options: {
+            duration: 3_000,
+            metadata: { has_icon: false },
+            title: 'Copied'
+          }
+        }
+      ]
+    ])
+  })
+
+  test('does nothing when the requested host is not mounted', () => {
+    expect(() => addToast('info', 'Copied to clipboard')).not.toThrow()
   })
 
 })

@@ -30,6 +30,7 @@ var LiveMotion = (() => {
   // js/live_toast/index.ts
   var live_toast_exports = {};
   __export(live_toast_exports, {
+    addToast: () => addToast,
     createLiveToastHook: () => createLiveToastHook
   });
 
@@ -815,9 +816,16 @@ var LiveMotion = (() => {
   var maxItemsIgnoresFlashes = true;
   var gap = 15;
   var dismissEvent = "live-toast-dismiss";
+  var clientToastEvent = "live-toast:add";
   var remainingSelector = "[data-live-toast-remaining]";
   var lastTS = [];
   var dismissTimers = new WeakMap();
+  function addToast(kind, message, options = {}) {
+    var _a;
+    (_a = document.getElementById("toast-group")) == null ? void 0 : _a.dispatchEvent(new CustomEvent(clientToastEvent, {
+      detail: { kind, message, options }
+    }));
+  }
   function doAnimations(animationDelayTime, maxItems, elToRemove) {
     const ts = [];
     let toasts = Array.from(document.querySelectorAll('#toast-group [phx-hook="LiveToast"]')).map((t) => {
@@ -994,15 +1002,36 @@ var LiveMotion = (() => {
     return {
       destroyed() {
         var _a;
+        if (this.el.dataset.liveToastGroup === "true") {
+          return;
+        }
         (_a = dismissTimers.get(this)) == null ? void 0 : _a.cancel();
         dismissTimers.delete(this);
         doAnimations.bind(this)(duration, maxItems);
       },
       updated() {
+        if (this.el.dataset.liveToastGroup === "true") {
+          return;
+        }
         const keyframes = { y: [this.el.targetDestination] };
         animate2(this.el, keyframes, { duration: 0 });
       },
       mounted() {
+        if (this.el.dataset.liveToastGroup === "true") {
+          const clientToastListener = (event) => {
+            const request = event.detail;
+            if (!request) {
+              return;
+            }
+            this.pushEventTo(this.el, "add_toast", {
+              kind: request.kind,
+              message: request.message,
+              options: request.options
+            });
+          };
+          this.el.addEventListener(clientToastEvent, clientToastListener);
+          return;
+        }
         this.el.addEventListener("show-error", (_event) => __async(this, null, function* () {
           const delayTime = Number.parseInt(this.el.dataset.delay || "0");
           yield new Promise((resolve) => setTimeout(resolve, delayTime));

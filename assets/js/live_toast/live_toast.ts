@@ -59,12 +59,25 @@ const maxItemsIgnoresFlashes = true
 // gap in px between toasts
 const gap = 15
 const dismissEvent = 'live-toast-dismiss'
+const clientToastEvent = 'live-toast:add'
 const remainingSelector = '[data-live-toast-remaining]'
 
 let lastTS: HTMLElement[] = []
 
 type DismissTimer = {
   cancel: () => void
+}
+
+export type ClientToastOptions = {
+  duration?: number | 'infinity'
+  metadata?: Record<string, unknown>
+  title?: string
+}
+
+type ClientToastRequest = {
+  kind: string
+  message: string
+  options: ClientToastOptions
 }
 
 const dismissTimers = new WeakMap<object, DismissTimer>()
@@ -74,6 +87,20 @@ declare global {
     order: number
     targetDestination: string
   }
+}
+
+export function addToast(
+  kind: string,
+  message: string,
+  options: ClientToastOptions = {}
+) {
+  document
+    .getElementById('toast-group')
+    ?.dispatchEvent(
+      new CustomEvent<ClientToastRequest>(clientToastEvent, {
+        detail: { kind, message, options }
+      })
+    )
 }
 
 function doAnimations(
@@ -349,16 +376,44 @@ function startDismissTimer(
 export function createLiveToastHook(duration = 6000, maxItems = 3) {
   return {
     destroyed(this: ViewHook) {
+      if (this.el.dataset.liveToastGroup === 'true') {
+        return
+      }
+
       dismissTimers.get(this)?.cancel()
       dismissTimers.delete(this)
       doAnimations.bind(this)(duration, maxItems)
     },
     updated(this: ViewHook) {
+      if (this.el.dataset.liveToastGroup === 'true') {
+        return
+      }
+
       // animate to targetDestination in 0ms
       const keyframes = { y: [this.el.targetDestination] }
       animate(this.el, keyframes, { duration: 0 })
     },
     mounted(this: ViewHook) {
+      if (this.el.dataset.liveToastGroup === 'true') {
+        const clientToastListener = (event: Event) => {
+          const request = (event as CustomEvent<ClientToastRequest>).detail
+
+          if (!request) {
+            return
+          }
+
+          this.pushEventTo(this.el, 'add_toast', {
+            kind: request.kind,
+            message: request.message,
+            options: request.options
+          })
+        }
+
+        this.el.addEventListener(clientToastEvent, clientToastListener)
+
+        return
+      }
+
       this.el.addEventListener('show-error', async _event => {
         const delayTime = Number.parseInt(this.el.dataset.delay || '0')
         await new Promise(resolve => setTimeout(resolve, delayTime))

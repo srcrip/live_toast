@@ -178,6 +178,25 @@ Custom toast components can also dismiss themselves with the composable client-s
 
 Both dismissal paths run the exit animation before removing the toast.
 
+### Browser JavaScript
+
+Import `addToast` when browser JavaScript needs to request a toast. The mounted toast host validates the requested kind
+and renders the toast server-side, so it continues to use the host's configured styles, custom component function,
+animation, and stacking behavior.
+
+```javascript
+import { addToast } from 'live_toast'
+
+addToast('info', 'Copied to clipboard.', {
+  title: 'Copied',
+  duration: 3_000,
+  metadata: { has_icon: false }
+})
+```
+
+The browser API accepts serializable `title`, `duration`, and `metadata` options. Use `duration: 'infinity'` for a
+persistent toast.
+
 Or you can use the helper function, [`put_toast`](https://hexdocs.pm/live_toast/LiveToast.html#put_toast/4), similar to how you may use [`put_flash`](https://hexdocs.pm/phoenix/Phoenix.Controller.html#put_flash/3):
 
 ```elixir
