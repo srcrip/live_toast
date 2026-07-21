@@ -203,7 +203,7 @@ defmodule DemoWeb.HomeLive do
       end
 
     duration =
-      case Map.get(payload, "duration", nil) do
+      case Map.get(payload, "duration") do
         d when is_integer(d) -> d
         d when is_binary(d) -> String.to_integer(d)
         _ -> nil

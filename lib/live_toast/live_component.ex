@@ -40,7 +40,7 @@ defmodule LiveToast.LiveComponent do
 
     flash_map = assigns[:f]
 
-    sync_toast_kind = Map.get(sync_toast, :kind, nil)
+    sync_toast_kind = Map.get(sync_toast, :kind)
 
     sync_toast_kind =
       if is_atom(sync_toast_kind) do

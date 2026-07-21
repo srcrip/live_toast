@@ -15,8 +15,6 @@ if config_env() == :prod do
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4004")
 
-  config :demo, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
-
   config :demo, DemoWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
@@ -24,4 +22,6 @@ if config_env() == :prod do
       port: port
     ],
     secret_key_base: secret_key_base
+
+  config :demo, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 end

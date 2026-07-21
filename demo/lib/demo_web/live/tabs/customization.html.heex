@@ -31,7 +31,7 @@
 
   <h2 class="text-lg font-semibold mb-3">Custom Class Function</h2>
   <p>
-    If you need more control over the styles, you can also pass a custom class function (that generates the class string for the main element). Note that there are a lot of required things in the default implementation of this class. It is best to take the example from the docs and extend it rather than start from zero.
+    A custom class function changes the outer toast shell, which owns the LiveToast hook, timing, animation, and dismiss button. Note that there are a lot of required things in the default implementation of this class. It is best to take the example from the docs and extend it rather than start from zero.
   </p>
 
   <h2 class="text-lg font-semibold mb-3">Custom JavaScript</h2>
@@ -41,6 +41,9 @@
 
   <h2 class="text-lg font-semibold mb-3">Custom Components</h2>
   <p>
-    If you need total control, you can pass a custom component to the toast functions. This hijacks the normal rendering and then you can pretty much do whatever you want in terms of generating the DOM elements.
+    A custom component renders the toast content inside the LiveToast shell. Use it to control the icon, title, body, actions, and application-specific markup while LiveToast continues to manage timing, animation, and dismissal. Pass it to an individual toast, or define
+    <code class="text-rose-600 bg-zinc-50 rounded px-1">toast_component_fn</code>
+    on <code class="text-rose-600 bg-zinc-50 rounded px-1">toast_group</code>
+    to use it for every programmatic toast in that host.
   </p>
 </div>

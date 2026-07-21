@@ -1,6 +1,8 @@
 defmodule DemoWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :demo
 
+  alias Phoenix.LiveView.Socket
+
   @session_options [
     store: :cookie,
     key: "_demo_key",
@@ -8,7 +10,7 @@ defmodule DemoWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket("/live", Phoenix.LiveView.Socket,
+  socket("/live", Socket,
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
   )
