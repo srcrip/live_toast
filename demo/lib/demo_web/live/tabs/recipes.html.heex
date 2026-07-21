@@ -28,6 +28,35 @@
 </div>
 
 <div class="mb-12 space-y-4">
+  <h3 id="client-side-toasts" class="scroll-mt-20 text-zinc-900 font-medium">
+    Client-Side Toasts
+  </h3>
+  <p>
+    Import <code>addToast</code>
+    to request a toast from browser JavaScript. The mounted toast host validates the kind
+    and renders it server-side, so it still uses the configured classes, component function, animations, and stacking.
+  </p>
+  <pre class="overflow-x-auto rounded-md bg-zinc-950 p-4 text-sm text-zinc-100"><code>import &#123; addToast &#125; from "live_toast"
+
+addToast("info", "Copied to clipboard", &#123;
+  title: "Copied",
+  duration: 3_000,
+  metadata: &#123; has_icon: false &#125;
+&#125;)</code></pre>
+  <div class="flex flex-wrap gap-3">
+    <.button type="button" data-client-toast-example>Show Client-Side Toast</.button>
+  </div>
+  <p>
+    <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/assets/js/app.js"
+    >
+      View the demo source
+    </.link>
+  </p>
+</div>
+
+<div class="mb-12 space-y-4">
   <h3 id="dismiss-programmatically" class="scroll-mt-20 text-zinc-900 font-medium">
     Dismiss Programmatically
   </h3>

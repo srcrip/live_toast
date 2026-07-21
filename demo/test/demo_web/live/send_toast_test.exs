@@ -156,6 +156,31 @@ defmodule DemoWeb.SendToastTest do
     end
   end
 
+  defmodule ClientToastLive do
+    @moduledoc false
+
+    use Phoenix.LiveView
+
+    def mount(_params, _session, socket), do: {:ok, socket}
+
+    def render(assigns) do
+      ~H"""
+      <LiveToast.toast_group
+        flash={@flash}
+        connected={assigns[:socket] != nil}
+        toasts_sync={assigns[:toasts_sync]}
+        toast_component_fn={&client_toast/1}
+      />
+      """
+    end
+
+    defp client_toast(assigns) do
+      ~H"""
+      <p data-client-toast data-reference={@metadata["reference"]}>{@body}</p>
+      """
+    end
+  end
+
   defmodule ConnectionNotificationLive do
     @moduledoc false
 
@@ -286,6 +311,58 @@ defmodule DemoWeb.SendToastTest do
       assert html =~ ~s(data-toast-renderer="override")
       assert html =~ "Rendered by the per-toast override."
       refute html =~ ~s(data-toast-renderer="default")
+    end
+  end
+
+  describe "client toast API" do
+    test "renders a client toast with supported options", %{conn: conn} do
+      {:ok, view, _html} = live_isolated(conn, ClientToastLive)
+
+      view
+      |> element("#toast-group")
+      |> render_hook("add_toast", %{
+        "kind" => "info",
+        "message" => "Copied to clipboard",
+        "options" => %{
+          "duration" => "infinity",
+          "metadata" => %{"reference" => "clipboard"},
+          "title" => "Copied",
+          "uuid" => "clipboard-toast"
+        }
+      })
+
+      html = render(view)
+
+      refute html =~ ~s(id="toast-clipboard-toast")
+      assert html =~ ~s(data-duration="Infinity")
+      assert html =~ ~s(data-reference="clipboard")
+      assert html =~ "Copied to clipboard"
+    end
+
+    test "ignores unsupported client toast kinds and options", %{conn: conn} do
+      {:ok, view, _html} = live_isolated(conn, ClientToastLive)
+
+      html =
+        view
+        |> element("#toast-group")
+        |> render_hook("add_toast", %{
+          "kind" => "unknown",
+          "message" => "Ignored",
+          "options" => %{}
+        })
+
+      refute html =~ "Ignored"
+
+      html =
+        view
+        |> element("#toast-group")
+        |> render_hook("add_toast", %{
+          "kind" => "info",
+          "message" => "Also ignored",
+          "options" => %{"duration" => -1}
+        })
+
+      refute html =~ "Also ignored"
     end
   end
 
