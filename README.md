@@ -508,3 +508,16 @@ Some of the stuff still to work on:
 - [ ] Lots of amazing tests
 - [ ] Spring animations
 - [ ] Possibly some way to configure additional severity levels
+
+## Cutting a new GitHub release:
+
+Mostly for my notes:
+
+```
+git tag -a v0.9.0 -m "LiveToast v0.9.0"
+git push origin v0.9.0
+gh release create v0.9.0 \
+  --repo srcrip/live_toast \
+  --verify-tag \
+  --title "LiveToast v0.9.0"
+```
