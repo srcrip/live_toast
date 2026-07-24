@@ -82,6 +82,16 @@ Releasing new bundle (meant to compile it in `v0.6.1`).
 - Fix earlier weirdness with gettext usage in 0.7.0 in #34 (thanks @neilberkman)
 - Fix docs source ref in #39 (thanks @Flo0807)
 
-## [v0.9.0] (unreleased)
+## [v0.9.0] (2026-07-24)
 
-- Made display of the disconnect error delayed and configurable in #19 (thanks @lardcanoe)
+## Highlights
+
+- Add a browser JavaScript API: `addToast/3` requests server-rendered toasts from frontend code.
+- Add programmatic dismissal with `LiveToast.dismiss_toast/2` and the composable `LiveToast.dismiss/1` action for custom components.
+- Pause timed toasts while hovered or focused, then resume with their remaining duration.
+- Support persistent toasts with `duration: 0` or `:infinity`.
+- Add `:top_center` and `:bottom_center` host positions.
+- Allow a default custom toast component function on `toast_group`, with per-toast overrides.
+- Pass application metadata through to custom toast components.
+- Make connection-state notices customizable, replaceable through slots, or fully disableable.
+- Add recipes and documentation for the new APIs and customization paths.

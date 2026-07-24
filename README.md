@@ -26,7 +26,7 @@ Add `live_toast` to your list of dependencies in the `mix.exs` of your Phoenix a
 ```elixir
 def deps do
   [
-    {:live_toast, "~> 0.8.0"}
+    {:live_toast, "~> 0.9.0"}
   ]
 end
 ```
