@@ -66,8 +66,30 @@ let liveSocket = new LiveSocket('/live', Socket, {
 })
 ```
 
-Then, add `'../deps/live_toast/lib/**/*.*ex'` to your list of paths Tailwind will look for class names, in your
-`tailwind.config.js`:
+Then, add the path to the `live_toast` dependency to your list of paths Tailwind will look for class names. This depends on the Tailwind version you are using.
+
+<!-- tabs-open -->
+
+### Tailwind CSS v4
+
+Use this instruction if you use the CSS-first configuration of Tailwind. If your project still has a `tailwind.config.js` file, look for the Tailwind CSS v3 instruction.
+
+In your CSS file:
+
+```css
+/* assets/css/app.css */
+
+/* add this line */
+@source "../../deps/live_toast/lib/**/*.*ex";
+```
+
+**Note:** The path uses `../../` because CSS files are typically in `assets/css/`.
+
+### Tailwind CSS v3
+
+Use this instruction if your project has a `tailwind.config.js` file.
+
+In your `tailwind.config.js` file:
 
 ```javascript
 // assets/tailwind.config.js
@@ -77,12 +99,15 @@ module.exports = {
     './js/**/*.js',
     '../lib/your_app_web.ex',
     '../lib/your_app_web/**/*.*ex',
+    // add this line
     '../deps/live_toast/lib/**/*.*ex',
   ]
 }
 ```
 
-Your particular file will look different but all you need to do is make sure the last line is there.
+<!-- tabs-close -->
+
+Your particular files will look different but all you need to do is make sure the path is there.
 
 > **Note for Umbrella Apps:**
 > If you're using an umbrella application, your paths above may look different. You'll probably have an extra folder in
