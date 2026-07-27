@@ -242,11 +242,22 @@ You can change where toasts are anchored by passing the `corner` setting to `toa
 
 ### Internationalization
 
-You can provide translations for the defaul error toasts by adding the following to your `config.exs`:
+LiveToast can translate its built-in connection notices. Enable this by adding the following to your `config.exs`:
 
 ```elixir
 config :live_toast,
   gettext_backend: MyApp.Gettext
+```
+
+Without this configuration, LiveToast renders its built-in connection notices in English.
+
+`send_toast/3`, `put_toast/4`, and custom connection-notification copy render the message and title you provide unchanged. Translate application-owned copy before passing it to LiveToast:
+
+```elixir
+LiveToast.send_toast(
+  :error,
+  MyApp.Gettext.dgettext("errors", "Failed to send the email")
+)
 ```
 
 You have to create a `live_toast.po` file, inside the `priv/gettext/<language>/LC_MESSAGES/` folder for each language you want to support.

@@ -4,7 +4,6 @@ defmodule LiveToast.LiveComponent do
   use Phoenix.LiveComponent
 
   alias LiveToast.Components
-  alias LiveToast.Utility
 
   @client_toast_option_keys ~w(duration metadata title)
 
@@ -130,10 +129,10 @@ defmodule LiveToast.LiveComponent do
           action={action}
           metadata={metadata}
           corner={@corner}
-          title={if title, do: Utility.translate(title), else: nil}
+          title={title}
           target={@myself}
         >
-          {Utility.translate(msg)}
+          {msg}
         </Components.toast>
       </div>
 

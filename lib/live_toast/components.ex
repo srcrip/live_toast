@@ -169,7 +169,7 @@ defmodule LiveToast.Components do
         toast_class_fn={@toast_class_fn}
         id="client-error"
         kind={@connection_notifications.client_error.kind}
-        title={Utility.translate(@connection_notifications.client_error.title)}
+        title={@connection_notifications.client_error.title}
         duration={0}
         dismissible={false}
         data-live-toast-connection="client_error"
@@ -182,7 +182,7 @@ defmodule LiveToast.Components do
         hidden
       >
         <%= if @client_error == [] do %>
-          {Utility.translate(@connection_notifications.client_error.body)}
+          {@connection_notifications.client_error.body}
           <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
         <% else %>
           {render_slot(
@@ -198,7 +198,7 @@ defmodule LiveToast.Components do
         toast_class_fn={@toast_class_fn}
         id="server-error"
         kind={@connection_notifications.server_error.kind}
-        title={Utility.translate(@connection_notifications.server_error.title)}
+        title={@connection_notifications.server_error.title}
         duration={0}
         dismissible={false}
         data-live-toast-connection="server_error"
@@ -211,7 +211,7 @@ defmodule LiveToast.Components do
         hidden
       >
         <%= if @server_error == [] do %>
-          {Utility.translate(@connection_notifications.server_error.body)}
+          {@connection_notifications.server_error.body}
           <Utility.svg name="hero-arrow-path" class="inline-block ml-1 h-3 w-3 animate-spin" />
         <% else %>
           {render_slot(
@@ -285,13 +285,13 @@ defmodule LiveToast.Components do
     defaults = %{
       client_error: %{
         kind: :error,
-        title: "We can't find the internet",
-        body: "Attempting to reconnect"
+        title: Utility.translate("We can't find the internet"),
+        body: Utility.translate("Attempting to reconnect")
       },
       server_error: %{
         kind: :error,
-        title: "Something went wrong!",
-        body: "Hang in there while we get back on track"
+        title: Utility.translate("Something went wrong!"),
+        body: Utility.translate("Hang in there while we get back on track")
       }
     }
 
