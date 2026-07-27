@@ -75,8 +75,9 @@ defmodule LiveToast.Utility do
   end
 
   def translate(message) do
-    :live_toast
-    |> Application.get_env(:gettext_backend, LiveToast.Gettext)
-    |> Gettext.dgettext("live_toast", message)
+    case Application.get_env(:live_toast, :gettext_backend) do
+      nil -> message
+      backend -> Gettext.dgettext(backend, "live_toast", message)
+    end
   end
 end
