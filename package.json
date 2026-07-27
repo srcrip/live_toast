@@ -4,9 +4,11 @@
   "description": "Phoenix Hook for LiveToast",
   "license": "MIT",
   "private": true,
+  "types": "./assets/index.d.ts",
   "module": "./priv/static/live_toast.esm.js",
   "main": "./priv/static/live_toast.cjs.js",
   "exports": {
+    "types": "./assets/index.d.ts",
     "import": "./priv/static/live_toast.esm.js",
     "require": "./priv/static/live_toast.cjs.js"
   },
@@ -20,6 +22,7 @@
     "LICENSE.md",
     "package.json",
     "priv/static/*",
+    "assets/index.d.ts",
     "assets/js/live_toast/*"
   ]
 }

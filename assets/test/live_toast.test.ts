@@ -78,8 +78,6 @@ function mountToast(duration: number | 'Infinity' = 1000, countdown = false) {
     get: () => document.body
   })
 
-  el.order = 1
-  el.targetDestination = '0px'
   el.matches = ((selector: string) => {
     if (selector === ':hover') return hovered
     if (selector === ':focus-within') return focused
