@@ -68,6 +68,11 @@ type DismissTimer = {
   cancel: () => void
 }
 
+type ToastElement = HTMLElement & {
+  order: number
+  targetDestination: string
+}
+
 export type ClientToastOptions = {
   duration?: number | 'infinity'
   metadata?: Record<string, unknown>
@@ -82,11 +87,8 @@ type ClientToastRequest = {
 
 const dismissTimers = new WeakMap<object, DismissTimer>()
 
-declare global {
-  interface HTMLElement {
-    order: number
-    targetDestination: string
-  }
+function asToastElement(el: HTMLElement): ToastElement {
+  return el as ToastElement
 }
 
 export function addToast(
@@ -109,9 +111,9 @@ function doAnimations(
   maxItems: number,
   elToRemove?: HTMLElement
 ) {
-  const ts = []
+  const ts: ToastElement[] = []
   let toasts = Array.from(
-    document.querySelectorAll<HTMLElement>(
+    document.querySelectorAll<ToastElement>(
       '#toast-group [phx-hook="LiveToast"]'
     )
   )
@@ -226,7 +228,8 @@ function toastGroupTarget(el: HTMLElement) {
 }
 
 async function animateOut(this: ViewHook) {
-  const val = (this.el.order - 2) * 100 + (this.el.order - 2) * gap
+  const toast = asToastElement(this.el)
+  const val = (toast.order - 2) * 100 + (toast.order - 2) * gap
 
   let direction = ''
 
@@ -390,7 +393,8 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
       }
 
       // animate to targetDestination in 0ms
-      const keyframes = { y: [this.el.targetDestination] }
+      const toast = asToastElement(this.el)
+      const keyframes = { y: [toast.targetDestination] }
       animate(this.el, keyframes, { duration: 0 })
     },
     mounted(this: ViewHook) {

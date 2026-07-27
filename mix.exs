@@ -69,6 +69,7 @@ defmodule LiveToast.MixProject do
   defp files do
     ~w"""
     assets/js
+    assets/index.d.ts
     priv
     lib/live_toast.ex
     lib/live_toast/components.ex

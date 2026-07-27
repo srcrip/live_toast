@@ -784,6 +784,9 @@ var clientToastEvent = "live-toast:add";
 var remainingSelector = "[data-live-toast-remaining]";
 var lastTS = [];
 var dismissTimers = new WeakMap();
+function asToastElement(el) {
+  return el;
+}
 function addToast(kind, message, options = {}) {
   document.getElementById("toast-group")?.dispatchEvent(new CustomEvent(clientToastEvent, {
     detail: { kind, message, options }
@@ -856,7 +859,8 @@ function toastGroupTarget(el) {
   return toastGroup || "#toast-group";
 }
 async function animateOut() {
-  const val = (this.el.order - 2) * 100 + (this.el.order - 2) * gap;
+  const toast = asToastElement(this.el);
+  const val = (toast.order - 2) * 100 + (toast.order - 2) * gap;
   let direction = "";
   if (this.el.dataset.corner === "bottom_left" || this.el.dataset.corner === "bottom_center" || this.el.dataset.corner === "bottom_right") {
     direction = "-";
@@ -970,7 +974,8 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
       if (this.el.dataset.liveToastGroup === "true") {
         return;
       }
-      const keyframes = { y: [this.el.targetDestination] };
+      const toast = asToastElement(this.el);
+      const keyframes = { y: [toast.targetDestination] };
       animate2(this.el, keyframes, { duration: 0 });
     },
     mounted() {
