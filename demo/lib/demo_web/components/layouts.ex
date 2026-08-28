@@ -35,6 +35,19 @@ defmodule DemoWeb.Layouts do
     ]
   end
 
+  attr(:kind, :atom, required: true)
+  attr(:title, :string, default: nil)
+  attr(:body, :any, required: true)
+
+  def demo_toast_component_fn(assigns) do
+    ~H"""
+    <div data-demo-toast-component={@kind}>
+      <p :if={@title} class="text-sm font-semibold">{@title}</p>
+      <p class="text-sm">{@body}</p>
+    </div>
+    """
+  end
+
   attr(:notice, :map, required: true)
 
   def connection_notice(assigns) do

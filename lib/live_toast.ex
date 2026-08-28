@@ -298,7 +298,12 @@ defmodule LiveToast do
 
   attr(:toast_component_fn, :any,
     default: nil,
-    doc: "default component function used to render programmatic toasts"
+    doc: "default component function used to render programmatic toasts and Phoenix flashes"
+  )
+
+  attr(:flash_group_id, :string,
+    default: nil,
+    doc: "optional id for a container around Phoenix flashes"
   )
 
   attr :toasts_sync, :list, required: true, doc: "toasts that get synchronized when calling `put_toast`"
@@ -332,6 +337,7 @@ defmodule LiveToast do
       client_error_delay={@client_error_delay}
       toast_class_fn={@toast_class_fn}
       toast_component_fn={@toast_component_fn}
+      flash_group_id={@flash_group_id}
       group_class_fn={@group_class_fn}
       connection_notifications={@connection_notifications}
       client_error={@client_error}
@@ -345,7 +351,9 @@ defmodule LiveToast do
       corner={@corner}
       flash_duration={@flash_duration}
       toast_class_fn={@toast_class_fn}
+      toast_component_fn={@toast_component_fn}
       group_class_fn={@group_class_fn}
+      flash_group_id={@flash_group_id}
       client_error_delay={@client_error_delay}
       connection_notifications={@connection_notifications}
       client_error={@client_error}

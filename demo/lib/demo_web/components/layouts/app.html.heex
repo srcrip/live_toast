@@ -2,6 +2,9 @@
   <LiveToast.toast_group
     toast_class_fn={&demo_toast_class_fn/1}
     group_class_fn={&demo_group_class_fn/1}
+    toast_component_fn={
+      if assigns[:live_action] == :customization, do: &demo_toast_component_fn/1
+    }
     flash={@flash}
     kinds={[:info, :error, :warn]}
     flash_duration={3000}

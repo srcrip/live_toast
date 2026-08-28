@@ -133,6 +133,13 @@ defmodule LiveToast.Components do
     doc: "function to override the toast classes"
   )
 
+  attr(:toast_component_fn, :any,
+    default: nil,
+    doc: "component function used to render Phoenix flash content"
+  )
+
+  attr(:id, :string, default: nil, doc: "optional id for the flash-only container")
+
   attr(:connection_notifications, :any,
     default: %{},
     doc: "false disables connection-state notifications; a map overrides their copy and kind"
@@ -150,18 +157,10 @@ defmodule LiveToast.Components do
     assigns = assign(assigns, :connection_notifications, connection_notifications(assigns.connection_notifications))
 
     ~H"""
-    <.toast
-      :for={level <- @kinds}
-      data-component="flash"
-      corner={@corner}
-      toast_class_fn={@toast_class_fn}
-      flash_duration={@flash_duration}
-      duration={0}
-      kind={level}
-      title={String.capitalize(to_string(level))}
-      phx-update="ignore"
-      flash={@f}
-    />
+    <div :if={@id} id={@id} style="display: contents">
+      <.flash_toasts {assigns} />
+    </div>
+    <.flash_toasts :if={!@id} {assigns} />
     <%= if @connection_notifications do %>
       <.toast
         data-component="flash"
@@ -224,6 +223,24 @@ defmodule LiveToast.Components do
     """
   end
 
+  defp flash_toasts(assigns) do
+    ~H"""
+    <.toast
+      :for={level <- @kinds}
+      data-component="flash"
+      corner={@corner}
+      toast_class_fn={@toast_class_fn}
+      component={@toast_component_fn}
+      flash_duration={@flash_duration}
+      duration={0}
+      kind={level}
+      title={String.capitalize(to_string(level))}
+      phx-update="ignore"
+      flash={@f}
+    />
+    """
+  end
+
   defp duration_value(:infinity), do: "Infinity"
   defp duration_value(duration), do: duration
 
@@ -247,6 +264,13 @@ defmodule LiveToast.Components do
     doc: "function to override the toast classes"
   )
 
+  attr(:toast_component_fn, :any,
+    default: nil,
+    doc: "component function used to render Phoenix flash content"
+  )
+
+  attr(:flash_group_id, :string, default: nil, doc: "optional id for the flash-only container")
+
   attr(:client_error_delay, :integer, default: 3000, doc: "adds a delay before the disconnected client error is shown")
 
   attr(:flash_duration, :integer, default: 0, doc: "if provided clears flash after provided milliseconds")
@@ -269,6 +293,8 @@ defmodule LiveToast.Components do
         corner={@corner}
         flash_duration={@flash_duration}
         toast_class_fn={@toast_class_fn}
+        toast_component_fn={@toast_component_fn}
+        id={@flash_group_id}
         client_error_delay={@client_error_delay}
         connection_notifications={@connection_notifications}
         client_error={@client_error}

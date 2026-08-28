@@ -316,9 +316,9 @@ classes; use a custom component function for the icon, title, body, action, and 
 
 ### Default custom toast component
 
-Pass `toast_component_fn` to `LiveToast.toast_group` when all programmatic toasts in that host should use the same
-custom component. A `component:` passed to an individual `send_toast/3` call takes precedence. This host default does
-not change Phoenix flash or connection-notice rendering.
+Pass `toast_component_fn` to `LiveToast.toast_group` when programmatic toasts and Phoenix flashes in that host should
+use the same custom component. A `component:` passed to an individual `send_toast/3` call takes precedence for that
+toast. Connection notices continue to use their default content or the corresponding slot.
 
 ```heex
 <LiveToast.toast_group
@@ -326,8 +326,12 @@ not change Phoenix flash or connection-notice rendering.
   connected={assigns[:socket] != nil}
   toasts_sync={assigns[:toasts_sync]}
   toast_component_fn={&MyAppWeb.Components.NotificationToast.render/1}
+  flash_group_id="phoenix-flashes"
 />
 ```
+
+`flash_group_id` optionally adds an addressable container around only the Phoenix flashes. Programmatic toasts remain
+outside that container.
 
 ```elixir
 LiveToast.send_toast(:info, "The message was sent.", title: "Sent")

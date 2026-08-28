@@ -156,6 +156,28 @@ defmodule DemoWeb.SendToastTest do
     end
   end
 
+  defmodule FlashComponentLive do
+    @moduledoc false
+
+    use Phoenix.LiveView
+
+    def mount(_params, _session, socket) do
+      {:ok, Phoenix.LiveView.put_flash(socket, :info, "Rendered from a live flash.")}
+    end
+
+    def render(assigns) do
+      ~H"""
+      <LiveToast.toast_group
+        flash={@flash}
+        toasts_sync={assigns[:toasts_sync]}
+        connected={assigns[:socket] != nil}
+        toast_component_fn={&DemoWeb.SendToastTest.flash_component/1}
+        flash_group_id="live-flashes"
+      />
+      """
+    end
+  end
+
   defmodule ClientToastLive do
     @moduledoc false
 
@@ -262,6 +284,24 @@ defmodule DemoWeb.SendToastTest do
     """
   end
 
+  defp dead_flash_component_host(assigns) do
+    ~H"""
+    <LiveToast.toast_group
+      flash={@flash}
+      connected={false}
+      toasts_sync={[]}
+      toast_component_fn={&flash_component/1}
+      flash_group_id="dead-flashes"
+    />
+    """
+  end
+
+  def flash_component(assigns) do
+    ~H"""
+    <p data-flash-renderer="custom" data-kind={@kind}>{@body}</p>
+    """
+  end
+
   describe "LiveToast.send_toast/3" do
     test "renders info toast", %{conn: conn} do
       {:ok, view, _html} = live_isolated(conn, TestLive)
@@ -341,6 +381,28 @@ defmodule DemoWeb.SendToastTest do
       assert html =~ ~s(data-toast-renderer="override")
       assert html =~ "Rendered by the per-toast override."
       refute html =~ ~s(data-toast-renderer="default")
+    end
+  end
+
+  describe "Phoenix flashes" do
+    test "uses the host component in a live host", %{conn: conn} do
+      {:ok, view, html} = live_isolated(conn, FlashComponentLive)
+
+      assert html =~ ~s(id="live-flashes")
+      assert html =~ ~s(data-flash-renderer="custom")
+      assert html =~ "Rendered from a live flash."
+      assert has_element?(view, "#live-flashes [data-kind=info]")
+    end
+
+    test "uses the host component in a dead host" do
+      html =
+        render_component(&dead_flash_component_host/1,
+          flash: %{"error" => "Rendered from a dead flash."}
+        )
+
+      assert html =~ ~s(id="dead-flashes")
+      assert html =~ ~s(data-flash-renderer="custom")
+      assert html =~ "Rendered from a dead flash."
     end
   end
 
