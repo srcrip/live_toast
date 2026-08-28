@@ -235,7 +235,6 @@ defmodule LiveToast.Components do
       duration={0}
       kind={level}
       title={String.capitalize(to_string(level))}
-      phx-update="ignore"
       flash={@f}
     />
     """
