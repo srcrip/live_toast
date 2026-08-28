@@ -44,6 +44,20 @@
     A custom component renders the toast content inside the LiveToast shell. Use it to control the icon, title, body, actions, and application-specific markup while LiveToast continues to manage timing, animation, and dismissal. Pass it to an individual toast, or define
     <code class="text-rose-600 bg-zinc-50 rounded px-1">toast_component_fn</code>
     on <code class="text-rose-600 bg-zinc-50 rounded px-1">toast_group</code>
-    to use it for every programmatic toast in that host.
+    to use it for every programmatic toast and Phoenix flash in that host.
+  </p>
+  <pre class="overflow-x-auto rounded-md bg-zinc-950 p-4 text-sm text-zinc-100"><code>&lt;LiveToast.toast_group
+  flash=&#123;@flash&#125;
+  connected=&#123;assigns[:socket] != nil&#125;
+  toasts_sync=&#123;assigns[:toasts_sync]&#125;
+  toast_component_fn=&#123;&amp;notification/1&#125;
+/&gt;</code></pre>
+  <p>
+    <.link
+      class="text-blue-700 hover:text-blue-500 underline"
+      href="https://github.com/srcrip/live_toast/blob/main/demo/lib/demo_web/components/layouts.ex"
+    >
+      View the demo component
+    </.link>
   </p>
 </div>

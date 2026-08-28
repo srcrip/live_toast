@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 Note that the versions prior to `0.6.0` are very unstable.
 
+## [v0.10.0] (unreleased)
+
+Note: this release includes breaking changes involving translation. The library no longer calls `gettext` functions on
+dynamic strings passed to `put_toast` and `send_toast`.
+
+### Changed
+
+- [Translation behavior](https://github.com/srcrip/live_toast/pull/78): translation of LiveToast's built-in connection notices is now opt-in; configure `gettext_backend` to enable it. `send_toast/3`, `put_toast/4`, and custom connection-notification copy now render the supplied message and title unchanged, so translate application-owned copy before passing it to LiveToast.
+- [TypeScript compatibility](https://github.com/srcrip/live_toast/pull/77): LiveToast no longer augments the global `HTMLElement` interface, and the package now ships and exposes its TypeScript declarations.
+
 ## [v0.1.0] (2024-03-06)
 
 🚀 Initial release.
