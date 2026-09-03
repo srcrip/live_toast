@@ -68,7 +68,7 @@ defmodule LiveToast.Components do
       {@rest}
     >
       <%= if @component do %>
-        {@component.(Map.merge(assigns, %{body: msg}))}
+        {@component.(assign(assigns, :body, msg))}
       <% else %>
         <div class="grow flex flex-col items-start justify-center">
           <p

@@ -167,6 +167,10 @@ defmodule DemoWeb.SendToastTest do
       {:noreply, Phoenix.LiveView.put_flash(socket, :info, "Rendered from a live flash.")}
     end
 
+    def handle_event("replace_flash", _params, socket) do
+      {:noreply, Phoenix.LiveView.put_flash(socket, :info, "Replaced live flash.")}
+    end
+
     def render(assigns) do
       ~H"""
       <LiveToast.toast_group
@@ -177,6 +181,7 @@ defmodule DemoWeb.SendToastTest do
         flash_group_id="live-flashes"
       />
       <button phx-click="show_flash">Show Flash</button>
+      <button phx-click="replace_flash">Replace Flash</button>
       """
     end
   end
@@ -400,6 +405,13 @@ defmodule DemoWeb.SendToastTest do
 
       assert render(view) =~ "Rendered from a live flash."
       assert has_element?(view, "#live-flashes [data-kind=info]")
+
+      view
+      |> element("button", "Replace Flash")
+      |> render_click()
+
+      assert render(view) =~ "Replaced live flash."
+      refute render(view) =~ "Rendered from a live flash."
     end
 
     test "uses the host component in a dead host" do
