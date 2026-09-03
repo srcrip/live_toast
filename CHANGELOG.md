@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 Note that the versions prior to `0.6.0` are very unstable.
 
+## [v0.10.1] (2026-09-03)
+
+### Fixed
+
+- Custom Phoenix flash components now rerender when a flash is replaced by another flash of the same kind.
+
 ## [v0.10.0] (2026-08-28)
 
 Note: this release includes breaking changes involving translation. The library no longer calls `gettext` functions on
