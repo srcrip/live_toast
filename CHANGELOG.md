@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 Note that the versions prior to `0.6.0` are very unstable.
 
+## [v0.10.2] (2026-09-04)
+
+### Fixed
+
+- Phoenix flashes now update correctly across LiveView navigation when using a custom toast component.
+
 ## [v0.10.1] (2026-09-03)
 
 ### Fixed
