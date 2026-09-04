@@ -158,9 +158,24 @@ defmodule LiveToast.Components do
 
     ~H"""
     <div :if={@id} id={@id} style="display: contents">
-      <.flash_toasts {assigns} />
+      <.flash_toasts
+        f={@f}
+        corner={@corner}
+        flash_duration={@flash_duration}
+        toast_class_fn={@toast_class_fn}
+        toast_component_fn={@toast_component_fn}
+        kinds={@kinds}
+      />
     </div>
-    <.flash_toasts :if={!@id} {assigns} />
+    <.flash_toasts
+      :if={!@id}
+      f={@f}
+      corner={@corner}
+      flash_duration={@flash_duration}
+      toast_class_fn={@toast_class_fn}
+      toast_component_fn={@toast_component_fn}
+      kinds={@kinds}
+    />
     <%= if @connection_notifications do %>
       <.toast
         data-component="flash"
