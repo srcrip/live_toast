@@ -31,14 +31,13 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :tailwind,
-  version: "3.4.0",
+  version: "4.3.3",
   demo: [
     args: ~w(
-  --config=tailwind.config.cjs
-           --input=css/app.css
-                   --output=../priv/static/assets/app.css
-  ),
-    cd: Path.expand("../assets", __DIR__)
+      --input=assets/css/app.css
+      --output=priv/static/assets/app.css
+    ),
+    cd: Path.expand("..", __DIR__)
   ]
 
 import_config "#{config_env()}.exs"

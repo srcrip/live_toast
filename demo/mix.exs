@@ -44,7 +44,7 @@ defmodule Demo.MixProject do
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:floki, ">= 0.30.0", only: :test},
-      {:tailwind, "~> 0.2"},
+      {:tailwind, "~> 0.3"},
       {:jason, "~> 1.4"},
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"}

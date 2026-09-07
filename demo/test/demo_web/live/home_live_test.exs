@@ -45,6 +45,19 @@ defmodule DemoWeb.HomeLiveTest do
     end
   end
 
+  describe "Installation page" do
+    test "documents Tailwind 3 and 4 setup", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/installation")
+
+      assert html =~ "Live Toast — Installation"
+      assert html =~ "Tailwind CSS 4"
+      assert html =~ "Tailwind CSS 3"
+      assert html =~ "../../deps/live_toast/lib"
+      assert html =~ "../deps/live_toast/lib/**/*.*ex"
+      assert html =~ "LiveToast.toast_group"
+    end
+  end
+
   describe "LiveToast.send_toast/7" do
     test "renders correctly", %{conn: conn} do
       {:ok, view, html} = live(conn, ~p"/")
@@ -193,6 +206,7 @@ defmodule DemoWeb.HomeLiveTest do
 
       assert html =~ ~s(href="/#what-is-live-toast")
       assert html =~ ~s(href="/#duration")
+      assert html =~ ~s(href="/installation")
       assert html =~ ~s(href="/recipes#showing-progress")
       assert html =~ ~s(href="/recipes#dismiss-programmatically")
       assert html =~ ~s(href="/recipes#client-side-toasts")

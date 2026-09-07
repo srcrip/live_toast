@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 Note that the versions prior to `0.6.0` are very unstable.
 
+## Unreleased
+
+### Changed
+
+- Default toast styles, README instructions, and the demo installation guide now support both Tailwind CSS 3 and 4.
+
+### Fixed
+
+- Connection notices can be shown when Tailwind CSS 4 gives the `hidden` attribute precedence over display styles.
+
 ## [v0.10.2] (2026-09-04)
 
 ### Fixed

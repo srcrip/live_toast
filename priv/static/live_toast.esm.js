@@ -997,6 +997,7 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
       this.el.addEventListener("show-error", async (_event) => {
         const delayTime = Number.parseInt(this.el.dataset.delay || "0");
         await new Promise((resolve) => setTimeout(resolve, delayTime));
+        this.el.removeAttribute("hidden");
         this.el.style.display = "flex";
       });
       this.el.addEventListener("hide-error", async (_event) => {

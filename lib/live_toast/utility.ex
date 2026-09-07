@@ -55,7 +55,9 @@ defmodule LiveToast.Utility do
   end
 
   def show(js \\ %JS{}, selector) do
-    JS.show(js,
+    js
+    |> JS.remove_attribute("hidden", to: selector)
+    |> JS.show(
       to: selector,
       display: "flex",
       transition:

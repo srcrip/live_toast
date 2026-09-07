@@ -14,7 +14,7 @@ defmodule DemoWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium border border-zinc-200/50 transition-colors bg-zinc-100 text-zinc-900 shadow-sm hover:bg-zinc-200 phx-submit-loading:opacity-75 active:text-zinc-800 h-9 px-4 py-2",
+        "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium border border-zinc-200/50 transition-colors bg-zinc-100 text-zinc-900 shadow-xs hover:bg-zinc-200 phx-submit-loading:opacity-75 active:text-zinc-800 h-9 px-4 py-2",
         @class
       ]}
       {@rest}

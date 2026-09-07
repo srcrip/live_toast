@@ -117,6 +117,31 @@ function mountToast(duration: number | 'Infinity' = 1000, countdown = false) {
   }
 }
 
+function mountConnectionToast() {
+  document.body.innerHTML = `
+    <div
+      id="client-error"
+      phx-hook="LiveToast"
+      data-corner="bottom_right"
+      data-delay="0"
+      data-duration="0"
+      hidden
+    ></div>
+  `
+
+  const el = document.getElementById('client-error') as HTMLElement
+  const callbacks = createLiveToastHook()
+  const hook = {
+    el,
+    pushEvent: () => undefined,
+    pushEventTo: () => undefined
+  }
+
+  callbacks.mounted.call(hook as never)
+
+  return { el }
+}
+
 function mountToastGroup() {
   document.body.insertAdjacentHTML(
     'beforeend',
@@ -223,6 +248,17 @@ describe('LiveToast timed dismissal', () => {
     advance(60_000)
 
     expect(toast.pushes).toHaveLength(0)
+  })
+
+  test('removes the hidden attribute before showing a connection error', async () => {
+    const toast = mountConnectionToast()
+
+    toast.el.dispatchEvent(new Event('show-error'))
+    advance(0)
+    await settle()
+
+    expect(toast.el.hidden).toBe(false)
+    expect(toast.el.style.display).toBe('flex')
   })
 
   test('cancels dismissal when the hook is destroyed', () => {
