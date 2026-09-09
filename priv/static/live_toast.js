@@ -1040,6 +1040,7 @@ var LiveMotion = (() => {
         this.el.addEventListener("show-error", (_event) => __async(this, null, function* () {
           const delayTime = Number.parseInt(this.el.dataset.delay || "0");
           yield new Promise((resolve) => setTimeout(resolve, delayTime));
+          this.el.removeAttribute("hidden");
           this.el.style.display = "flex";
         }));
         this.el.addEventListener("hide-error", (_event) => __async(this, null, function* () {

@@ -431,6 +431,7 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         // (don't want to do this quite yet because 1.0 is pretty new)
         // also repeat this on hide.
 
+        this.el.removeAttribute('hidden')
         this.el.style.display = 'flex'
       })
 

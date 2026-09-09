@@ -524,7 +524,7 @@ defmodule DemoWeb.HomeLive do
         <button
           type="button"
           aria-label="Menu"
-          class="-mr-2 rounded p-2 active:bg-gray-400/20 md:hidden"
+          class="-mr-2 rounded-sm p-2 active:bg-gray-400/20 md:hidden"
           phx-click={
             JS.toggle_class(
               "max-md:block",

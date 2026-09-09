@@ -18,6 +18,7 @@ Live Toast is a drop-in replacement for the flash system in Phoenix/LiveView.
 - **⚙️ Highly configurable:** Looks good out of the box, but can be changed in pretty much any way you want.
 - **🌍 Simple asset delivery:** `LiveToast` simply ships Tailwind classes and lets your project bundle them up. No CSS
     drop-in required.
+- **🧩 Tailwind compatibility:** The default toast styles work with Tailwind CSS 3.4 and 4.x.
 
 ## Installation
 
@@ -66,8 +67,24 @@ let liveSocket = new LiveSocket('/live', Socket, {
 })
 ```
 
-Then, add `'../deps/live_toast/lib/**/*.*ex'` to your list of paths Tailwind will look for class names, in your
-`tailwind.config.js`:
+LiveToast's classes need to be included in Tailwind's source detection. The configuration is different for Tailwind 4
+and Tailwind 3.
+
+### Tailwind 4
+
+Add LiveToast as an explicit source in `assets/css/app.css`:
+
+```css
+/* Keep your existing Tailwind import and source declarations. */
+@source "../../deps/live_toast/lib";
+```
+
+The source path is relative to the stylesheet. For an umbrella application, it will usually be
+`"../../../../deps/live_toast/lib"`.
+
+### Tailwind 3
+
+Add `'../deps/live_toast/lib/**/*.*ex'` to the `content` paths in `tailwind.config.js`:
 
 ```javascript
 // assets/tailwind.config.js
@@ -82,11 +99,16 @@ module.exports = {
 }
 ```
 
-Your particular file will look different but all you need to do is make sure the last line is there.
+Your particular file will look different, but all you need to do is make sure the last line is there.
 
 > **Note for Umbrella Apps:**
 > If you're using an umbrella application, your paths above may look different. You'll probably have an extra folder in
 > there, so the line you need to add would be more like `"../../../deps/live_toast/lib/**/*.*ex"`
+
+LiveToast's default class functions intentionally use syntax supported by both Tailwind 3.4 and 4.x. If you provide a
+custom `toast_class_fn` or `group_class_fn`, those classes are compiled by your application and must be compatible with
+the Tailwind version it uses. Tailwind's [upgrade guide](https://tailwindcss.com/docs/upgrade-guide) covers changes to
+border and ring defaults, important modifiers, arbitrary variants, and other utilities.
 
 Finally, replace your `<.flash_group />` component with the new `<LiveToast.toast_group />`. It's most likely in your
 `app.html.heex`:
@@ -424,14 +446,14 @@ defmodule MyModule do
   def toast_class_fn(assigns) do
     [
       # base classes
-      "group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
+      "group/toast z-[100] pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border border-gray-200 col-start-1 col-end-1 row-start-1 row-end-2",
       # start hidden if javascript is enabled
-      "[@media(scripting:enabled)]:opacity-0 [@media(scripting:enabled){[data-phx-main]_&}]:opacity-100",
+      "[@media(scripting:enabled)]:opacity-0 [@media(scripting:enabled)]:[[data-phx-main]_&]:opacity-100",
       # used to hide the disconnected flashes
       if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
       # override styles per severity
       assigns[:kind] == :info && "bg-white text-black",
-      assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200"
+      assigns[:kind] == :error && "!text-red-700 !bg-red-100 !border-red-200"
     ]
   end
 end
@@ -477,15 +499,15 @@ need to override [`toast_class_fn/1`](https://hexdocs.pm/live_toast/LiveToast.ht
 def custom_toast_class_fn(assigns) do
   [
     # base classes
-    "bg-white group/toast z-100 pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border col-start-1 col-end-1 row-start-1 row-end-2",
+    "bg-white group/toast z-[100] pointer-events-auto relative w-full items-center justify-between origin-center overflow-hidden rounded-lg p-4 shadow-lg border border-gray-200 col-start-1 col-end-1 row-start-1 row-end-2",
     # start hidden if javascript is enabled
-    "[@media(scripting:enabled)]:opacity-0 [@media(scripting:enabled){[data-phx-main]_&}]:opacity-100",
+    "[@media(scripting:enabled)]:opacity-0 [@media(scripting:enabled)]:[[data-phx-main]_&]:opacity-100",
     # used to hide the disconnected flashes
     if(assigns[:rest][:hidden] == true, do: "hidden", else: "flex"),
     # override styles per severity
     assigns[:kind] == :info && "text-black",
-    assigns[:kind] == :error && "!text-red-700 !bg-red-100 border-red-200",
-    assigns[:kind] == :warning && "!text-amber-700 !bg-amber-100 border-amber-200"
+    assigns[:kind] == :error && "!text-red-700 !bg-red-100 !border-red-200",
+    assigns[:kind] == :warning && "!text-amber-700 !bg-amber-100 !border-amber-200"
   ]
 end
 ```
