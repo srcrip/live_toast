@@ -554,17 +554,12 @@ defmodule DemoWeb.HomeLive do
   end
 
   def tab(%{action: :why} = assigns), do: why(assigns)
-  def tab(%{action: :installation} = assigns), do: installation(assigns)
   def tab(%{action: :recipes} = assigns), do: recipes(assigns)
   def tab(%{action: :customization} = assigns), do: customization(assigns)
   def tab(assigns), do: demo(assigns)
 
   def apply_action(socket, :why) do
     assign(socket, :page_title, "Live Toast — Why Live Toast?")
-  end
-
-  def apply_action(socket, :installation) do
-    assign(socket, :page_title, "Live Toast — Installation")
   end
 
   def apply_action(socket, :recipes) do

@@ -8,7 +8,7 @@ Note that the versions prior to `0.6.0` are very unstable.
 
 ### Changed
 
-- Default toast styles, README instructions, and the demo installation guide now support both Tailwind CSS 3 and 4.
+- Default toast component styles now support Tailwind 3 and 4, and docs are changed accordingly.
 
 ### Fixed
 
