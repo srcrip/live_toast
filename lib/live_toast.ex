@@ -1,9 +1,6 @@
 defmodule LiveToast do
   @moduledoc """
   LiveComponent for displaying toast messages.
-
-  The default class functions support Tailwind CSS 3.4 and 4.x. Applications must include LiveToast's `lib` directory
-  in Tailwind's source detection; see the [installation guide](https://hexdocs.pm/live_toast/readme.html#installation).
   """
 
   use Phoenix.Component
