@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 Note that the versions prior to `0.6.0` are very unstable.
 
-## Unreleased
+## [v0.11.0] (2026-09-09)
 
 ### Changed
 

@@ -27,7 +27,7 @@ Add `live_toast` to your list of dependencies in the `mix.exs` of your Phoenix a
 ```elixir
 def deps do
   [
-    {:live_toast, "~> 0.10.2"}
+    {:live_toast, "~> 0.11.0"}
   ]
 end
 ```
@@ -551,10 +551,10 @@ Some of the stuff still to work on:
 Mostly for my notes:
 
 ```
-git tag -a v0.10.2 -m "LiveToast v0.10.2"
-git push origin v0.10.2
-gh release create v0.10.2 \
+git tag -a v0.11.0 -m "LiveToast v0.11.0"
+git push origin v0.11.0
+gh release create v0.11.0 \
   --repo srcrip/live_toast \
   --verify-tag \
-  --title "LiveToast v0.10.2"
+  --title "LiveToast v0.11.0"
 ```
