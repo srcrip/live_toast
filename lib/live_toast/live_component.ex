@@ -57,7 +57,7 @@ defmodule LiveToast.LiveComponent do
         toasts = toasts || []
         toasts = [sync_toast | toasts]
 
-        new_f = put_in(assigns[:f][sync_toast_kind], nil)
+        new_f = Map.put(assigns[:f], sync_toast_kind, nil)
         assigns = Map.put(assigns, :f, new_f)
 
         socket

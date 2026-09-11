@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 Note that the versions prior to `0.6.0` are very unstable.
 
+## [Unreleased]
+
+### Fixed
+
+- `put_toast/4` no longer replaces the flash map with the whole assigns map when the synced flash is still present, which hid every other flash.
+
 ## [v0.11.0] (2026-09-09)
 
 ### Changed
