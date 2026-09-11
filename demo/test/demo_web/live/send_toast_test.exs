@@ -4,6 +4,9 @@ defmodule DemoWeb.SendToastTest do
 
   import Phoenix.LiveViewTest
 
+  alias Phoenix.LiveView.Lifecycle
+  alias Phoenix.LiveView.Socket
+
   defmodule TestLive do
     @moduledoc false
 
@@ -80,6 +83,33 @@ defmodule DemoWeb.SendToastTest do
         <p>{@body}</p>
         <span data-reference={@metadata.reference}></span>
       </div>
+      """
+    end
+  end
+
+  defmodule SyncToastLive do
+    @moduledoc false
+
+    use Phoenix.LiveView
+
+    def mount(_params, _session, socket), do: {:ok, socket}
+
+    def handle_event("save", _params, socket) do
+      {:noreply, LiveToast.put_toast(socket, :success, "Saved", uuid: "saved")}
+    end
+
+    def handle_event("show_error", _params, socket) do
+      {:noreply, Phoenix.LiveView.put_flash(socket, :error, "Check the form")}
+    end
+
+    def render(assigns) do
+      ~H"""
+      <LiveToast.toast_group
+        flash={@flash}
+        toasts_sync={assigns[:toasts_sync]}
+        connected={true}
+        kinds={[:success, :error]}
+      />
       """
     end
   end
@@ -389,6 +419,49 @@ defmodule DemoWeb.SendToastTest do
       assert html =~ ~s(data-toast-renderer="override")
       assert html =~ "Rendered by the per-toast override."
       refute html =~ ~s(data-toast-renderer="default")
+    end
+  end
+
+  describe "LiveToast.put_toast/4" do
+    test "renders another flash while the synced flash awaits client clearing", %{conn: conn} do
+      {:ok, view, _html} = live_isolated(conn, SyncToastLive)
+
+      render_click(view, "save")
+
+      assert has_element?(view, "#toast-saved", "Saved")
+      refute has_element?(view, "#flash-success")
+      assert_push_event(view, "clear-flash", %{key: :success})
+      refute_push_event(view, "clear-flash", %{key: :success})
+
+      # Keep the success flash: do not send the hook's lv:clear-flash event.
+      render_click(view, "show_error")
+
+      assert has_element?(view, "#flash-error", "Check the form")
+      assert has_element?(view, "#toast-saved", "Saved")
+      refute has_element?(view, "#flash-success")
+      assert_push_event(view, "clear-flash", %{key: :success})
+      refute_push_event(view, "clear-flash", %{key: :success})
+    end
+
+    test "keeps the component flash map flat when removing a synced flash" do
+      parent_socket =
+        %Socket{assigns: %{__changed__: %{}, flash: %{}}}
+        |> LiveToast.put_toast(:success, "Saved")
+
+      {:ok, socket} =
+        LiveToast.LiveComponent.mount(%Socket{private: %{live_temp: %{}, lifecycle: %Lifecycle{}}})
+
+      assigns = %{
+        id: "toast-group",
+        f: parent_socket.assigns.flash,
+        toasts_sync: parent_socket.assigns.toasts_sync
+      }
+
+      {:ok, socket} = LiveToast.LiveComponent.update(assigns, socket)
+      assigns = put_in(assigns.f["error"], "Check the form")
+      {:ok, socket} = LiveToast.LiveComponent.update(assigns, socket)
+
+      assert socket.assigns.f == %{"success" => nil, "error" => "Check the form"}
     end
   end
 
