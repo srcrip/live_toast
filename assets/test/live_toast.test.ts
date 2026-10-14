@@ -117,13 +117,13 @@ function mountToast(duration: number | 'Infinity' = 1000, countdown = false) {
   }
 }
 
-function mountConnectionToast() {
+function mountConnectionToast(delay = 0) {
   document.body.innerHTML = `
     <div
       id="client-error"
       phx-hook="LiveToast"
       data-corner="bottom_right"
-      data-delay="0"
+      data-delay="${delay}"
       data-duration="0"
       hidden
     ></div>
@@ -259,6 +259,19 @@ describe('LiveToast timed dismissal', () => {
 
     expect(toast.el.hidden).toBe(false)
     expect(toast.el.style.display).toBe('flex')
+  })
+
+  test('does not show a connection error when the connection is restored within the delay', async () => {
+    const toast = mountConnectionToast(3000)
+
+    toast.el.dispatchEvent(new Event('show-error'))
+    advance(1000)
+    toast.el.dispatchEvent(new Event('hide-error'))
+    advance(3000)
+    await settle()
+
+    expect(toast.el.hidden).toBe(true)
+    expect(toast.el.style.display).toBe('none')
   })
 
   test('cancels dismissal when the hook is destroyed', () => {

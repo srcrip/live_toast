@@ -418,9 +418,13 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         return
       }
 
-      this.el.addEventListener('show-error', async _event => {
+      // Pending reveal of the connection notice. It must be cancelled by
+      // 'hide-error', otherwise a connection that comes back within the delay
+      // still reveals the notice afterwards and nothing ever hides it again.
+      let pendingShow: ReturnType<typeof setTimeout> | undefined
+
+      this.el.addEventListener('show-error', _event => {
         const delayTime = Number.parseInt(this.el.dataset.delay || '0')
-        await new Promise(resolve => setTimeout(resolve, delayTime))
 
         // todo: in the future use this to execute the data-disconnected command
         // https://elixirforum.com/t/can-we-use-liveview-js-commands-inside-a-hook/67324/8
@@ -431,11 +435,15 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         // (don't want to do this quite yet because 1.0 is pretty new)
         // also repeat this on hide.
 
-        this.el.removeAttribute('hidden')
-        this.el.style.display = 'flex'
+        clearTimeout(pendingShow)
+        pendingShow = setTimeout(() => {
+          this.el.removeAttribute('hidden')
+          this.el.style.display = 'flex'
+        }, delayTime)
       })
 
-      this.el.addEventListener('hide-error', async _event => {
+      this.el.addEventListener('hide-error', _event => {
+        clearTimeout(pendingShow)
         this.el.style.display = 'none'
       })
 

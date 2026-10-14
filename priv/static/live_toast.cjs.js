@@ -1008,13 +1008,17 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
         this.el.addEventListener(clientToastEvent, clientToastListener);
         return;
       }
-      this.el.addEventListener("show-error", async (_event) => {
+      let pendingShow;
+      this.el.addEventListener("show-error", (_event) => {
         const delayTime = Number.parseInt(this.el.dataset.delay || "0");
-        await new Promise((resolve) => setTimeout(resolve, delayTime));
-        this.el.removeAttribute("hidden");
-        this.el.style.display = "flex";
+        clearTimeout(pendingShow);
+        pendingShow = setTimeout(() => {
+          this.el.removeAttribute("hidden");
+          this.el.style.display = "flex";
+        }, delayTime);
       });
-      this.el.addEventListener("hide-error", async (_event) => {
+      this.el.addEventListener("hide-error", (_event) => {
+        clearTimeout(pendingShow);
         this.el.style.display = "none";
       });
       if (["server-error", "client-error"].includes(this.el.id)) {

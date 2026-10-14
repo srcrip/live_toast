@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 Note that the versions prior to `0.6.0` are very unstable.
 
+## [Unreleased]
+
+### Fixed
+
+- The `#client-error` and `#server-error` connection notices no longer appear, and stay on screen, when the connection is restored before `client_error_delay` runs out.
+
 ## [v0.11.0] (2026-09-09)
 
 ### Changed
