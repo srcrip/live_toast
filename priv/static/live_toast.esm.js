@@ -1008,12 +1008,12 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
           return;
         }
       }
-      window.addEventListener("phx:clear-flash", (e) => {
+      this.handleEvent("clear-flash", (payload) => {
         this.pushEvent("lv:clear-flash", {
-          key: e.detail.key
+          key: payload.key
         });
       });
-      window.addEventListener("flash-leave", async (event) => {
+      this.el.addEventListener("flash-leave", async (event) => {
         if (event.target === this.el) {
           doAnimations.bind(this, duration, maxItems, this.el)();
           await animateOut.bind(this)();
@@ -1023,8 +1023,8 @@ function createLiveToastHook(duration = 6e3, maxItems = 3) {
         event.stopPropagation();
         await dismissToast.bind(this)(duration, maxItems);
       });
-      window.addEventListener(`phx:${dismissEvent}`, async (event) => {
-        const detail = event.detail;
+      this.handleEvent(dismissEvent, async (payload) => {
+        const detail = payload;
         const id = detail.id || `toast-${detail.uuid}`;
         if (id === this.el.id) {
           await dismissToast.bind(this)(duration, maxItems);

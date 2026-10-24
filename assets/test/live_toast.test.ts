@@ -70,6 +70,8 @@ function mountToast(duration: number | 'Infinity' = 1000, countdown = false) {
   const el = document.getElementById('toast-one') as HTMLElement
   const group = document.getElementById('toast-group') as HTMLElement
   const pushes: Array<[Element | string, string, Record<string, string>]> = []
+  const flashPushes: Array<[string, Record<string, string>]> = []
+  const serverListeners: Array<[string, EventListener]> = []
   let hovered = false
   let focused = false
 
@@ -87,7 +89,19 @@ function mountToast(duration: number | 'Infinity' = 1000, countdown = false) {
   const callbacks = createLiveToastHook(1000, 3)
   const hook = {
     el,
-    pushEvent: () => undefined,
+    handleEvent(
+      event: string,
+      callback: (payload: Record<string, string>) => void
+    ) {
+      const listener: EventListener = event => {
+        callback((event as CustomEvent<Record<string, string>>).detail)
+      }
+      serverListeners.push([`phx:${event}`, listener])
+      window.addEventListener(`phx:${event}`, listener)
+    },
+    pushEvent: (event: string, payload: Record<string, string>) => {
+      flashPushes.push([event, payload])
+    },
     pushEventTo: (
       target: Element | string,
       event: string,
@@ -106,6 +120,15 @@ function mountToast(duration: number | 'Infinity' = 1000, countdown = false) {
     group,
     hook,
     pushes,
+    flashPushes,
+    destroy() {
+      callbacks.destroyed.call(hook as never)
+      // LiveView removes listeners registered through handleEvent after destroyed.
+      for (const [event, listener] of serverListeners) {
+        window.removeEventListener(event, listener)
+      }
+      el.remove()
+    },
     setFocused(value: boolean) {
       focused = value
       el.dispatchEvent(new Event(value ? 'focusin' : 'focusout'))
@@ -283,6 +306,38 @@ describe('LiveToast timed dismissal', () => {
 
     expect(animationEvents).toEqual(['animate', 'clear'])
     expect(toast.pushes).toHaveLength(1)
+  })
+
+  test('stops handling server events after the hook is destroyed', async () => {
+    const toast = mountToast(0)
+
+    window.dispatchEvent(
+      new CustomEvent('phx:clear-flash', { detail: { key: 'info' } })
+    )
+    expect(toast.flashPushes).toEqual([['lv:clear-flash', { key: 'info' }]])
+
+    toast.destroy()
+    window.dispatchEvent(
+      new CustomEvent('phx:clear-flash', { detail: { key: 'info' } })
+    )
+    window.dispatchEvent(
+      new CustomEvent('phx:live-toast-dismiss', { detail: { id: toast.el.id } })
+    )
+    await settle()
+
+    expect(toast.flashPushes).toHaveLength(1)
+    expect(toast.pushes).toHaveLength(0)
+  })
+
+  test('handles flash-leave on the toast element', async () => {
+    const toast = mountToast(0)
+    toast.el.dataset.component = 'flash'
+    animationEvents.length = 0
+
+    toast.el.dispatchEvent(new Event('flash-leave'))
+    await settle()
+
+    expect(animationEvents).toContain('animate')
   })
 
 })

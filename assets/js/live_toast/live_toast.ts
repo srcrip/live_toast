@@ -446,13 +446,13 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         }
       }
 
-      window.addEventListener('phx:clear-flash', e => {
+      this.handleEvent('clear-flash', payload => {
         this.pushEvent('lv:clear-flash', {
-          key: (e as CustomEvent<{ key: string }>).detail.key
+          key: (payload as { key: string }).key
         })
       })
 
-      window.addEventListener('flash-leave', async event => {
+      this.el.addEventListener('flash-leave', async event => {
         if (event.target === this.el) {
           // animate this flash sliding out
           doAnimations.bind(this, duration, maxItems, this.el)()
@@ -466,9 +466,8 @@ export function createLiveToastHook(duration = 6000, maxItems = 3) {
         await dismissToast.bind(this)(duration, maxItems)
       })
 
-      window.addEventListener(`phx:${dismissEvent}`, async event => {
-        const detail = (event as CustomEvent<{ id?: string; uuid?: string }>)
-          .detail
+      this.handleEvent(dismissEvent, async payload => {
+        const detail = payload as { id?: string; uuid?: string }
         const id = detail.id || `toast-${detail.uuid}`
 
         if (id === this.el.id) {

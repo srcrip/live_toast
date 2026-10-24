@@ -1051,12 +1051,12 @@ var LiveMotion = (() => {
             return;
           }
         }
-        window.addEventListener("phx:clear-flash", (e) => {
+        this.handleEvent("clear-flash", (payload) => {
           this.pushEvent("lv:clear-flash", {
-            key: e.detail.key
+            key: payload.key
           });
         });
-        window.addEventListener("flash-leave", (event) => __async(this, null, function* () {
+        this.el.addEventListener("flash-leave", (event) => __async(this, null, function* () {
           if (event.target === this.el) {
             doAnimations.bind(this, duration, maxItems, this.el)();
             yield animateOut.bind(this)();
@@ -1066,8 +1066,8 @@ var LiveMotion = (() => {
           event.stopPropagation();
           yield dismissToast.bind(this)(duration, maxItems);
         }));
-        window.addEventListener(`phx:${dismissEvent}`, (event) => __async(this, null, function* () {
-          const detail = event.detail;
+        this.handleEvent(dismissEvent, (payload) => __async(this, null, function* () {
+          const detail = payload;
           const id = detail.id || `toast-${detail.uuid}`;
           if (id === this.el.id) {
             yield dismissToast.bind(this)(duration, maxItems);
